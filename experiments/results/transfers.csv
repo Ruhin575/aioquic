@@ -1,0 +1,6 @@
+variant,profile,file_size,run,download_time_s,goodput_mbps,sha256_ok,qlog_path
+smoke_stock,clean,1048576,1,0.269600,31.115,True,experiments/transfer/client-qlog/smoke_stock/clean/1
+smoke_stock,clean,1048576,2,0.316595,26.496,True,experiments/transfer/client-qlog/smoke_stock/clean/2
+auto_server_stock,clean,1048576,1,0.312505,26.843,True,experiments/transfer/client-qlog/auto_server_stock/clean/1
+auto_server_high_threshold,clean,1048576,1,0.305284,27.478,True,experiments/transfer/client-qlog/auto_server_high_threshold/clean/1
+qlog_check,baseline,1048576,1,0.337784,24.834,True,experiments/transfer/client-qlog/qlog_check/baseline/1

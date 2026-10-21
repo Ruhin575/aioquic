@@ -1,5 +1,6 @@
 import logging
 import math
+import os
 from bisect import bisect_left
 from collections.abc import Callable, Iterable
 from typing import Any, Optional
@@ -149,6 +150,19 @@ class QuicPacketRecovery:
         self._send_probe = send_probe
 
         # loss detection
+        try:
+            self._packet_threshold = int(
+                os.environ.get("AIOQUIC_PACKET_THRESHOLD", K_PACKET_THRESHOLD)
+            )
+        except ValueError as exc:
+            raise ValueError(
+                "AIOQUIC_PACKET_THRESHOLD must be a non-negative integer"
+            ) from exc
+        if self._packet_threshold < 0:
+            raise ValueError(
+                "AIOQUIC_PACKET_THRESHOLD must be a non-negative integer"
+            )
+
         self._pto_count = 0
         self._rtt_first_sample_time = 0.0
         self._rtt_initial = initial_rtt
@@ -441,7 +455,7 @@ class QuicPacketRecovery:
             if self._rtt_initialized
             else self._rtt_initial
         )
-        packet_threshold = space.largest_acked_packet - K_PACKET_THRESHOLD
+        packet_threshold = space.largest_acked_packet - self._packet_threshold
         time_threshold = now - loss_delay
 
         lost_packets = []

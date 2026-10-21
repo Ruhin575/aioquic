@@ -303,7 +303,7 @@ async def perform_http_request(
         if isinstance(http_event, DataReceived):
             octets += len(http_event.data)
     logger.info(
-        "Response received for %s %s : %d bytes in %.1f s (%.3f Mbps)"
+        "Response received for %s %s : %d bytes in %.6f s (%.3f Mbps)"
         % (method, urlparse(url).path, octets, elapsed, octets * 8 / elapsed / 1000000)
     )
 

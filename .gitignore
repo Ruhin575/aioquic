@@ -17,3 +17,19 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+
+# Generated QUIC experiment artifacts
+experiments/transfer/__pycache__/
+experiments/transfer/downloaded/
+experiments/transfer/control-downloaded/
+experiments/transfer/server.log
+experiments/transfer/server-qlog/
+
+# Locally generated experiment certificates and private keys
+experiments/transfer/*.pem
+
+# Generated client QUIC logs
+experiments/transfer/client-qlog/
+
+# Generated HTTP/3 test files
+experiments/transfer/www/
