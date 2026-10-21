@@ -33,3 +33,4 @@ experiments/transfer/client-qlog/
 
 # Generated HTTP/3 test files
 experiments/transfer/www/
+experiments/verify-out/

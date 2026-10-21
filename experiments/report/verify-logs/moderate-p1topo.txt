@@ -1,0 +1,29 @@
+=== Applied profile: moderate (ns=ns-router) ===
+--- rc0 (downlink, server -> client) ---
+qdisc netem 10: root refcnt 19 limit 1000 delay 50ms  15ms loss 0.3% reorder 15% 50% rate 15Mbit gap 1
+--- rs0 (uplink, client -> server) ---
+qdisc netem 10: root refcnt 19 limit 1000 delay 30ms rate 15Mbit
+
+=== Verifying profile: moderate ===
+
+--- ping (300 packets, 20 ms apart) ---
+
+--- 10.10.2.2 ping statistics ---
+300 packets transmitted, 298 received, 0.666667% packet loss, time 7134ms
+rtt min/avg/max/mdev = 30.143/81.467/125.791/14.579 ms, pipe 6
+
+--- UDP probe (2000 packets, 0.005s interval) ---
+[udp_probe receiver] wrote 1995 rows to ./verify-out/moderate.csv
+
+=== Observed from pcap/probe: profile=moderate ===
+  packets expected    : 2000
+  packets received    : 1995
+  one-way delay (mean): 60.43 ms
+  jitter (stddev)     : 11.36 ms
+  loss                : 0.250 %
+  out-of-order        : 8.571 %
+
+pcap : ./verify-out/moderate.pcap
+csv  : ./verify-out/moderate.csv
+
+Compare observed values to the configured values in profiles.md.

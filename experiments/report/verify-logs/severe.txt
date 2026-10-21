@@ -1,0 +1,29 @@
+=== Applied profile: severe (ns=ns-router) ===
+--- veth-rc (downlink, server -> client) ---
+qdisc netem 10: root refcnt 19 limit 1000 delay 70ms  25ms loss 0.5% reorder 25% 75% rate 15Mbit gap 1
+--- veth-rs (uplink, client -> server) ---
+qdisc netem 10: root refcnt 19 limit 1000 delay 30ms rate 15Mbit
+
+=== Verifying profile: severe ===
+
+--- ping (300 packets, 20 ms apart) ---
+
+--- 10.0.2.2 ping statistics ---
+300 packets transmitted, 299 received, 0.333333% packet loss, time 7013ms
+rtt min/avg/max/mdev = 30.137/104.991/162.607/23.350 ms, pipe 8
+
+--- UDP probe (2000 packets, 0.005s interval) ---
+[udp_probe receiver] wrote 1988 rows to ./verify-out/severe.csv
+
+=== Observed from pcap/probe: profile=severe ===
+  packets expected    : 2000
+  packets received    : 1988
+  one-way delay (mean): 93.51 ms
+  jitter (stddev)     : 18.24 ms
+  loss                : 0.600 %
+  out-of-order        : 9.557 %
+
+pcap : ./verify-out/severe.pcap
+csv  : ./verify-out/severe.csv
+
+Compare observed values to the configured values in profiles.md.

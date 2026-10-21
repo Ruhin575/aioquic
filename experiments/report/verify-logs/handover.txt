@@ -1,0 +1,29 @@
+=== Applied profile: handover (ns=ns-router) ===
+--- veth-rc (downlink, server -> client) ---
+qdisc netem 10: root refcnt 19 limit 1000 delay 80ms  40ms loss 1% reorder 30% 80% rate 15Mbit gap 1
+--- veth-rs (uplink, client -> server) ---
+qdisc netem 10: root refcnt 19 limit 1000 delay 30ms rate 15Mbit
+
+=== Verifying profile: handover ===
+
+--- ping (300 packets, 20 ms apart) ---
+
+--- 10.0.2.2 ping statistics ---
+300 packets transmitted, 298 received, 0.666667% packet loss, time 7044ms
+rtt min/avg/max/mdev = 30.090/126.181/218.496/36.079 ms, pipe 10
+
+--- UDP probe (2000 packets, 0.005s interval) ---
+[udp_probe receiver] wrote 1986 rows to ./verify-out/handover.csv
+
+=== Observed from pcap/probe: profile=handover ===
+  packets expected    : 1999
+  packets received    : 1986
+  one-way delay (mean): 126.59 ms
+  jitter (stddev)     : 27.00 ms
+  loss                : 0.650 %
+  out-of-order        : 21.148 %
+
+pcap : ./verify-out/handover.pcap
+csv  : ./verify-out/handover.csv
+
+Compare observed values to the configured values in profiles.md.

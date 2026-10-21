@@ -1,0 +1,29 @@
+=== Applied profile: mild (ns=ns-router) ===
+--- veth-rc (downlink, server -> client) ---
+qdisc netem 10: root refcnt 19 limit 1000 delay 40ms  10ms loss 0.1% reorder 5% 25% rate 15Mbit gap 1
+--- veth-rs (uplink, client -> server) ---
+qdisc netem 10: root refcnt 19 limit 1000 delay 30ms rate 15Mbit
+
+=== Verifying profile: mild ===
+
+--- ping (300 packets, 20 ms apart) ---
+
+--- 10.0.2.2 ping statistics ---
+300 packets transmitted, 300 received, 0% packet loss, time 6913ms
+rtt min/avg/max/mdev = 50.079/71.688/141.280/10.336 ms, pipe 7
+
+--- UDP probe (2000 packets, 0.005s interval) ---
+[udp_probe receiver] wrote 1998 rows to ./verify-out/mild.csv
+
+=== Observed from pcap/probe: profile=mild ===
+  packets expected    : 2000
+  packets received    : 1998
+  one-way delay (mean): 46.29 ms
+  jitter (stddev)     : 7.49 ms
+  loss                : 0.100 %
+  out-of-order        : 1.502 %
+
+pcap : ./verify-out/mild.pcap
+csv  : ./verify-out/mild.csv
+
+Compare observed values to the configured values in profiles.md.
