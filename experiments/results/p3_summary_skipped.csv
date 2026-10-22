@@ -1,0 +1,6 @@
+variant,profile,run,reason
+smoke_stock,clean,1,server qlog directory not found: /home/dpooja/aioquic/experiments/transfer/server-qlog/smoke_stock/clean/1
+smoke_stock,clean,2,server qlog directory not found: /home/dpooja/aioquic/experiments/transfer/server-qlog/smoke_stock/clean/2
+auto_server_stock,clean,1,server qlog directory not found: /home/dpooja/aioquic/experiments/transfer/server-qlog/auto_server_stock/clean/1
+auto_server_high_threshold,clean,1,server qlog directory not found: /home/dpooja/aioquic/experiments/transfer/server-qlog/auto_server_high_threshold/clean/1
+qlog_check,baseline,1,server qlog directory not found: /home/dpooja/aioquic/experiments/transfer/server-qlog/qlog_check/baseline/1

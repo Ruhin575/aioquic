@@ -193,6 +193,31 @@ def save_result(row):
         writer.writerow(row)
 
 
+def wait_for_server_qlog(server_qlog_dir, timeout=15.0):
+    """Wait for the server qlog to appear and stop growing."""
+    deadline = time.time() + timeout
+    last_size = -1
+
+    while time.time() < deadline:
+        files = list(server_qlog_dir.glob("*.qlog"))
+
+        if files:
+            size = sum(f.stat().st_size for f in files)
+
+            if size > 0 and size == last_size:
+                return True
+
+            last_size = size
+
+        time.sleep(0.5)
+
+    print(
+        f"WARNING: no complete server qlog appeared in "
+        f"{server_qlog_dir} within {timeout}s",
+        flush=True,
+    )
+    return False
+
 def run_transfer(file_name, variant, profile, run_number, threshold=None):
     output_dir = TRANSFER_DIR / "downloaded" / variant / profile / str(run_number)
     qlog_dir = TRANSFER_DIR / "client-qlog" / variant / profile / str(run_number)
@@ -213,6 +238,8 @@ def run_transfer(file_name, variant, profile, run_number, threshold=None):
             qlog_dir,
             threshold,
         )
+        # Give aioquic time to finish writing the server-side qlog
+        wait_for_server_qlog(server_qlog_dir)
 
         if not downloaded_file.exists():
             raise RuntimeError(f"Downloaded file not found: {downloaded_file}")
