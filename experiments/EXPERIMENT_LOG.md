@@ -142,3 +142,105 @@
 - **2026-10-24T12:42:18** SUCCESS: profile=severe, file=50MB.bin, variant=huge-threshold, run=2
 
 - **2026-10-24T12:49:43** SUCCESS: profile=severe, file=50MB.bin, variant=huge-threshold, run=3
+
+- **2026-10-26T13:02:18** SUCCESS: profile=baseline, file=10MB.bin, variant=stock, run=1
+
+- **2026-10-26T13:59:49** SUCCESS: profile=baseline, file=10MB.bin, variant=stock, run=1
+
+- **2026-10-26T14:00:01** SUCCESS: profile=baseline, file=10MB.bin, variant=stock, run=2
+
+- **2026-10-26T14:00:12** SUCCESS: profile=baseline, file=10MB.bin, variant=stock, run=3
+
+- **2026-10-26T14:00:24** SUCCESS: profile=baseline, file=10MB.bin, variant=stock, run=4
+
+- **2026-10-26T14:00:36** SUCCESS: profile=baseline, file=10MB.bin, variant=stock, run=5
+
+- **2026-10-26T14:01:22** SUCCESS: profile=mild, file=10MB.bin, variant=stock, run=1
+
+- **2026-10-26T14:02:03** SUCCESS: profile=mild, file=10MB.bin, variant=stock, run=2
+
+- **2026-10-26T14:02:47** SUCCESS: profile=mild, file=10MB.bin, variant=stock, run=3
+
+- **2026-10-26T14:03:25** SUCCESS: profile=mild, file=10MB.bin, variant=stock, run=4
+
+- **2026-10-26T14:04:04** SUCCESS: profile=mild, file=10MB.bin, variant=stock, run=5
+
+- **2026-10-26T14:05:35** SUCCESS: profile=moderate, file=10MB.bin, variant=stock, run=1
+
+- **2026-10-26T14:07:00** SUCCESS: profile=moderate, file=10MB.bin, variant=stock, run=2
+
+- **2026-10-26T14:08:21** SUCCESS: profile=moderate, file=10MB.bin, variant=stock, run=3
+
+- **2026-10-26T14:09:47** SUCCESS: profile=moderate, file=10MB.bin, variant=stock, run=4
+
+- **2026-10-26T14:11:18** SUCCESS: profile=moderate, file=10MB.bin, variant=stock, run=5
+
+- **2026-10-26T14:13:06** SUCCESS: profile=severe, file=10MB.bin, variant=stock, run=1
+
+- **2026-10-26T14:42:43** SUCCESS: profile=severe, file=10MB.bin, variant=stock, run=2
+
+- **2026-10-26T14:44:38** SUCCESS: profile=severe, file=10MB.bin, variant=stock, run=3
+
+- **2026-10-26T14:46:14** SUCCESS: profile=severe, file=10MB.bin, variant=stock, run=4
+
+- **2026-10-26T14:47:59** SUCCESS: profile=severe, file=10MB.bin, variant=stock, run=5
+
+- **2026-10-26T14:50:48** SUCCESS: profile=handover, file=10MB.bin, variant=stock, run=1
+
+- **2026-10-26T14:53:46** SUCCESS: profile=handover, file=10MB.bin, variant=stock, run=2
+
+- **2026-10-26T14:56:43** SUCCESS: profile=handover, file=10MB.bin, variant=stock, run=3
+
+- **2026-10-26T14:59:35** SUCCESS: profile=handover, file=10MB.bin, variant=stock, run=4
+
+- **2026-10-26T15:02:31** SUCCESS: profile=handover, file=10MB.bin, variant=stock, run=5
+
+- **2026-10-26T15:02:43** SUCCESS: profile=baseline, file=10MB.bin, variant=huge-threshold, run=1
+
+- **2026-10-26T15:02:56** SUCCESS: profile=baseline, file=10MB.bin, variant=huge-threshold, run=2
+
+- **2026-10-26T15:03:09** SUCCESS: profile=baseline, file=10MB.bin, variant=huge-threshold, run=3
+
+- **2026-10-26T15:03:21** SUCCESS: profile=baseline, file=10MB.bin, variant=huge-threshold, run=4
+
+- **2026-10-26T15:03:34** SUCCESS: profile=baseline, file=10MB.bin, variant=huge-threshold, run=5
+
+- **2026-10-26T15:04:08** SUCCESS: profile=mild, file=10MB.bin, variant=huge-threshold, run=1
+
+- **2026-10-26T15:04:40** SUCCESS: profile=mild, file=10MB.bin, variant=huge-threshold, run=2
+
+- **2026-10-26T15:05:14** SUCCESS: profile=mild, file=10MB.bin, variant=huge-threshold, run=3
+
+- **2026-10-26T15:05:46** SUCCESS: profile=mild, file=10MB.bin, variant=huge-threshold, run=4
+
+- **2026-10-26T15:06:15** SUCCESS: profile=mild, file=10MB.bin, variant=huge-threshold, run=5
+
+- **2026-10-26T15:07:21** SUCCESS: profile=moderate, file=10MB.bin, variant=huge-threshold, run=1
+
+- **2026-10-26T15:08:23** SUCCESS: profile=moderate, file=10MB.bin, variant=huge-threshold, run=2
+
+- **2026-10-26T15:09:30** SUCCESS: profile=moderate, file=10MB.bin, variant=huge-threshold, run=3
+
+- **2026-10-26T15:10:24** SUCCESS: profile=moderate, file=10MB.bin, variant=huge-threshold, run=4
+
+- **2026-10-26T15:11:30** SUCCESS: profile=moderate, file=10MB.bin, variant=huge-threshold, run=5
+
+- **2026-10-26T15:12:58** SUCCESS: profile=severe, file=10MB.bin, variant=huge-threshold, run=1
+
+- **2026-10-26T15:14:25** SUCCESS: profile=severe, file=10MB.bin, variant=huge-threshold, run=2
+
+- **2026-10-26T15:15:47** SUCCESS: profile=severe, file=10MB.bin, variant=huge-threshold, run=3
+
+- **2026-10-26T15:17:06** SUCCESS: profile=severe, file=10MB.bin, variant=huge-threshold, run=4
+
+- **2026-10-26T15:18:39** SUCCESS: profile=severe, file=10MB.bin, variant=huge-threshold, run=5
+
+- **2026-10-26T15:21:03** SUCCESS: profile=handover, file=10MB.bin, variant=huge-threshold, run=1
+
+- **2026-10-26T15:23:33** SUCCESS: profile=handover, file=10MB.bin, variant=huge-threshold, run=2
+
+- **2026-10-26T15:26:06** SUCCESS: profile=handover, file=10MB.bin, variant=huge-threshold, run=3
+
+- **2026-10-26T15:28:36** SUCCESS: profile=handover, file=10MB.bin, variant=huge-threshold, run=4
+
+- **2026-10-26T15:31:10** SUCCESS: profile=handover, file=10MB.bin, variant=huge-threshold, run=5

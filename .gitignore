@@ -39,3 +39,4 @@ experiments/analysis/sample_data/
 experiments/report/plots/
 experiments/analysis/parsed/
 experiments/analysis/__pycache__/
+experiments/analysis/work_main
