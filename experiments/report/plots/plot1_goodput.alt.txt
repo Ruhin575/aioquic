@@ -1,0 +1,1 @@
+plot1_goodput: Plot generated from the filtered experiment data. Underlying plotted values are in plot1_goodput_data.csv.

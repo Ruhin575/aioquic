@@ -1,0 +1,11 @@
+profile,variant,mean,sd,n
+baseline,huge-threshold,0.0,0.0,5
+baseline,stock,0.0,0.0,5
+handover,huge-threshold,83.224,0.8107897384649144,5
+handover,stock,83.38,2.4643254655178994,5
+mild,huge-threshold,90.81400000000001,11.396316510171168,5
+mild,stock,95.874,1.9052768827653355,5
+moderate,huge-threshold,91.672,3.548904056184103,5
+moderate,stock,93.28200000000001,1.9670460086129171,5
+severe,huge-threshold,89.664,3.0526840648845375,5
+severe,stock,90.69,1.0473538084143315,5
