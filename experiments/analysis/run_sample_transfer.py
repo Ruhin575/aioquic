@@ -18,7 +18,8 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "experiments" / "transfer"))
 import run_transfer as rt  # noqa: E402  (its CLI is guarded by __main__, so importing is safe)
 
-TEAM_RESULTS = rt.RESULTS_FILE.resolve()   # remembered at import, before any redirect
+TEAM_RESULTS = (ROOT / "experiments" / "results" / "transfers.csv").resolve()
+TEAM_OUTPUT_DIR = (ROOT / "experiments" / "results").resolve()
 
 
 def main(argv=None):
@@ -29,14 +30,21 @@ def main(argv=None):
     ap.add_argument("--run", type=int, default=1)
     ap.add_argument("--threshold", type=int, default=None)
     ap.add_argument("--results-file", required=True, help="CSV to append the result row to")
+    ap.add_argument("--output-dir", required=True,
+                    help="where run_<N>/{client,server}-qlog and download/ are written (NOT experiments/results)")
     a = ap.parse_args(argv)
 
     results = Path(a.results_file).resolve()
+    out_dir = Path(a.output_dir).resolve()
     if results == TEAM_RESULTS:
         raise SystemExit("Refusing to write to the team's results file; choose a different --results-file.")
-    rt.RESULTS_FILE = results            # save_result() reads this global at call time
+    if out_dir == TEAM_OUTPUT_DIR or TEAM_OUTPUT_DIR in out_dir.parents:
+        raise SystemExit("Refusing to write into the team's experiments/results directory; choose a different --output-dir.")
+    if not a.variant.startswith("p3sample"):
+        raise SystemExit("Sample variants must start with 'p3sample' so they stay out of final results.")
     rt.run_transfer(file_name=a.file, variant=a.variant, profile=a.profile,
-                    run_number=a.run, threshold=a.threshold)
+                    run_number=a.run, threshold=a.threshold,
+                    output_dir=out_dir, results_file=results)
     return 0
 
 
