@@ -244,3 +244,403 @@
 - **2026-10-26T15:28:36** SUCCESS: profile=handover, file=10MB.bin, variant=huge-threshold, run=4
 
 - **2026-10-26T15:31:10** SUCCESS: profile=handover, file=10MB.bin, variant=huge-threshold, run=5
+
+- **2026-10-28T10:29:51** FAILED: profile=baseline, file=10MB.bin, variant=stock, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:51** FAILED: profile=baseline, file=10MB.bin, variant=stock, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:51** FAILED: profile=baseline, file=10MB.bin, variant=stock, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:52** FAILED: profile=baseline, file=10MB.bin, variant=stock, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:52** FAILED: profile=baseline, file=10MB.bin, variant=stock, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:52** FAILED: profile=mild, file=10MB.bin, variant=stock, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:52** FAILED: profile=mild, file=10MB.bin, variant=stock, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:52** FAILED: profile=mild, file=10MB.bin, variant=stock, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:52** FAILED: profile=mild, file=10MB.bin, variant=stock, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:52** FAILED: profile=mild, file=10MB.bin, variant=stock, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:53** FAILED: profile=moderate, file=10MB.bin, variant=stock, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:53** FAILED: profile=moderate, file=10MB.bin, variant=stock, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:53** FAILED: profile=moderate, file=10MB.bin, variant=stock, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:53** FAILED: profile=moderate, file=10MB.bin, variant=stock, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:53** FAILED: profile=moderate, file=10MB.bin, variant=stock, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:53** FAILED: profile=severe, file=10MB.bin, variant=stock, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:53** FAILED: profile=severe, file=10MB.bin, variant=stock, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:54** FAILED: profile=severe, file=10MB.bin, variant=stock, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:54** FAILED: profile=severe, file=10MB.bin, variant=stock, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:54** FAILED: profile=severe, file=10MB.bin, variant=stock, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:54** FAILED: profile=handover, file=10MB.bin, variant=stock, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:54** FAILED: profile=handover, file=10MB.bin, variant=stock, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:54** FAILED: profile=handover, file=10MB.bin, variant=stock, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:55** FAILED: profile=handover, file=10MB.bin, variant=stock, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:55** FAILED: profile=handover, file=10MB.bin, variant=stock, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:55** FAILED: profile=baseline, file=10MB.bin, variant=huge-threshold, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:55** FAILED: profile=baseline, file=10MB.bin, variant=huge-threshold, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:55** FAILED: profile=baseline, file=10MB.bin, variant=huge-threshold, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:55** FAILED: profile=baseline, file=10MB.bin, variant=huge-threshold, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:55** FAILED: profile=baseline, file=10MB.bin, variant=huge-threshold, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:56** FAILED: profile=mild, file=10MB.bin, variant=huge-threshold, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:56** FAILED: profile=mild, file=10MB.bin, variant=huge-threshold, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:56** FAILED: profile=mild, file=10MB.bin, variant=huge-threshold, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:56** FAILED: profile=mild, file=10MB.bin, variant=huge-threshold, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:56** FAILED: profile=mild, file=10MB.bin, variant=huge-threshold, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:56** FAILED: profile=moderate, file=10MB.bin, variant=huge-threshold, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:56** FAILED: profile=moderate, file=10MB.bin, variant=huge-threshold, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:57** FAILED: profile=moderate, file=10MB.bin, variant=huge-threshold, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:57** FAILED: profile=moderate, file=10MB.bin, variant=huge-threshold, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:57** FAILED: profile=moderate, file=10MB.bin, variant=huge-threshold, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:57** FAILED: profile=severe, file=10MB.bin, variant=huge-threshold, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:57** FAILED: profile=severe, file=10MB.bin, variant=huge-threshold, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:57** FAILED: profile=severe, file=10MB.bin, variant=huge-threshold, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:58** FAILED: profile=severe, file=10MB.bin, variant=huge-threshold, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:58** FAILED: profile=severe, file=10MB.bin, variant=huge-threshold, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:58** FAILED: profile=handover, file=10MB.bin, variant=huge-threshold, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:58** FAILED: profile=handover, file=10MB.bin, variant=huge-threshold, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:58** FAILED: profile=handover, file=10MB.bin, variant=huge-threshold, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:58** FAILED: profile=handover, file=10MB.bin, variant=huge-threshold, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:29:58** FAILED: profile=handover, file=10MB.bin, variant=huge-threshold, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:36** FAILED: profile=baseline, file=10MB.bin, variant=stock, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:37** FAILED: profile=baseline, file=10MB.bin, variant=stock, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:37** FAILED: profile=baseline, file=10MB.bin, variant=stock, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:37** FAILED: profile=baseline, file=10MB.bin, variant=stock, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:37** FAILED: profile=baseline, file=10MB.bin, variant=stock, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:37** FAILED: profile=mild, file=10MB.bin, variant=stock, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:37** FAILED: profile=mild, file=10MB.bin, variant=stock, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:38** FAILED: profile=mild, file=10MB.bin, variant=stock, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:38** FAILED: profile=mild, file=10MB.bin, variant=stock, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:38** FAILED: profile=mild, file=10MB.bin, variant=stock, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:38** FAILED: profile=moderate, file=10MB.bin, variant=stock, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:38** FAILED: profile=moderate, file=10MB.bin, variant=stock, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:38** FAILED: profile=moderate, file=10MB.bin, variant=stock, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:38** FAILED: profile=moderate, file=10MB.bin, variant=stock, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:39** FAILED: profile=moderate, file=10MB.bin, variant=stock, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:39** FAILED: profile=severe, file=10MB.bin, variant=stock, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:39** FAILED: profile=severe, file=10MB.bin, variant=stock, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:39** FAILED: profile=severe, file=10MB.bin, variant=stock, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:39** FAILED: profile=severe, file=10MB.bin, variant=stock, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:39** FAILED: profile=severe, file=10MB.bin, variant=stock, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:40** FAILED: profile=handover, file=10MB.bin, variant=stock, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:40** FAILED: profile=handover, file=10MB.bin, variant=stock, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:40** FAILED: profile=handover, file=10MB.bin, variant=stock, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:40** FAILED: profile=handover, file=10MB.bin, variant=stock, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:40** FAILED: profile=handover, file=10MB.bin, variant=stock, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:40** FAILED: profile=baseline, file=10MB.bin, variant=huge-threshold, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:41** FAILED: profile=baseline, file=10MB.bin, variant=huge-threshold, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:41** FAILED: profile=baseline, file=10MB.bin, variant=huge-threshold, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:41** FAILED: profile=baseline, file=10MB.bin, variant=huge-threshold, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:41** FAILED: profile=baseline, file=10MB.bin, variant=huge-threshold, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:41** FAILED: profile=mild, file=10MB.bin, variant=huge-threshold, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:41** FAILED: profile=mild, file=10MB.bin, variant=huge-threshold, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:41** FAILED: profile=mild, file=10MB.bin, variant=huge-threshold, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:42** FAILED: profile=mild, file=10MB.bin, variant=huge-threshold, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:42** FAILED: profile=mild, file=10MB.bin, variant=huge-threshold, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:42** FAILED: profile=moderate, file=10MB.bin, variant=huge-threshold, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:42** FAILED: profile=moderate, file=10MB.bin, variant=huge-threshold, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:42** FAILED: profile=moderate, file=10MB.bin, variant=huge-threshold, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:42** FAILED: profile=moderate, file=10MB.bin, variant=huge-threshold, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:43** FAILED: profile=moderate, file=10MB.bin, variant=huge-threshold, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:43** FAILED: profile=severe, file=10MB.bin, variant=huge-threshold, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:43** FAILED: profile=severe, file=10MB.bin, variant=huge-threshold, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:43** FAILED: profile=severe, file=10MB.bin, variant=huge-threshold, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:43** FAILED: profile=severe, file=10MB.bin, variant=huge-threshold, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:43** FAILED: profile=severe, file=10MB.bin, variant=huge-threshold, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:44** FAILED: profile=handover, file=10MB.bin, variant=huge-threshold, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:44** FAILED: profile=handover, file=10MB.bin, variant=huge-threshold, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:44** FAILED: profile=handover, file=10MB.bin, variant=huge-threshold, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:44** FAILED: profile=handover, file=10MB.bin, variant=huge-threshold, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:31:44** FAILED: profile=handover, file=10MB.bin, variant=huge-threshold, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:34** FAILED: profile=baseline, file=10MB.bin, variant=stock, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:34** FAILED: profile=baseline, file=10MB.bin, variant=stock, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:34** FAILED: profile=baseline, file=10MB.bin, variant=stock, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:34** FAILED: profile=baseline, file=10MB.bin, variant=stock, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:34** FAILED: profile=baseline, file=10MB.bin, variant=stock, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:35** FAILED: profile=mild, file=10MB.bin, variant=stock, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:35** FAILED: profile=mild, file=10MB.bin, variant=stock, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:35** FAILED: profile=mild, file=10MB.bin, variant=stock, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:35** FAILED: profile=mild, file=10MB.bin, variant=stock, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:35** FAILED: profile=mild, file=10MB.bin, variant=stock, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:35** FAILED: profile=moderate, file=10MB.bin, variant=stock, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:35** FAILED: profile=moderate, file=10MB.bin, variant=stock, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:36** FAILED: profile=moderate, file=10MB.bin, variant=stock, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:36** FAILED: profile=moderate, file=10MB.bin, variant=stock, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:36** FAILED: profile=moderate, file=10MB.bin, variant=stock, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:36** FAILED: profile=severe, file=10MB.bin, variant=stock, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:36** FAILED: profile=severe, file=10MB.bin, variant=stock, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:36** FAILED: profile=severe, file=10MB.bin, variant=stock, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:36** FAILED: profile=severe, file=10MB.bin, variant=stock, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:37** FAILED: profile=severe, file=10MB.bin, variant=stock, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:37** FAILED: profile=handover, file=10MB.bin, variant=stock, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:37** FAILED: profile=handover, file=10MB.bin, variant=stock, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:37** FAILED: profile=handover, file=10MB.bin, variant=stock, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:37** FAILED: profile=handover, file=10MB.bin, variant=stock, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:37** FAILED: profile=handover, file=10MB.bin, variant=stock, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:38** FAILED: profile=baseline, file=10MB.bin, variant=huge-threshold, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:38** FAILED: profile=baseline, file=10MB.bin, variant=huge-threshold, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:38** FAILED: profile=baseline, file=10MB.bin, variant=huge-threshold, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:38** FAILED: profile=baseline, file=10MB.bin, variant=huge-threshold, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:38** FAILED: profile=baseline, file=10MB.bin, variant=huge-threshold, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:38** FAILED: profile=mild, file=10MB.bin, variant=huge-threshold, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:38** FAILED: profile=mild, file=10MB.bin, variant=huge-threshold, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:39** FAILED: profile=mild, file=10MB.bin, variant=huge-threshold, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:39** FAILED: profile=mild, file=10MB.bin, variant=huge-threshold, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:39** FAILED: profile=mild, file=10MB.bin, variant=huge-threshold, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:39** FAILED: profile=moderate, file=10MB.bin, variant=huge-threshold, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:39** FAILED: profile=moderate, file=10MB.bin, variant=huge-threshold, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:39** FAILED: profile=moderate, file=10MB.bin, variant=huge-threshold, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:40** FAILED: profile=moderate, file=10MB.bin, variant=huge-threshold, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:40** FAILED: profile=moderate, file=10MB.bin, variant=huge-threshold, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:40** FAILED: profile=severe, file=10MB.bin, variant=huge-threshold, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:40** FAILED: profile=severe, file=10MB.bin, variant=huge-threshold, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:40** FAILED: profile=severe, file=10MB.bin, variant=huge-threshold, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:41** FAILED: profile=severe, file=10MB.bin, variant=huge-threshold, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:41** FAILED: profile=severe, file=10MB.bin, variant=huge-threshold, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:41** FAILED: profile=handover, file=10MB.bin, variant=huge-threshold, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:41** FAILED: profile=handover, file=10MB.bin, variant=huge-threshold, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:41** FAILED: profile=handover, file=10MB.bin, variant=huge-threshold, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:41** FAILED: profile=handover, file=10MB.bin, variant=huge-threshold, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:35:41** FAILED: profile=handover, file=10MB.bin, variant=huge-threshold, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-10-28T10:54:38** SUCCESS: profile=baseline, file=10MB.bin, variant=stock, run=1
+
+- **2026-10-28T10:54:50** SUCCESS: profile=baseline, file=10MB.bin, variant=stock, run=2
+
+- **2026-10-28T10:55:02** SUCCESS: profile=baseline, file=10MB.bin, variant=stock, run=3
+
+- **2026-10-28T10:55:14** SUCCESS: profile=baseline, file=10MB.bin, variant=stock, run=4
+
+- **2026-10-28T10:55:27** SUCCESS: profile=baseline, file=10MB.bin, variant=stock, run=5
+
+- **2026-10-28T10:56:07** SUCCESS: profile=mild, file=10MB.bin, variant=stock, run=1
+
+- **2026-10-28T10:56:47** SUCCESS: profile=mild, file=10MB.bin, variant=stock, run=2
+
+- **2026-10-28T10:57:27** SUCCESS: profile=mild, file=10MB.bin, variant=stock, run=3
+
+- **2026-10-28T10:57:59** SUCCESS: profile=mild, file=10MB.bin, variant=stock, run=4
+
+- **2026-10-28T10:58:34** SUCCESS: profile=mild, file=10MB.bin, variant=stock, run=5
+
+- **2026-10-28T11:00:05** SUCCESS: profile=moderate, file=10MB.bin, variant=stock, run=1
+
+- **2026-10-28T11:01:34** SUCCESS: profile=moderate, file=10MB.bin, variant=stock, run=2
+
+- **2026-10-28T11:03:03** SUCCESS: profile=moderate, file=10MB.bin, variant=stock, run=3
+
+- **2026-10-28T11:04:39** SUCCESS: profile=moderate, file=10MB.bin, variant=stock, run=4
+
+- **2026-10-28T11:06:05** SUCCESS: profile=moderate, file=10MB.bin, variant=stock, run=5
+
+- **2026-10-28T11:08:04** SUCCESS: profile=severe, file=10MB.bin, variant=stock, run=1
+
+- **2026-10-28T11:10:00** SUCCESS: profile=severe, file=10MB.bin, variant=stock, run=2
+
+- **2026-10-28T11:11:50** SUCCESS: profile=severe, file=10MB.bin, variant=stock, run=3
+
+- **2026-10-28T11:13:44** SUCCESS: profile=severe, file=10MB.bin, variant=stock, run=4
+
+- **2026-10-28T11:15:43** SUCCESS: profile=severe, file=10MB.bin, variant=stock, run=5
+
+- **2026-10-28T11:18:44** SUCCESS: profile=handover, file=10MB.bin, variant=stock, run=1
+
+- **2026-10-28T11:21:45** SUCCESS: profile=handover, file=10MB.bin, variant=stock, run=2
+
+- **2026-10-28T11:24:42** SUCCESS: profile=handover, file=10MB.bin, variant=stock, run=3
+
+- **2026-10-28T11:27:43** SUCCESS: profile=handover, file=10MB.bin, variant=stock, run=4
+
+- **2026-10-28T11:30:34** SUCCESS: profile=handover, file=10MB.bin, variant=stock, run=5
+
+- **2026-10-28T11:30:47** SUCCESS: profile=baseline, file=10MB.bin, variant=huge-threshold, run=1
+
+- **2026-10-28T11:30:59** SUCCESS: profile=baseline, file=10MB.bin, variant=huge-threshold, run=2
+
+- **2026-10-28T11:31:11** SUCCESS: profile=baseline, file=10MB.bin, variant=huge-threshold, run=3
+
+- **2026-10-28T11:31:23** SUCCESS: profile=baseline, file=10MB.bin, variant=huge-threshold, run=4
+
+- **2026-10-28T11:31:36** SUCCESS: profile=baseline, file=10MB.bin, variant=huge-threshold, run=5
+
+- **2026-10-28T11:32:00** SUCCESS: profile=mild, file=10MB.bin, variant=huge-threshold, run=1
+
+- **2026-10-28T11:32:29** SUCCESS: profile=mild, file=10MB.bin, variant=huge-threshold, run=2
+
+- **2026-10-28T11:33:05** SUCCESS: profile=mild, file=10MB.bin, variant=huge-threshold, run=3
+
+- **2026-10-28T11:33:36** SUCCESS: profile=mild, file=10MB.bin, variant=huge-threshold, run=4
+
+- **2026-10-28T11:34:06** SUCCESS: profile=mild, file=10MB.bin, variant=huge-threshold, run=5
+
+- **2026-10-28T11:35:16** SUCCESS: profile=moderate, file=10MB.bin, variant=huge-threshold, run=1
+
+- **2026-10-28T11:36:18** SUCCESS: profile=moderate, file=10MB.bin, variant=huge-threshold, run=2
+
+- **2026-10-28T11:37:26** SUCCESS: profile=moderate, file=10MB.bin, variant=huge-threshold, run=3
+
+- **2026-10-28T11:38:43** SUCCESS: profile=moderate, file=10MB.bin, variant=huge-threshold, run=4
+
+- **2026-10-28T11:39:41** SUCCESS: profile=moderate, file=10MB.bin, variant=huge-threshold, run=5
+
+- **2026-10-28T11:41:14** SUCCESS: profile=severe, file=10MB.bin, variant=huge-threshold, run=1
+
+- **2026-10-28T11:42:46** SUCCESS: profile=severe, file=10MB.bin, variant=huge-threshold, run=2
+
+- **2026-10-28T11:44:19** SUCCESS: profile=severe, file=10MB.bin, variant=huge-threshold, run=3
+
+- **2026-10-28T11:45:52** SUCCESS: profile=severe, file=10MB.bin, variant=huge-threshold, run=4
+
+- **2026-10-28T11:47:30** SUCCESS: profile=severe, file=10MB.bin, variant=huge-threshold, run=5
+
+- **2026-10-28T11:50:03** SUCCESS: profile=handover, file=10MB.bin, variant=huge-threshold, run=1
+
+- **2026-10-28T11:52:30** SUCCESS: profile=handover, file=10MB.bin, variant=huge-threshold, run=2
+
+- **2026-10-28T11:54:53** SUCCESS: profile=handover, file=10MB.bin, variant=huge-threshold, run=3
+
+- **2026-10-28T11:57:20** SUCCESS: profile=handover, file=10MB.bin, variant=huge-threshold, run=4
+
+- **2026-10-28T11:59:47** SUCCESS: profile=handover, file=10MB.bin, variant=huge-threshold, run=5
