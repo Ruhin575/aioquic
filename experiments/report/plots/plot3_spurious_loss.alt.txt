@@ -1,0 +1,1 @@
+plot3_spurious_loss: Plot generated from the filtered experiment data. Underlying plotted values are in plot3_spurious_loss_data.csv.
