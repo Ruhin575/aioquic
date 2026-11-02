@@ -150,18 +150,26 @@ class QuicPacketRecovery:
         self._send_probe = send_probe
 
         # loss detection
-        try:
-            self._packet_threshold = int(
-                os.environ.get("AIOQUIC_PACKET_THRESHOLD", K_PACKET_THRESHOLD)
-            )
-        except ValueError as exc:
-            raise ValueError(
-                "AIOQUIC_PACKET_THRESHOLD must be a non-negative integer"
-            ) from exc
-        if self._packet_threshold < 0:
-            raise ValueError(
-                "AIOQUIC_PACKET_THRESHOLD must be a non-negative integer"
-            )
+        threshold_env = os.environ.get("AIOQUIC_PACKET_THRESHOLD", "").strip()
+        self._threshold_mode = "static"
+        if threshold_env in ("dynamic", "dynamic_undo"):
+            self._threshold_mode = threshold_env
+            self._packet_threshold = K_PACKET_THRESHOLD
+        elif threshold_env == "":
+            self._packet_threshold = K_PACKET_THRESHOLD
+        else:
+            try:
+                self._packet_threshold = int(threshold_env)
+            except ValueError as exc:
+                raise ValueError(
+                    "AIOQUIC_PACKET_THRESHOLD must be a non-negative integer, "
+                    "'dynamic' or 'dynamic_undo'"
+                ) from exc
+            if self._packet_threshold < 0:
+                raise ValueError(
+                    "AIOQUIC_PACKET_THRESHOLD must be a non-negative integer, "
+                    "'dynamic' or 'dynamic_undo'"
+                )
 
         self._pto_count = 0
         self._rtt_first_sample_time = 0.0
@@ -400,6 +408,7 @@ class QuicPacketRecovery:
         to be either acknowledged or lost, never both. Retransmitting early does
         not imply a loss though, so this is not a congestion event.
         """
+        loss_rule = "handshake" if speed_up_handshake else "pto"
         # Retransmit any outstanding CRYPTO data.
         crypto_scheduled = False
         for space in self.spaces:
@@ -413,6 +422,8 @@ class QuicPacketRecovery:
                         packets[0].packet_type.name,
                         ", ".join(str(packet.packet_number) for packet in packets),
                     )
+                for packet in packets:
+                    packet._loss_rule = loss_rule
                 self._on_packets_lost(
                     congestion_event=False, now=now, packets=packets, space=space
                 )
@@ -439,6 +450,7 @@ class QuicPacketRecovery:
                         packet.packet_type.name,
                         packet.packet_number,
                     )
+                packet._loss_rule = loss_rule
                 self._on_packets_lost(
                     congestion_event=False, now=now, packets=[packet], space=space
                 )
@@ -464,7 +476,17 @@ class QuicPacketRecovery:
             if packet_number > space.largest_acked_packet:
                 break
 
-            if packet_number <= packet_threshold or packet.sent_time <= time_threshold:
+            by_packet = packet_number <= packet_threshold
+            by_time = packet.sent_time <= time_threshold
+            if by_packet or by_time:
+                packet._by_packet = by_packet
+                packet._by_time = by_time
+                if by_packet and by_time:
+                    packet._loss_rule = "both"
+                elif by_packet:
+                    packet._loss_rule = "packet"
+                else:
+                    packet._loss_rule = "time"
                 lost_packets.append(packet)
             else:
                 packet_loss_time = packet.sent_time + loss_delay
@@ -575,6 +597,9 @@ class QuicPacketRecovery:
                     data={
                         "type": self._quic_logger.packet_type(packet.packet_type),
                         "packet_number": packet.packet_number,
+                        "rule": packet._loss_rule,
+                        "by_packet": packet._by_packet,
+                        "by_time": packet._by_time,
                     },
                 )
                 self._log_metrics_updated()

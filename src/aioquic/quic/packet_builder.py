@@ -39,6 +39,13 @@ class QuicSentPacket:
     sent_time: Optional[float] = None
     sent_bytes: int = 0
 
+    # rule that declared packet lost
+    # "packet", "time", "both", "pto" or "handshake"
+    # empty until lost
+    _loss_rule: str = ""
+    _by_packet: bool = False
+    _by_time: bool = False
+
     delivery_handlers: list[tuple[QuicDeliveryHandler, Any]] = field(
         default_factory=list
     )
