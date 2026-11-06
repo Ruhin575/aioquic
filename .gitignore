@@ -40,3 +40,7 @@ experiments/report/plots/
 experiments/analysis/parsed/
 experiments/analysis/__pycache__/
 experiments/analysis/work_main
+# Video experiment artifacts (large / generated) - Amrutha
+experiments/video/content/
+experiments/video/source_*.mp4
+experiments/video/results/
