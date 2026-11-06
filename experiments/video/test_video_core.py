@@ -1,155 +1,171 @@
-#!/usr/bin/env python3
-"""plot_qoe.py - video QoE plots. Every plot also writes its data (CSV) and alt-text (.alt.txt).
-Bars use different hatch patterns per variant, so colour is never the only cue.
+"""Offline tests for video_core.py (no network). Run from the repo root:
 
-    # Plots 5, 6, 7 from the summary CSV written by parse_video_results.py
-    python experiments/video/plot_qoe.py summary --results video_results.csv --out plots/
-
-    # Plot 8: buffer level and chosen bitrate over time for one or more runs (per-segment CSV)
-    python experiments/video/plot_qoe.py timeline --segments segments.csv \
-        --run-id stock__moderate__1 --run-id k20__moderate__1 --out plots/
-
-Plot 5  QoE score per profile and variant        (higher is better)
-Plot 6  average bitrate (Mbps) per profile and variant
-Plot 7  stall count per run, per profile and variant
-Plot 8  buffer level (s) and bitrate over time, stalls marked
-Error bars are 95% confidence intervals over the runs of a cell (none when a cell has one run).
+    python -m pytest experiments/video/test_video_core.py -q
 """
-import argparse
-import os
 import sys
+from pathlib import Path
 
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-import pandas as pd
+import pytest
 
-PROFILE_ORDER = ["baseline", "mild", "moderate", "severe", "handover"]
-VARIANT_ORDER = ["stock", "k5", "k10", "k20", "k100", "dynamic", "dynamic_undo"]
-HATCHES = ["", "//", "xx", "..", "\\\\", "++", "oo"]
-LINESTYLES = ["-", "--", "-.", ":"]
-T975 = {1: 12.706, 2: 4.303, 3: 3.182, 4: 2.776, 5: 2.571, 6: 2.447, 7: 2.365, 8: 2.306, 9: 2.262, 10: 2.228}
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+import video_core as vc  # noqa: E402
+
+MPD = (HERE / "test_data" / "manifest_20s.mpd").read_text()          # a real ffmpeg-written manifest
 
 
-def ordered(values, preferred):
-    present = list(dict.fromkeys(values))
-    return [v for v in preferred if v in present] + sorted(v for v in present if v not in preferred)
+@pytest.fixture(scope="module")
+def manifest():
+    return vc.parse_mpd(MPD)
 
 
-def cell_stats(df, metric):
-    rows = []
-    for (variant, profile), g in df.groupby(["variant", "profile"]):
-        n = len(g)
-        mean = g[metric].mean()
-        ci = (T975.get(n - 1, 1.96) * g[metric].std(ddof=1) / n ** 0.5) if n > 1 else 0.0
-        rows.append(dict(variant=variant, profile=profile, n=n, mean=round(mean, 4), ci95=round(ci, 4)))
-    return pd.DataFrame(rows)
+# ---- MPD ----------------------------------------------------------------------------------
+def test_parse_mpd_video_only_and_sorted(manifest):
+    assert [r.bandwidth for r in manifest.representations] == [250000, 500000, 1000000, 2500000, 5000000]
+    assert manifest.n_segments == 5 and manifest.duration_s == pytest.approx(20.0)
+    assert all(d == pytest.approx(4.0) for d in manifest.segment_durations)
 
 
-def bar_plot(df, metric, title, ylabel, base, out_dir, note):
-    stats = cell_stats(df, metric)
-    profiles = ordered(stats["profile"], PROFILE_ORDER)
-    variants = ordered(stats["variant"], VARIANT_ORDER)
-    width = 0.8 / len(variants)
-    fig, ax = plt.subplots(figsize=(10, 4.5))
-    for j, v in enumerate(variants):
-        means, cis = [], []
-        for p in profiles:
-            row = stats[(stats.variant == v) & (stats.profile == p)]
-            means.append(float(row["mean"].iloc[0]) if len(row) else 0.0)
-            cis.append(float(row["ci95"].iloc[0]) if len(row) else 0.0)
-        xs = [i + (j - (len(variants) - 1) / 2) * width for i in range(len(profiles))]
-        ax.bar(xs, means, width, yerr=cis, capsize=3, label=v, hatch=HATCHES[j % len(HATCHES)],
-               edgecolor="black", linewidth=0.8)
-    ax.set_xticks(range(len(profiles)))
-    ax.set_xticklabels(profiles)
-    ax.set_ylabel(ylabel)
-    ax.set_title(title)
-    ax.axhline(0, color="black", linewidth=0.8)
-    ax.grid(axis="y", alpha=0.3)
-    ax.legend(title="variant")
-    fig.tight_layout()
-    path = os.path.join(out_dir, base)
-    fig.savefig(path + ".png", dpi=150)
-    plt.close(fig)
-    stats.to_csv(path + "_data.csv", index=False)
-    best = stats.loc[stats["mean"].idxmax()]
-    worst = stats.loc[stats["mean"].idxmin()]
-    alt = ("Grouped bar chart of %s for each network profile (%s) and each variant (%s), with 95%% confidence "
-           "intervals; variants use different hatch patterns. %s The highest value is %.2f (%s, %s) and the "
-           "lowest is %.2f (%s, %s)." % (ylabel, ", ".join(profiles), ", ".join(variants), note,
-                                         best["mean"], best["variant"], best["profile"],
-                                         worst["mean"], worst["variant"], worst["profile"]))
-    with open(path + ".alt.txt", "w") as f:
-        f.write(alt + "\n")
-    print("Wrote", path + ".png")
+def test_segment_and_init_paths(manifest):
+    rep = manifest.representations[3]                                  # id "3", 2.5 Mbps
+    assert vc.init_path(rep) == "init-stream3.m4s"
+    assert vc.segment_path(rep, 0) == "chunk-stream3-00001.m4s"
+    assert vc.segment_path(rep, 4) == "chunk-stream3-00005.m4s"
 
 
-def summary(results_csv, out_dir):
-    df = pd.read_csv(results_csv)
-    os.makedirs(out_dir, exist_ok=True)
-    bar_plot(df, "qoe_score", "Plot 5: QoE score per profile", "QoE score", "plot5_qoe", out_dir,
-             "Higher is better; the score is average bitrate minus penalties for stalls and quality switches.")
-    bar_plot(df, "avg_bitrate_mbps", "Plot 6: average bitrate per profile", "average bitrate (Mbps)",
-             "plot6_bitrate", out_dir, "Higher is better.")
-    bar_plot(df, "stall_count", "Plot 7: stalls per run", "stall count per run", "plot7_stalls", out_dir,
-             "Lower is better.")
+def test_parse_mpd_rejects_unaligned_representations():
+    bad = MPD.replace('<S t="0" d="51200" r="4" />', '<S t="0" d="51200" r="3" />', 1)
+    with pytest.raises(ValueError):
+        vc.parse_mpd(bad)
 
 
-def timeline(segments_csv, run_ids, out_dir):
-    df = pd.read_csv(segments_csv)
-    os.makedirs(out_dir, exist_ok=True)
-    fig, (ax_b, ax_q) = plt.subplots(2, 1, figsize=(10, 6), sharex=True)
-    parts, alt = [], []
-    for i, rid in enumerate(run_ids):
-        g = df[df["run_id"] == rid].sort_values("segment_index")
-        if g.empty:
-            raise SystemExit("run_id %r not found in %s" % (rid, segments_csv))
-        ls = LINESTYLES[i % len(LINESTYLES)]
-        ax_b.plot(g["timestamp"], g["buffer_level_s"], linestyle=ls, linewidth=1.6, label=rid)
-        st = g[g["stall"] > 0]
-        ax_b.plot(st["timestamp"], st["buffer_level_s"], linestyle="none", marker="v", color="red", markersize=7)
-        ax_q.step(g["timestamp"], g["bitrate_mbps"], where="post", linestyle=ls, linewidth=1.6, label=rid)
-        part = g[["run_id", "segment_index", "timestamp", "bitrate_mbps", "buffer_level_s", "stall"]]
-        parts.append(part)
-        alt.append("%s has %d stall events and %d bitrate switches" % (
-            rid, int(g["stall"].sum()), int((g["bitrate_mbps"].diff().fillna(0) != 0).sum())))
-    ax_b.set_ylabel("buffer level (s)")
-    ax_b.set_title("Plot 8: buffer level and bitrate over time (red triangles = stalls)")
-    ax_b.grid(alpha=0.3)
-    ax_b.legend(fontsize=8)
-    ax_q.set_ylabel("bitrate (Mbps)")
-    ax_q.set_xlabel("time since start of run (s)")
-    ax_q.grid(alpha=0.3)
-    fig.tight_layout()
-    path = os.path.join(out_dir, "plot8_timeline")
-    fig.savefig(path + ".png", dpi=150)
-    plt.close(fig)
-    pd.concat(parts).to_csv(path + "_data.csv", index=False)
-    with open(path + ".alt.txt", "w") as f:
-        f.write("Two stacked line charts over time. Top: playback buffer level in seconds, with red triangles at "
-                "stalls. Bottom: selected video bitrate in Mbps as a step line. Runs use different line styles. "
-                + "; ".join(alt) + ".\n")
-    print("Wrote", path + ".png")
+def test_parse_mpd_fixed_duration_template():
+    xml = ('<MPD xmlns="urn:mpeg:dash:schema:mpd:2011" mediaPresentationDuration="PT12S"><Period>'
+           '<AdaptationSet contentType="video"><SegmentTemplate timescale="1000" duration="4000" '
+           'media="s$RepresentationID$-$Number$.m4s" initialization="i$RepresentationID$.m4s" startNumber="0"/>'
+           '<Representation id="a" bandwidth="1000000"/></AdaptationSet></Period></MPD>')
+    m = vc.parse_mpd(xml)
+    assert m.n_segments == 3 and vc.segment_path(m.representations[0], 2) == "sa-2.m4s"
 
 
-def main(argv=None):
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    sub = ap.add_subparsers(dest="cmd", required=True)
-    s = sub.add_parser("summary", help="Plots 5, 6, 7")
-    s.add_argument("--results", required=True)
-    s.add_argument("--out", default="plots")
-    t = sub.add_parser("timeline", help="Plot 8")
-    t.add_argument("--segments", required=True)
-    t.add_argument("--run-id", action="append", required=True)
-    t.add_argument("--out", default="plots")
-    a = ap.parse_args(argv)
-    if a.cmd == "summary":
-        summary(a.results, a.out)
-    else:
-        timeline(a.segments, a.run_id, a.out)
-    return 0
+# ---- ABR ----------------------------------------------------------------------------------
+def test_abr_starts_on_lowest_rung(manifest):
+    assert vc.HarmonicABR().choose(manifest.representations).bandwidth == 250000
 
 
-if __name__ == "__main__":
-    sys.exit(main())
+def test_abr_picks_highest_that_fits(manifest):
+    abr = vc.HarmonicABR()
+    for _ in range(3):
+        abr.add_sample(10e6)
+    assert abr.choose(manifest.representations).bandwidth == 5000000          # 0.8 x 10 = 8 Mbps
+    abr = vc.HarmonicABR()
+    for _ in range(3):
+        abr.add_sample(1.5e6)                                                  # budget 1.2 Mbps
+    assert abr.choose(manifest.representations).bandwidth == 1000000
+
+
+def test_abr_harmonic_mean_reacts_to_one_bad_download(manifest):
+    abr = vc.HarmonicABR()
+    for s in (10e6, 10e6, 1e6):
+        abr.add_sample(s)
+    assert abr.estimate_bps() == pytest.approx(2.5e6)                         # 3 / (0.1 + 0.1 + 1) Mbps
+    assert abr.choose(manifest.representations).bandwidth == 1000000          # not 2.5 Mbps
+
+
+def test_abr_window_is_three(manifest):
+    abr = vc.HarmonicABR()
+    for s in (1e6, 10e6, 10e6, 10e6):
+        abr.add_sample(s)
+    assert abr.estimate_bps() == pytest.approx(10e6)                          # the 1 Mbps sample fell out
+
+
+# ---- Playback buffer ----------------------------------------------------------------------
+def test_startup_delay_is_time_of_first_segment():
+    b = vc.PlaybackBuffer(t0=0.0, startup_buffer_s=4.0)
+    b.add_segment(1.5, 4.0)
+    assert b.playing and b.startup_delay == pytest.approx(1.5)
+
+
+def test_no_playback_until_startup_buffer_reached():
+    b = vc.PlaybackBuffer(0.0, startup_buffer_s=8.0)
+    b.add_segment(1.0, 4.0)
+    assert not b.playing and b.startup_delay is None
+    b.add_segment(2.0, 4.0)
+    assert b.playing and b.startup_delay == pytest.approx(2.0)
+
+
+def test_stall_is_counted_and_timed():
+    b = vc.PlaybackBuffer(0.0, startup_buffer_s=4.0)
+    b.add_segment(1.0, 4.0)            # playing from t=1, buffer empties at t=5
+    b.add_segment(7.0, 4.0)            # next segment arrives 2 s late
+    assert b.stall_count == 1 and b.total_stall_s == pytest.approx(2.0)
+    assert b.playing and b.level == pytest.approx(4.0)
+
+
+def test_buffer_never_negative_and_no_stall_when_fed_in_time():
+    b = vc.PlaybackBuffer(0.0, 4.0)
+    for i in range(10):
+        b.add_segment(1.0 + 3.5 * i, 4.0)       # a segment every 3.5 s, each 4 s long
+    assert b.stall_count == 0 and b.level >= 0
+
+
+def test_end_of_video_is_not_a_stall():
+    b = vc.PlaybackBuffer(0.0, 4.0)
+    b.add_segment(1.0, 4.0)
+    b.mark_all_downloaded(1.0)
+    b.advance(100.0)
+    assert b.stall_count == 0 and b.ended and not b.playing
+
+
+def test_last_segment_resumes_a_stall_even_below_resume_target():
+    b = vc.PlaybackBuffer(0.0, startup_buffer_s=4.0, resume_buffer_s=8.0)
+    b.add_segment(1.0, 4.0)
+    b.advance(6.0)                              # empty since t=5 -> stall
+    b.add_segment(6.0, 4.0)                     # 4 s < resume target 8 s: still stalled
+    assert not b.playing
+    b.mark_all_downloaded(6.0)                  # nothing more is coming: resume
+    assert b.playing and b.stall_count == 1 and b.total_stall_s == pytest.approx(1.0)
+
+
+# ---- Whole session (the offline "baseline trace") -----------------------------------------
+def run(manifest, mbps, **kw):
+    return vc.simulate_session(manifest, lambda t: mbps * 1e6, **kw)
+
+
+def test_baseline_link_has_no_stalls_fast_startup_high_bitrate(manifest):
+    rows, s = run(manifest, 13.3)
+    assert s["stall_count"] == 0 and s["total_stall_s"] == 0
+    assert s["startup_delay_s"] < 3.0
+    assert max(r["bitrate_mbps"] for r in rows) == 5.0 and rows[-1]["bitrate_mbps"] in (2.5, 5.0)
+
+
+def test_rows_follow_the_agreed_schema(manifest):
+    rows, _ = run(manifest, 13.3)
+    assert list(rows[0].keys()) == vc.ROW_COLUMNS and len(rows) == manifest.n_segments
+
+
+def test_slow_link_picks_low_rungs(manifest):
+    rows, s = run(manifest, 0.75)
+    assert max(r["bitrate_mbps"] for r in rows) <= 0.5
+
+
+def test_link_below_lowest_rung_stalls(manifest):
+    _, s = run(manifest, 0.2)
+    assert s["stall_count"] >= 1 and s["total_stall_s"] > 0
+
+
+def test_row_stall_columns_sum_to_session_totals(manifest):
+    rows, s = run(manifest, 0.2)
+    assert sum(r["stall"] for r in rows) == s["stall_count"]
+    assert sum(r["stall_s"] for r in rows) == pytest.approx(s["total_stall_s"], abs=1e-3)
+
+
+def test_buffer_cap_limits_download_ahead():
+    xml = MPD
+    long_manifest = vc.Manifest(vc.parse_mpd(xml).representations, [4.0] * 30)
+    rows, _ = run(long_manifest, 13.3, max_buffer_s=12.0)
+    assert max(r["buffer_level_s"] for r in rows) <= 12.0 + 1e-6
+
+
+def test_qoe_formula():
+    assert vc.qoe_score(2.0, 1, 10.0, 3) == pytest.approx(2.0 - 0.3 - 0.5 - 0.3)
