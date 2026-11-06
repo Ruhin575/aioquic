@@ -1,0 +1,26 @@
+{
+  "variant": "stock",
+  "profile": "handover",
+  "run": 3,
+  "run_id": "stock__handover__3",
+  "threshold_env": null,
+  "started": "2026-11-06T13:29:11",
+  "git": {
+    "commit": "337f6f560f41e58029dd9209a28c70e5fc788571",
+    "branch": "amrutha_video",
+    "dirty": true
+  },
+  "server_qlog_complete": true,
+  "result": {
+    "variant": "stock",
+    "profile": "handover",
+    "run": 3,
+    "startup_delay_s": 1.615,
+    "stall_count": 1,
+    "total_stall_s": 1.008,
+    "avg_bitrate_mbps": 0.258,
+    "quality_switches": 2,
+    "qoe_score": -0.2921
+  },
+  "finished": "2026-11-06T13:31:09"
+}

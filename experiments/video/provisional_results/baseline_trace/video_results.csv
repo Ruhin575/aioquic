@@ -1,0 +1,2 @@
+variant,profile,run,startup_delay_s,stall_count,total_stall_s,avg_bitrate_mbps,quality_switches,qoe_score
+stock,none,1,0.183,0,0.0,4.842,1,4.7417

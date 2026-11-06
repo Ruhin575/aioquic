@@ -1,0 +1,26 @@
+{
+  "variant": "stock",
+  "profile": "severe",
+  "run": 2,
+  "run_id": "stock__severe__2",
+  "threshold_env": null,
+  "started": "2026-11-06T13:05:34",
+  "git": {
+    "commit": "337f6f560f41e58029dd9209a28c70e5fc788571",
+    "branch": "amrutha_video",
+    "dirty": true
+  },
+  "server_qlog_complete": true,
+  "result": {
+    "variant": "stock",
+    "profile": "severe",
+    "run": 2,
+    "startup_delay_s": 1.032,
+    "stall_count": 1,
+    "total_stall_s": 3.707,
+    "avg_bitrate_mbps": 0.525,
+    "quality_switches": 6,
+    "qoe_score": -0.5604
+  },
+  "finished": "2026-11-06T13:07:33"
+}

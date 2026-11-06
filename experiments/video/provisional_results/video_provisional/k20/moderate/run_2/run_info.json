@@ -1,0 +1,26 @@
+{
+  "variant": "k20",
+  "profile": "moderate",
+  "run": 2,
+  "run_id": "k20__moderate__2",
+  "threshold_env": "20",
+  "started": "2026-11-06T13:03:39",
+  "git": {
+    "commit": "337f6f560f41e58029dd9209a28c70e5fc788571",
+    "branch": "amrutha_video",
+    "dirty": true
+  },
+  "server_qlog_complete": true,
+  "result": {
+    "variant": "k20",
+    "profile": "moderate",
+    "run": 2,
+    "startup_delay_s": 1.295,
+    "stall_count": 0,
+    "total_stall_s": 0.0,
+    "avg_bitrate_mbps": 0.725,
+    "quality_switches": 9,
+    "qoe_score": -0.175
+  },
+  "finished": "2026-11-06T13:05:34"
+}
