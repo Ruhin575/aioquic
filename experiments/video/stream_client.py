@@ -13,7 +13,7 @@ What it does
   2. requests the 4 s segments one after another, choosing the bitrate with HarmonicABR
      (harmonic mean of the last 3 download throughputs x 0.8; first segment on the lowest rung),
   3. keeps a simulated playback buffer in real time (PlaybackBuffer): startup delay, stalls, stall seconds,
-     and stops requesting while the buffer is full (--max-buffer-s),
+     and stops requesting while the buffer is full (--max-buffer-s, default 12 s as in dash.js),
   4. writes one CSV row per segment (video_core.ROW_COLUMNS) and a small <segments-out>.meta.json.
 
 The ABR and buffer rules live in video_core.py and are unit-tested offline. Only audio is ignored.
@@ -194,7 +194,10 @@ def parse_args(argv=None):
     ap.add_argument("--segments-out", required=True, help="per-segment CSV to write")
     ap.add_argument("--qlog-dir", help="write the client's qlog here")
     ap.add_argument("--max-segments", type=int, help="stop after N segments (testing)")
-    ap.add_argument("--max-buffer-s", type=float, default=30.0, help="stop requesting while the buffer is this full")
+    ap.add_argument("--max-buffer-s", type=float, default=12.0,
+                    help="stop requesting while the buffer is this full. Default 12 s = dash.js stableBufferTime "
+                         "(its buffer target while not at top quality). FIXED for all final runs: changing it "
+                         "means rerunning every variant")
     ap.add_argument("--startup-buffer-s", type=float, default=None, help="default: one segment")
     ap.add_argument("--resume-buffer-s", type=float, default=None, help="default: same as startup")
     ap.add_argument("--abr-window", type=int, default=3)
