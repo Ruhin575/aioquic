@@ -18,6 +18,10 @@ K_MICRO_SECOND = 0.000001
 K_PERSISTENT_CONGESTION_THRESHOLD = 3
 K_SECOND = 1.0
 
+# Ceiling for the adaptive packet threshold in dynamic mode. Provisional;
+K_MAX = 40
+K_DECAY = 0.9  # per clean RTT, toward K_PACKET_THRESHOLD
+
 # The number of ACK ranges kept. Duplicate detection accepts packets fewer than
 # twice this many below the largest received, and each range plus the gap above
 # it spans at least two, so the range dropped never holds a packet which was
@@ -171,6 +175,14 @@ class QuicPacketRecovery:
                     "'dynamic' or 'dynamic_undo'"
                 )
 
+        # dynamic threshold state (always defined; only used in dynamic modes)
+        self._dynamic_mode = self._threshold_mode == "dynamic"
+        self._dynamic_undo_mode = self._threshold_mode == "dynamic_undo"
+        self._k_adaptive: float = float(K_PACKET_THRESHOLD)
+        self._recent_lost: dict[int, tuple[float, float, int]] = {}
+        self._saved_cwnd: Optional[int] = None
+        self._saved_ssthresh: Optional[int] = None
+        self._k_adapted_this_round: bool = False
         self._pto_count = 0
         self._rtt_first_sample_time = 0.0
         self._rtt_initial = initial_rtt
@@ -256,6 +268,33 @@ class QuicPacketRecovery:
 
         return None
 
+    def _expire_recent_lost(self, now: float) -> None:
+        if not self._recent_lost or self._rtt_smoothed == 0:
+            return
+        expired = [
+            pn
+            for pn, (loss_time, _, _) in self._recent_lost.items()
+            if loss_time + 2 * self._rtt_smoothed < now
+        ]
+        for pn in expired:
+            del self._recent_lost[pn]
+
+    def _adapt_k(self, gap: int) -> None:
+        old_k = self._k_adaptive
+        self._k_adaptive = min(max(self._k_adaptive, gap + 1), float(K_MAX))
+        self._k_adapted_this_round = True
+        if self._quic_logger is not None:
+            self._quic_logger.log_event(
+                category="recovery",
+                event="k_adapted",
+                data={
+                    "old_k": old_k,
+                    "new_k": self._k_adaptive,
+                    "gap": gap,
+                    "mode": self._threshold_mode,
+                },
+            )
+
     def get_probe_timeout(self, *, include_max_ack_delay: bool = True) -> float:
         """
         Return the PTO period, without backoff.
@@ -285,6 +324,8 @@ class QuicPacketRecovery:
         """
         Update metrics as the result of an ACK being received.
         """
+        if self._dynamic_mode or self._dynamic_undo_mode:
+            self._expire_recent_lost(now)
         is_ack_eliciting = False
         largest_acked = ack_rangeset.bounds().stop - 1
         largest_newly_acked = None
@@ -352,9 +393,31 @@ class QuicPacketRecovery:
                 congestion_window=self._cc.congestion_window,
                 smoothed_rtt=self._rtt_smoothed,
             )
+            # Dynamic decay with a clean RTT sample with no spurious adaptation
+            # relaxes K back toward the stock threshold.
+            if self._dynamic_mode or self._dynamic_undo_mode:
+                if (
+                    not self._k_adapted_this_round
+                    and self._k_adaptive > K_PACKET_THRESHOLD
+                ):
+                    self._k_adaptive = max(
+                        self._k_adaptive * K_DECAY, float(K_PACKET_THRESHOLD)
+                    )
+                self._k_adapted_this_round = False
 
         else:
             log_rtt = False
+
+        # A late ACK for a packet still in _recent_lost means that loss
+        # declaration was spurious; the stored gap is the K that would have
+        # avoided it, so feed it to the adaptive threshold.
+        if (self._dynamic_mode or self._dynamic_undo_mode) and self._recent_lost:
+            for pn in list(self._recent_lost):
+                for r in ack_rangeset:
+                    if r.start <= pn < r.stop:
+                        _, _, gap = self._recent_lost.pop(pn)
+                        self._adapt_k(gap)
+                        break
 
         self._detect_loss(now=now, space=space)
 
@@ -467,7 +530,12 @@ class QuicPacketRecovery:
             if self._rtt_initialized
             else self._rtt_initial
         )
-        packet_threshold = space.largest_acked_packet - self._packet_threshold
+        effective_k = (
+            int(self._k_adaptive)
+            if (self._dynamic_mode or self._dynamic_undo_mode)
+            else self._packet_threshold
+        )
+        packet_threshold = space.largest_acked_packet - effective_k
         time_threshold = now - loss_delay
 
         lost_packets = []
@@ -487,6 +555,25 @@ class QuicPacketRecovery:
                     packet._loss_rule = "packet"
                 else:
                     packet._loss_rule = "time"
+
+                # In dynamic mode, record pure packet-threshold losses in the
+                # 1-RTT space so a later late-ACK can reveal them as spurious
+                # and drive _adapt_k. Store the gap measured now, not at ACK
+                # time, when largest_acked has moved on.
+                if (
+                    (self._dynamic_mode or self._dynamic_undo_mode)
+                    and space.is_application_data
+                    and packet._loss_rule == "packet"
+                ):
+                    gap = space.largest_acked_packet - packet_number
+                    if len(self._recent_lost) >= 64:
+                        del self._recent_lost[min(self._recent_lost)]
+                    self._recent_lost[packet_number] = (
+                        now,
+                        packet.sent_time,
+                        gap,
+                    )
+
                 lost_packets.append(packet)
             else:
                 packet_loss_time = packet.sent_time + loss_delay
