@@ -5,8 +5,8 @@ Definition (Day 0 contract): a spurious loss is a packet number that was
 declared lost at time L and was first acknowledged at a later time A > L.
 
 Limitations (state them in the report):
-  * "declared lost" = removed as lost by ANY recovery rule (packet threshold, time
-    threshold, PTO); the qlog does not say which one fired.
+  * "declared lost" = removed as lost by a recovery rule. The loss rule
+    is retained when available in the parsed qlog CSV.
   * The packet's data may have been retransmitted in a NEW packet before the late ACK;
     a late ACK does not prove the receiver got the data only once.
   * aioquic keeps a bounded number of ACK ranges, so a very old late ACK may be invisible.
@@ -44,10 +44,33 @@ def detect(df, space=DEFAULT_SPACE):
     lost = d[d["event_type"] == "lost"]
     acked = d[d["event_type"] == "acked"]
 
-    lost_first = lost.groupby("packet_number")["time_s"].min().rename("lost_time_s")
-    acked_first = acked.groupby("packet_number")["time_s"].min().rename("acked_time_s")
+    # Keep the metadata from the first loss declaration for each packet.
+    lost_first = (
+        lost.sort_values("time_s", kind="stable")
+        .drop_duplicates("packet_number", keep="first")
+        .set_index("packet_number")
+    )
 
-    joined = pd.concat([lost_first, acked_first], axis=1, join="inner")
+    lost_info = lost_first[["time_s"]].rename(
+        columns={"time_s": "lost_time_s"}
+    )
+
+    # Older parsed CSVs may not contain the new loss-rule columns.
+    for column in ["rule", "by_packet", "by_time"]:
+        if column not in lost_first.columns:
+            lost_first[column] = pd.NA
+
+    lost_info["loss_rule"] = lost_first["rule"]
+    lost_info["loss_by_packet"] = lost_first["by_packet"]
+    lost_info["loss_by_time"] = lost_first["by_time"]
+
+    acked_first = (
+        acked.groupby("packet_number")["time_s"]
+        .min()
+        .rename("acked_time_s")
+    )
+
+    joined = pd.concat([lost_info, acked_first], axis=1, join="inner")
     sp = joined[joined["acked_time_s"] > joined["lost_time_s"]].copy()
     sp["delay_s"] = sp["acked_time_s"] - sp["lost_time_s"]
     sp.index.name = "packet_number"
