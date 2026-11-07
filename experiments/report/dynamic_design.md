@@ -30,8 +30,10 @@ self._recent_lost: dict[int, tuple[float, float, int]] = {}
 self._saved_cwnd: Optional[int] = None
 self._saved_ssthresh: Optional[int] = None
 
-# set when K is raised; consulted and cleared at each RTT sample
+# set when K is raised; consulted and cleared once per RTT window
 self._k_adapted_this_round: bool = False
+# start of the current RTT window for decay (section 3.5)
+self._k_last_decay_time: float = 0.0
 ```
 
 `K_PACKET_THRESHOLD` remains 3 (unchanged from RFC 9002).
@@ -108,7 +110,7 @@ the check before `_detect_loss()` means a raised K applies to the same ACK.
 
 ```python
 old_k = self._k_adaptive
-self._k_adaptive = min(max(self._k_adaptive, gap + 1), float(K_MAX))
+self._k_adaptive = min(max(self._k_adaptive, float(gap + 1)), float(K_MAX))
 self._k_adapted_this_round = True
 # log recovery:k_adapted (section 8)
 ```
@@ -118,18 +120,27 @@ never decreases here, only in decay.
 
 ### 3.5 Decay
 
-Decay runs once per RTT sample, in the branch of `on_ack_received()` that
-updates the RTT estimate:
+Decay runs at most once per smoothed RTT of elapsed time, checked in the
+branch of `on_ack_received()` that updates the RTT estimate:
 
 ```python
-if not self._k_adapted_this_round and self._k_adaptive > K_PACKET_THRESHOLD:
-    self._k_adaptive = max(self._k_adaptive * K_DECAY, float(K_PACKET_THRESHOLD))
-self._k_adapted_this_round = False
+if now - self._k_last_decay_time >= self._rtt_smoothed:
+    if not self._k_adapted_this_round and self._k_adaptive > K_PACKET_THRESHOLD:
+        self._k_adaptive = max(self._k_adaptive * K_DECAY, float(K_PACKET_THRESHOLD))
+    self._k_adapted_this_round = False
+    self._k_last_decay_time = now
 ```
 
-The flag collects any K increase between two RTT samples. Decay is skipped
-at a sample if K was raised since the previous one, so K relaxes only after
-a clean RTT, i.e. one with no spurious loss detected.
+The flag collects any K increase during the current RTT window. K relaxes
+only after a full RTT with no spurious loss detected.
+
+An earlier version (commit 0179440) decayed on every RTT sample. aioquic
+takes an RTT sample on most ACKs, several per round trip, so that version
+drained K from 22 to 3 in well under a second and every reordering burst
+started again from K=3. In a moderate-profile test (10 MB, one run each),
+dynamic with per-sample decay reached 0.961 Mbps against 0.945 Mbps for
+stock. With time-limited decay (commit b40f456) it reached 1.171 Mbps
+(+24%), and packet-rule losses fell from 680 (stock) to 474.
 
 ---
 
@@ -162,16 +173,21 @@ The knee is between K=20 and K=30. Above 40, each further step buys about 1
 percentage point of coverage while genuine-loss delay keeps rising roughly
 linearly. K=40 sits just past the p95 gap in both profiles. Since K reaches
 the ceiling only during reordering and decays afterwards, the ceiling bounds
-the worst case rather than setting the operating point.
+the worst case rather than setting the operating point. In the moderate test
+run, the first confirmed spurious loss already had a gap of at least 39, so
+K went straight from 3 to 40.
 
 ### K_DECAY = 0.9 per clean RTT
 
 From K=40, K returns to the stock threshold of 3 after
-ln(3/40) / ln(0.9) ≈ 25 clean RTTs. With a base path RTT of about 60 ms
-(30 ms each way, before jitter), that is roughly 1.5 to 2.5 s: long enough to
-stay protected through bursty reordering, short enough to restore fast
-genuine-loss detection soon after it ends. If Day 5 runs show K staying high
-too long, the fallback is 0.8 (about 11 RTTs).
+ln(3/40) / ln(0.9) ≈ 25 clean RTTs. The base path RTT is about 60 ms (30 ms
+each way, before jitter), and queueing under load makes the smoothed RTT
+larger, so this takes a few seconds: long enough to stay protected through
+bursty reordering, short enough to restore fast genuine-loss detection after
+it ends. In the moderate test run K still fell back to 3 before 22 of the
+451 confirmed spurious losses. If Day 5 runs show bursts arriving after such
+resets cost goodput, the Day 6 option is a slower decay (e.g. 0.95); if K
+stays high too long on clean paths, the fallback is 0.8 (about 11 RTTs).
 
 ---
 
@@ -194,9 +210,19 @@ evidence, with a separate cap on how far it may grow. This would be
 implemented on Day 4, or in the Day 6 tuning pass if the table arrives late.
 
 If the condition is not met, the adaptive packet threshold alone is the final
-design. Shamili's Day 2 data points this way: at K=3, about 90% of spurious
-losses had the packet threshold crossed before the late ACK
-(recovery_tradeoff_summary_corrected.csv).
+design. The evidence so far points this way:
+
+- Shamili's Day 2 data: at K=3, about 90% of spurious losses had the packet
+  threshold crossed before the late ACK (recovery_tradeoff_summary_corrected.csv).
+- Instrumented stock run, moderate, 10 MB (one run): of 887 declared losses,
+  680 packet, 117 time, 87 both, 2 PTO, 2 handshake. Time + PTO is 13.4% of
+  all declared losses, so it cannot reach half of the spurious ones.
+- Dynamic run, same profile: raising K shifts some detection to the time rule
+  (time-rule losses 117 → 178), but time + PTO is still about 26% of declared
+  losses.
+
+Reethika's attribution table needs reruns on the pinned commit (moderate and
+severe) before this is final; the Phase 0 qlogs carry no rule metadata.
 
 ---
 
@@ -226,24 +252,23 @@ moderate and severe).
 
 ### recovery:k_adapted
 
-Emitted in `_adapt_k()` each time a spurious loss is confirmed:
+Emitted in `_adapt_k()` each time a spurious loss is confirmed, including
+when K does not change because the gap is already covered:
 
 ```json
 {
   "old_k": 3.0,
-  "new_k": 7.0,
-  "gap": 6,
+  "new_k": 40.0,
+  "gap": 45,
   "mode": "dynamic"
 }
 ```
 
-Decay steps are not logged separately. The K in force can be reconstructed
-from successive `k_adapted` events and the RTT samples in
-`recovery:metrics_updated`.
+Decay steps are not logged separately. A `k_adapted` event whose `old_k` is
+below the previous event's `new_k` shows that decay ran in between.
 
 ### recovery:packet_lost
 
 Carries `rule` ("packet", "time", "both", "pto" or "handshake"), `by_packet`
 and `by_time` from the Day 1 rule-attribution patch, which is how losses
 eligible for `_recent_lost` can be identified in the qlogs.
-
