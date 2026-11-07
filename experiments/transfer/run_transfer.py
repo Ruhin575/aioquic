@@ -19,15 +19,32 @@ PYTHON = sys.executable
 CSV_COLUMNS = [
     "variant",
     "profile",
-    "threshold",
     "file_size",
     "run",
     "download_time_s",
     "goodput_mbps",
     "sha256_ok",
-    "congestion_control",
     "qlog_path",
 ]
+
+def validate_threshold(threshold):
+    """Accept a positive integer threshold or a supported dynamic mode."""
+    if threshold is None:
+        return
+
+    if threshold in ("dynamic", "dynamic_undo"):
+        return
+
+    try:
+        value = int(threshold)
+    except (TypeError, ValueError):
+        raise ValueError(
+            "Threshold must be a positive integer, "
+            "'dynamic', or 'dynamic_undo'"
+        )
+
+    if value <= 0:
+        raise ValueError("Packet threshold must be positive")
 
 
 def sha256_file(path):
@@ -46,8 +63,7 @@ def start_server(threshold, qlog_dir):
     if threshold is None:
         command.extend(["-u", "AIOQUIC_PACKET_THRESHOLD"])
     else:
-        if threshold <= 0:
-            raise ValueError("Packet threshold must be positive")
+        validate_threshold(threshold)
         command.append(f"AIOQUIC_PACKET_THRESHOLD={threshold}")
 
     command.append(f"STATIC_ROOT={TRANSFER_DIR / 'www'}")
@@ -242,8 +258,14 @@ def save_result(results_file, row):
 
 def run_transfer(file_name, variant, profile, run_number,
                  threshold=None, output_dir=None, results_file=None):
+    validate_threshold(threshold)
+
     output_dir = Path(output_dir or (ROOT / "experiments" / "results")).resolve()
-    results_file = Path(results_file).resolve() if results_file else output_dir / "transfers.csv"
+    results_file = (
+        Path(results_file).resolve()
+        if results_file
+        else output_dir / "transfers.csv"
+    )
 
     # Required layout: output_dir/variant/profile/run_N/
     run_dir = output_dir / variant / profile / f"run_{run_number}"
@@ -300,13 +322,11 @@ def run_transfer(file_name, variant, profile, run_number,
         row = {
             "variant": variant,
             "profile": profile,
-            "threshold": threshold if threshold is not None else "",
             "file_size": actual_size,
             "run": run_number,
             "download_time_s": f"{download_time:.6f}",
             "goodput_mbps": f"{goodput_mbps:.3f}",
             "sha256_ok": True,
-            "congestion_control": "cubic",
             "qlog_path": str(run_dir),
         }
 
@@ -323,7 +343,7 @@ if __name__ == "__main__":
     parser.add_argument("--variant", default="stock")
     parser.add_argument("--profile", default="baseline")
     parser.add_argument("--run", type=int, default=1)
-    parser.add_argument("--threshold", type=int, default=None)
+    parser.add_argument("--threshold", type=str, default=None)
     parser.add_argument(
         "--output-dir",
         default=str(ROOT / "experiments" / "results"),
@@ -334,8 +354,10 @@ if __name__ == "__main__":
 
     if args.run < 1:
         parser.error("--run must be at least 1")
-    if args.threshold is not None and args.threshold <= 0:
-        parser.error("--threshold must be positive")
+    try:
+        validate_threshold(args.threshold)
+    except ValueError as exc:
+        parser.error(str(exc))
 
     run_transfer(
         file_name=args.file,

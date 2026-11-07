@@ -126,6 +126,12 @@ These results suggest that many packets declared lost during impaired network co
 
 Further analysis of the packet logs and congestion-window behavior is needed to understand the relationship between packet reordering, loss detection, and transfer performance.
 
+### Loss Rule Attribution
+
+To investigate which loss detection rules were responsible for declaring packets lost, we performed a separate attribution analysis on the historical server-side qlogs. We processed 100 qlogs containing 53,855 loss events from the `huge_threshold_100` and `threshold_20` datasets. However, none of these loss events contained the required attribution metadata (`rule`, `by_packet`, and `by_time`). Consequently, the attribution coverage was 0%.
+
+Therefore, the historical results cannot establish whether individual packets were declared lost due to packet-threshold-based detection, time-threshold-based detection, or PTO. The detailed methodology and results are presented in [Loss Rule Attribution Analysis](section_attribution.md). New instrumented experiments are required to investigate this further.
+
 ## Limitations
 
 There are a few limitations to consider when interpreting the results.
