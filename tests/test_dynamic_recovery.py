@@ -131,3 +131,58 @@ class DynamicRecoveryTest(TestCase):
             space=space,
         )
         self.assertNotIn(3, recovery._recent_lost)
+
+    def test_recent_lost_records_pure_packet_threshold_loss(self):
+        recovery, space = make_dynamic_recovery()
+        recovery._rtt_initial = 0.1
+        space.largest_acked_packet = 10
+
+        send_packets(recovery, space, {5: 0.95})
+        recovery._detect_loss(now=1.0, space=space)
+
+        self.assertIn(5, recovery._recent_lost)
+
+    def test_time_threshold_loss_is_not_recorded(self):
+        recovery, space = make_dynamic_recovery()
+        recovery._rtt_initial = 0.1
+        space.largest_acked_packet = 10
+
+        # Packet 8 is only two positions behind the largest ACK.
+        # It meets the time threshold, but not the packet threshold.
+        send_packets(recovery, space, {8: 0.5})
+        recovery._detect_loss(now=1.0, space=space)
+
+        self.assertNotIn(8, recovery._recent_lost)
+
+    def test_recent_lost_is_capped_at_64_entries(self):
+        recovery, space = make_dynamic_recovery()
+
+        recovery._recent_lost = {
+            i: (1.0, 0.9, 5) for i in range(64)
+        }
+
+        space.largest_acked_packet = 103
+        send_packets(recovery, space, {100: 0.95})
+        recovery._detect_loss(now=1.0, space=space)
+
+        self.assertEqual(len(recovery._recent_lost), 64)
+        self.assertNotIn(0, recovery._recent_lost)
+        self.assertIn(100, recovery._recent_lost)
+
+    def test_static_mode_does_not_record_recent_losses(self):
+        recovery, space = make_dynamic_recovery("3")
+        space.largest_acked_packet = 10
+
+        send_packets(recovery, space, {5: 0.95})
+        recovery._detect_loss(now=1.0, space=space)
+
+        self.assertFalse(recovery._dynamic_mode)
+        self.assertEqual(recovery._recent_lost, {})
+
+    def test_pto_loss_is_not_recorded_as_recent_loss(self):
+        recovery, space = make_dynamic_recovery()
+        send_packets(recovery, space, {0: 0.0})
+
+        recovery.reschedule_data(now=1.0)
+
+        self.assertEqual(recovery._recent_lost, {})
