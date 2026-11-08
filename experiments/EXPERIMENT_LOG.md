@@ -644,3 +644,113 @@
 - **2026-10-28T11:57:20** SUCCESS: profile=handover, file=10MB.bin, variant=huge-threshold, run=4
 
 - **2026-10-28T11:59:47** SUCCESS: profile=handover, file=10MB.bin, variant=huge-threshold, run=5
+
+- **2026-11-08T11:17:59** FAILED: profile=severe, file=1MB.bin, variant=stock, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-08T11:17:59** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-08T11:19:32** FAILED: profile=severe, file=1MB.bin, variant=stock, run=1: Command '['/home/reethika/networks_project/aioquic/.venv/bin/python', '/home/reethika/networks_project/aioquic/experiments/transfer/run_transfer.py', '--file', '1MB.bin', '--variant', 'stock', '--profile', 'severe', '--run', '1', '--output-dir', 'experiments/results/attribution_smoke', '--results-file', 'experiments/results/attribution_smoke/transfers.csv']' returned non-zero exit status 1.
+
+- **2026-11-08T11:19:32** FAILED: Command '['/home/reethika/networks_project/aioquic/.venv/bin/python', '/home/reethika/networks_project/aioquic/experiments/transfer/run_transfer.py', '--file', '1MB.bin', '--variant', 'stock', '--profile', 'severe', '--run', '1', '--output-dir', 'experiments/results/attribution_smoke', '--results-file', 'experiments/results/attribution_smoke/transfers.csv']' returned non-zero exit status 1.
+
+- **2026-11-08T11:22:35** SUCCESS: profile=severe, file=1MB.bin, variant=stock, run=1
+
+- **2026-11-08T11:33:32** SUCCESS: profile=baseline, file=10MB.bin, variant=stock, run=1
+
+- **2026-11-08T11:33:43** SUCCESS: profile=baseline, file=10MB.bin, variant=stock, run=2
+
+- **2026-11-08T11:33:55** SUCCESS: profile=baseline, file=10MB.bin, variant=stock, run=3
+
+- **2026-11-08T11:34:06** SUCCESS: profile=baseline, file=10MB.bin, variant=stock, run=4
+
+- **2026-11-08T11:34:17** SUCCESS: profile=baseline, file=10MB.bin, variant=stock, run=5
+
+- **2026-11-08T11:34:58** SUCCESS: profile=mild, file=10MB.bin, variant=stock, run=1
+
+- **2026-11-08T11:35:40** SUCCESS: profile=mild, file=10MB.bin, variant=stock, run=2
+
+- **2026-11-08T11:36:19** SUCCESS: profile=mild, file=10MB.bin, variant=stock, run=3
+
+- **2026-11-08T11:36:50** SUCCESS: profile=mild, file=10MB.bin, variant=stock, run=4
+
+- **2026-11-08T11:37:27** SUCCESS: profile=mild, file=10MB.bin, variant=stock, run=5
+
+- **2026-11-08T11:38:57** SUCCESS: profile=moderate, file=10MB.bin, variant=stock, run=1
+
+- **2026-11-08T11:40:27** SUCCESS: profile=moderate, file=10MB.bin, variant=stock, run=2
+
+- **2026-11-08T11:41:50** SUCCESS: profile=moderate, file=10MB.bin, variant=stock, run=3
+
+- **2026-11-08T11:43:20** SUCCESS: profile=moderate, file=10MB.bin, variant=stock, run=4
+
+- **2026-11-08T11:44:51** SUCCESS: profile=moderate, file=10MB.bin, variant=stock, run=5
+
+- **2026-11-08T11:46:45** SUCCESS: profile=severe, file=10MB.bin, variant=stock, run=1
+
+- **2026-11-08T11:48:38** SUCCESS: profile=severe, file=10MB.bin, variant=stock, run=2
+
+- **2026-11-08T11:50:28** SUCCESS: profile=severe, file=10MB.bin, variant=stock, run=3
+
+- **2026-11-08T11:52:17** SUCCESS: profile=severe, file=10MB.bin, variant=stock, run=4
+
+- **2026-11-08T11:54:06** SUCCESS: profile=severe, file=10MB.bin, variant=stock, run=5
+
+- **2026-11-08T11:57:10** SUCCESS: profile=handover, file=10MB.bin, variant=stock, run=1
+
+- **2026-11-08T12:00:12** SUCCESS: profile=handover, file=10MB.bin, variant=stock, run=2
+
+- **2026-11-08T12:03:11** SUCCESS: profile=handover, file=10MB.bin, variant=stock, run=3
+
+- **2026-11-08T12:06:11** SUCCESS: profile=handover, file=10MB.bin, variant=stock, run=4
+
+- **2026-11-08T12:09:20** SUCCESS: profile=handover, file=10MB.bin, variant=stock, run=5
+
+- **2026-11-08T12:09:32** SUCCESS: profile=baseline, file=10MB.bin, variant=k20, run=1
+
+- **2026-11-08T12:09:44** SUCCESS: profile=baseline, file=10MB.bin, variant=k20, run=2
+
+- **2026-11-08T12:09:56** SUCCESS: profile=baseline, file=10MB.bin, variant=k20, run=3
+
+- **2026-11-08T12:10:08** SUCCESS: profile=baseline, file=10MB.bin, variant=k20, run=4
+
+- **2026-11-08T12:10:20** SUCCESS: profile=baseline, file=10MB.bin, variant=k20, run=5
+
+- **2026-11-08T12:10:55** SUCCESS: profile=mild, file=10MB.bin, variant=k20, run=1
+
+- **2026-11-08T12:11:27** SUCCESS: profile=mild, file=10MB.bin, variant=k20, run=2
+
+- **2026-11-08T12:11:58** SUCCESS: profile=mild, file=10MB.bin, variant=k20, run=3
+
+- **2026-11-08T12:12:33** SUCCESS: profile=mild, file=10MB.bin, variant=k20, run=4
+
+- **2026-11-08T12:13:05** SUCCESS: profile=mild, file=10MB.bin, variant=k20, run=5
+
+- **2026-11-08T12:14:18** SUCCESS: profile=moderate, file=10MB.bin, variant=k20, run=1
+
+- **2026-11-08T12:15:29** SUCCESS: profile=moderate, file=10MB.bin, variant=k20, run=2
+
+- **2026-11-08T12:16:32** SUCCESS: profile=moderate, file=10MB.bin, variant=k20, run=3
+
+- **2026-11-08T12:17:41** SUCCESS: profile=moderate, file=10MB.bin, variant=k20, run=4
+
+- **2026-11-08T12:18:49** SUCCESS: profile=moderate, file=10MB.bin, variant=k20, run=5
+
+- **2026-11-08T12:20:14** SUCCESS: profile=severe, file=10MB.bin, variant=k20, run=1
+
+- **2026-11-08T12:21:37** SUCCESS: profile=severe, file=10MB.bin, variant=k20, run=2
+
+- **2026-11-08T12:23:03** SUCCESS: profile=severe, file=10MB.bin, variant=k20, run=3
+
+- **2026-11-08T12:24:29** SUCCESS: profile=severe, file=10MB.bin, variant=k20, run=4
+
+- **2026-11-08T12:25:58** SUCCESS: profile=severe, file=10MB.bin, variant=k20, run=5
+
+- **2026-11-08T12:28:31** SUCCESS: profile=handover, file=10MB.bin, variant=k20, run=1
+
+- **2026-11-08T12:30:55** SUCCESS: profile=handover, file=10MB.bin, variant=k20, run=2
+
+- **2026-11-08T12:33:24** SUCCESS: profile=handover, file=10MB.bin, variant=k20, run=3
+
+- **2026-11-08T12:35:45** SUCCESS: profile=handover, file=10MB.bin, variant=k20, run=4
+
+- **2026-11-08T12:38:05** SUCCESS: profile=handover, file=10MB.bin, variant=k20, run=5

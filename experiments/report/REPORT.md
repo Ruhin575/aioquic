@@ -128,9 +128,36 @@ Further analysis of the packet logs and congestion-window behavior is needed to 
 
 ### Loss Rule Attribution
 
-To investigate which loss detection rules were responsible for declaring packets lost, we performed a separate attribution analysis on the historical server-side qlogs. We processed 100 qlogs containing 53,855 loss events from the `huge_threshold_100` and `threshold_20` datasets. However, none of these loss events contained the required attribution metadata (`rule`, `by_packet`, and `by_time`). Consequently, the attribution coverage was 0%.
+The historical attribution analysis processed 100 server-side qlogs containing 53,855 loss events. These qlogs did not contain the required attribution metadata (`rule`, `by_packet`, and `by_time`), resulting in 0% attribution coverage.
 
-Therefore, the historical results cannot establish whether individual packets were declared lost due to packet-threshold-based detection, time-threshold-based detection, or PTO. The detailed methodology and results are presented in [Loss Rule Attribution Analysis](section_attribution.md). New instrumented experiments are required to investigate this further.
+To address this limitation, we conducted a new instrumented experiment matrix containing 50 runs across stock and K20 variants and all five network profiles. The analysis processed 50 server-side qlogs and identified 26,786 application-level loss events. All these events contained usable attribution metadata, giving 100% attribution coverage.
+
+The new results show differences in the distribution of packet-based, time-based, combined, and PTO-based loss attribution between stock and K20. The detailed methodology, historical results, and new instrumented results are presented in [Loss Rule Attribution Analysis](section_attribution.md).
+
+
+### New Instrumented Experiment: Goodput and Statistical Analysis
+
+A separate performance analysis was conducted using the new instrumented experiment matrix described in the loss rule attribution section. This dataset contains five runs for each variant-profile combination, comparing stock QUIC with K20.
+
+The table reports the mean goodput, the difference between K20 and stock, and the results of Welch's t-test.
+
+| Profile | Stock (Mbps) | K20 (Mbps) | Difference (Mbps) | Improvement | 95% CI for difference (Mbps) | Holm-adjusted p-value |
+|---|---:|---:|---:|---:|---:|---:|
+| Baseline | 13.381 | 13.334 | -0.047 | -0.35% | [-0.112, 0.017] | 0.1127 |
+| Mild | 2.447 | 2.915 | 0.468 | 19.14% | [0.008, 0.929] | 0.0947 |
+| Moderate | 0.983 | 1.305 | 0.322 | 32.75% | [0.218, 0.426] | 0.0010 |
+| Severe | 0.788 | 1.038 | 0.250 | 31.70% | [0.222, 0.278] | 1.61e-7 |
+| Handover | 0.472 | 0.600 | 0.128 | 27.23% | [0.099, 0.158] | 0.0002 |
+
+Welch's two-sample t-test was used to compare the mean goodput of stock and K20 for each network profile. Holm correction was applied to account for the five statistical comparisons. Statistical significance was assessed at the 0.05 level.
+
+The results indicate that K20 achieved higher mean goodput under mild, moderate, severe, and handover conditions. The largest relative improvements were observed under moderate and severe conditions.
+
+After Holm correction, the differences were statistically significant under moderate, severe, and handover conditions. The mild-profile improvement was not statistically significant after correction, and there was no statistically significant difference under baseline conditions.
+
+The confidence intervals shown are the individual, unadjusted 95% Welch confidence intervals. The statistical tests are based on five repetitions per configuration and should therefore be interpreted as preliminary evidence.
+
+These results belong to the new instrumented experiment matrix and are reported separately from the earlier performance results. TCP was not included in this new matrix, so this analysis does not provide a new TCP comparison.
 
 ## Limitations
 
@@ -142,9 +169,9 @@ Second, the experiments represent a limited set of network profiles and file-tra
 
 Third, the TCP results were collected separately and have different numbers of runs in some profiles. Therefore, the TCP and QUIC comparisons should be interpreted with this difference in mind.
 
-Finally, the measured improvements in average goodput and completion time do not by themselves establish statistical significance. The results show the behavior observed in these experiments, rather than guaranteeing the same performance in all mobile networks.
+Finally, the earlier performance results were not accompanied by statistical significance tests. Welch's t-tests with Holm correction were performed for the new instrumented goodput dataset, but these results are based on only five repetitions per configuration. Therefore, the findings should be treated as preliminary and may not generalize to all mobile networks.
 
 ## Conclusion
 
-In our experiments, increasing the loss detection threshold to 20 gave QUIC a higher average goodput and a shorter completion time than the default configuration in all five network profiles, with the biggest gains under mild and moderate impairment. At baseline there was almost no difference. TCP still performed better than both QUIC configurations in the impaired profiles. Spurious loss rates stayed high in all the impaired profiles, so the cause still needs a closer look at the logs.
+In the earlier performance experiments, increasing the loss detection threshold to 20 gave QUIC higher average goodput and shorter completion times than the default configuration across all five network profiles. The new instrumented experiments also showed higher mean goodput for K20 under mild, moderate, severe, and handover conditions, while baseline goodput was almost unchanged. After correcting for multiple comparisons using the Holm method, the improvements were statistically significant under moderate, severe, and handover conditions, but not under mild or baseline conditions. The new qlog analysis achieved 100% attribution coverage and showed differences in the distribution of packet-based and time-based loss attribution between stock and K20. TCP performed better than both QUIC configurations in the impaired profiles in the earlier comparison. Overall, the results suggest that the threshold modification can improve QUIC goodput under several impaired network conditions, although more repetitions and further analysis are needed.
 ````

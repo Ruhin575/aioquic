@@ -1,0 +1,11 @@
+variant,profile,total_lost,packet,time,both,pto,unavailable,count_check
+k20,baseline,0,0,0,0,0,0,True
+k20,handover,4206,144,4012,49,1,0,True
+k20,mild,2477,1295,1097,85,0,0,True
+k20,moderate,3466,129,3232,105,0,0,True
+k20,severe,2823,358,2406,59,0,0,True
+stock,baseline,0,0,0,0,0,0,True
+stock,handover,4496,3046,857,591,2,0,True
+stock,mild,2095,1910,103,82,0,0,True
+stock,moderate,3902,3038,504,360,0,0,True
+stock,severe,3321,2581,417,322,1,0,True

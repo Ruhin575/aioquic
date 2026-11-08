@@ -28,7 +28,10 @@ def analyze_qlog(qlog_path):
     if missing:
         raise ValueError(f"Parser output is missing columns: {sorted(missing)}")
 
-    lost = df[df["event_type"] == "lost"].copy()
+    lost = df[
+        (df["event_type"] == "lost") &
+        (df["pn_space"] == "application")
+    ].copy()
 
     details = []
     rule_counts = {}

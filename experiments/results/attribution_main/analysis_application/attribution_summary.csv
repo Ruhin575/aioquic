@@ -1,0 +1,51 @@
+qlog_path,total_lost,attributed,unavailable,attribution_coverage_pct,rule_counts
+experiments/results/attribution_main/k20/baseline/run_1/server-qlog/bcd91db7c803ff16.qlog,0,0,0,,{}
+experiments/results/attribution_main/k20/baseline/run_2/server-qlog/7ace48fcb140f907.qlog,0,0,0,,{}
+experiments/results/attribution_main/k20/baseline/run_3/server-qlog/2c43e734f31c1249.qlog,0,0,0,,{}
+experiments/results/attribution_main/k20/baseline/run_4/server-qlog/ee2ee17aa5b215bb.qlog,0,0,0,,{}
+experiments/results/attribution_main/k20/baseline/run_5/server-qlog/f9e155f88936b514.qlog,0,0,0,,{}
+experiments/results/attribution_main/k20/handover/run_1/server-qlog/35db5c33eb6e2919.qlog,878,878,0,100.0,"{""both"": 21, ""packet"": 4, ""time"": 853}"
+experiments/results/attribution_main/k20/handover/run_2/server-qlog/813ee68c37515723.qlog,906,906,0,100.0,"{""packet"": 112, ""pto"": 1, ""time"": 793}"
+experiments/results/attribution_main/k20/handover/run_3/server-qlog/cafda6d02489258f.qlog,843,843,0,100.0,"{""packet"": 8, ""time"": 835}"
+experiments/results/attribution_main/k20/handover/run_4/server-qlog/c5b04eb4cdcfa882.qlog,856,856,0,100.0,"{""both"": 2, ""packet"": 6, ""time"": 848}"
+experiments/results/attribution_main/k20/handover/run_5/server-qlog/915565db30d84d81.qlog,723,723,0,100.0,"{""both"": 26, ""packet"": 14, ""time"": 683}"
+experiments/results/attribution_main/k20/mild/run_1/server-qlog/5c5f4aff12399341.qlog,396,396,0,100.0,"{""both"": 14, ""packet"": 101, ""time"": 281}"
+experiments/results/attribution_main/k20/mild/run_2/server-qlog/82f82036996e3eaa.qlog,427,427,0,100.0,"{""both"": 7, ""packet"": 228, ""time"": 192}"
+experiments/results/attribution_main/k20/mild/run_3/server-qlog/0f359e50000c1275.qlog,449,449,0,100.0,"{""both"": 15, ""packet"": 286, ""time"": 148}"
+experiments/results/attribution_main/k20/mild/run_4/server-qlog/f3f5911fc4c7c8d7.qlog,552,552,0,100.0,"{""both"": 27, ""packet"": 275, ""time"": 250}"
+experiments/results/attribution_main/k20/mild/run_5/server-qlog/6b90811b8ff2596d.qlog,653,653,0,100.0,"{""both"": 22, ""packet"": 405, ""time"": 226}"
+experiments/results/attribution_main/k20/moderate/run_1/server-qlog/6dfe0ef2a858f17f.qlog,716,716,0,100.0,"{""both"": 21, ""packet"": 24, ""time"": 671}"
+experiments/results/attribution_main/k20/moderate/run_2/server-qlog/1d8e5f1e5f4d12bc.qlog,775,775,0,100.0,"{""both"": 21, ""packet"": 14, ""time"": 740}"
+experiments/results/attribution_main/k20/moderate/run_3/server-qlog/aa50ffa658ca866d.qlog,632,632,0,100.0,"{""both"": 16, ""packet"": 54, ""time"": 562}"
+experiments/results/attribution_main/k20/moderate/run_4/server-qlog/8df6525fb59f3d14.qlog,714,714,0,100.0,"{""both"": 39, ""packet"": 27, ""time"": 648}"
+experiments/results/attribution_main/k20/moderate/run_5/server-qlog/26397d8862b0bbac.qlog,629,629,0,100.0,"{""both"": 8, ""packet"": 10, ""time"": 611}"
+experiments/results/attribution_main/k20/severe/run_1/server-qlog/5841ad2fb35c5812.qlog,620,620,0,100.0,"{""both"": 18, ""packet"": 149, ""time"": 453}"
+experiments/results/attribution_main/k20/severe/run_2/server-qlog/aa139f6636fc63f7.qlog,548,548,0,100.0,"{""both"": 13, ""packet"": 30, ""time"": 505}"
+experiments/results/attribution_main/k20/severe/run_3/server-qlog/a58ced05d096d026.qlog,575,575,0,100.0,"{""both"": 16, ""packet"": 63, ""time"": 496}"
+experiments/results/attribution_main/k20/severe/run_4/server-qlog/600f7e4cd3fae3ec.qlog,586,586,0,100.0,"{""both"": 11, ""packet"": 96, ""time"": 479}"
+experiments/results/attribution_main/k20/severe/run_5/server-qlog/25c42d030fd62eeb.qlog,494,494,0,100.0,"{""both"": 1, ""packet"": 20, ""time"": 473}"
+experiments/results/attribution_main/stock/baseline/run_1/server-qlog/4a64c42841c6f4c2.qlog,0,0,0,,{}
+experiments/results/attribution_main/stock/baseline/run_2/server-qlog/db659ad903b5085a.qlog,0,0,0,,{}
+experiments/results/attribution_main/stock/baseline/run_3/server-qlog/d266c43e7543056a.qlog,0,0,0,,{}
+experiments/results/attribution_main/stock/baseline/run_4/server-qlog/1ddd27ecebcd7d6b.qlog,0,0,0,,{}
+experiments/results/attribution_main/stock/baseline/run_5/server-qlog/76214056537ef8e5.qlog,0,0,0,,{}
+experiments/results/attribution_main/stock/handover/run_1/server-qlog/a935ba3f1b90c4e7.qlog,904,904,0,100.0,"{""both"": 91, ""packet"": 627, ""pto"": 1, ""time"": 185}"
+experiments/results/attribution_main/stock/handover/run_2/server-qlog/f09bab32887c43cf.qlog,869,869,0,100.0,"{""both"": 144, ""packet"": 570, ""time"": 155}"
+experiments/results/attribution_main/stock/handover/run_3/server-qlog/3d24bfe680fc3620.qlog,896,896,0,100.0,"{""both"": 137, ""packet"": 618, ""pto"": 1, ""time"": 140}"
+experiments/results/attribution_main/stock/handover/run_4/server-qlog/8fe4d4c1d36f89e0.qlog,883,883,0,100.0,"{""both"": 95, ""packet"": 616, ""time"": 172}"
+experiments/results/attribution_main/stock/handover/run_5/server-qlog/81cd6df078be15dc.qlog,944,944,0,100.0,"{""both"": 124, ""packet"": 615, ""time"": 205}"
+experiments/results/attribution_main/stock/mild/run_1/server-qlog/45c732cc3aac6af3.qlog,324,324,0,100.0,"{""both"": 9, ""packet"": 304, ""time"": 11}"
+experiments/results/attribution_main/stock/mild/run_2/server-qlog/be5c12e4be200964.qlog,478,478,0,100.0,"{""both"": 18, ""packet"": 424, ""time"": 36}"
+experiments/results/attribution_main/stock/mild/run_3/server-qlog/e8408a1c5fa47ed8.qlog,407,407,0,100.0,"{""both"": 22, ""packet"": 363, ""time"": 22}"
+experiments/results/attribution_main/stock/mild/run_4/server-qlog/4bca2dcd70fa1ca2.qlog,334,334,0,100.0,"{""both"": 8, ""packet"": 313, ""time"": 13}"
+experiments/results/attribution_main/stock/mild/run_5/server-qlog/cd385c971379fc48.qlog,552,552,0,100.0,"{""both"": 25, ""packet"": 506, ""time"": 21}"
+experiments/results/attribution_main/stock/moderate/run_1/server-qlog/130c8798f9c88253.qlog,748,748,0,100.0,"{""both"": 82, ""packet"": 557, ""time"": 109}"
+experiments/results/attribution_main/stock/moderate/run_2/server-qlog/1fab71382f20e697.qlog,731,731,0,100.0,"{""both"": 66, ""packet"": 568, ""time"": 97}"
+experiments/results/attribution_main/stock/moderate/run_3/server-qlog/a8110173b3919910.qlog,849,849,0,100.0,"{""both"": 60, ""packet"": 702, ""time"": 87}"
+experiments/results/attribution_main/stock/moderate/run_4/server-qlog/b2fb670cf5f84fa5.qlog,824,824,0,100.0,"{""both"": 65, ""packet"": 654, ""time"": 105}"
+experiments/results/attribution_main/stock/moderate/run_5/server-qlog/5e221e980b51eb56.qlog,750,750,0,100.0,"{""both"": 87, ""packet"": 557, ""time"": 106}"
+experiments/results/attribution_main/stock/severe/run_1/server-qlog/b47dd86479b3ebae.qlog,582,582,0,100.0,"{""both"": 61, ""packet"": 438, ""time"": 83}"
+experiments/results/attribution_main/stock/severe/run_2/server-qlog/c6f694558a966026.qlog,684,684,0,100.0,"{""both"": 47, ""packet"": 566, ""time"": 71}"
+experiments/results/attribution_main/stock/severe/run_3/server-qlog/182b687d626e61e2.qlog,681,681,0,100.0,"{""both"": 65, ""packet"": 523, ""pto"": 1, ""time"": 92}"
+experiments/results/attribution_main/stock/severe/run_4/server-qlog/0d502f8a38aaf249.qlog,741,741,0,100.0,"{""both"": 94, ""packet"": 552, ""time"": 95}"
+experiments/results/attribution_main/stock/severe/run_5/server-qlog/4c6ed2b55f32db81.qlog,633,633,0,100.0,"{""both"": 55, ""packet"": 502, ""time"": 76}"
