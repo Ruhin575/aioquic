@@ -183,6 +183,7 @@ class QuicPacketRecovery:
         self._saved_cwnd: Optional[int] = None
         self._saved_ssthresh: Optional[int] = None
         self._k_adapted_this_round: bool = False
+        self._k_last_decay_time: float = 0.0
         self._pto_count = 0
         self._rtt_first_sample_time = 0.0
         self._rtt_initial = initial_rtt
@@ -281,7 +282,7 @@ class QuicPacketRecovery:
 
     def _adapt_k(self, gap: int) -> None:
         old_k = self._k_adaptive
-        self._k_adaptive = min(max(self._k_adaptive, gap + 1), float(K_MAX))
+        self._k_adaptive = min(max(self._k_adaptive, float(gap + 1)), float(K_MAX))
         self._k_adapted_this_round = True
         if self._quic_logger is not None:
             self._quic_logger.log_event(
@@ -294,6 +295,16 @@ class QuicPacketRecovery:
                     "mode": self._threshold_mode,
                 },
             )
+
+    def _process_late_acks(self, ack_rangeset: RangeSet) -> None:
+        if not (self._dynamic_mode or self._dynamic_undo_mode) or not self._recent_lost:
+            return
+        for pn in list(self._recent_lost):
+            for r in ack_rangeset:
+                if r.start <= pn < r.stop:
+                    _, _, gap = self._recent_lost.pop(pn)
+                    self._adapt_k(gap)
+                    break
 
     def get_probe_timeout(self, *, include_max_ack_delay: bool = True) -> float:
         """
@@ -356,8 +367,11 @@ class QuicPacketRecovery:
                 for handler, args in packet.delivery_handlers:
                     handler(QuicDeliveryState.ACKED, *args)
 
-        # nothing to do if there are no newly acked packets
+        # nothing to do if there are no newly acked packets, except check for
+        # late ACKs: a declared-lost packet is no longer in sent_packets, so an
+        # ACK whose only new information is that late packet lands here
         if largest_newly_acked is None:
+            self._process_late_acks(ack_rangeset)
             return
 
         if largest_acked == largest_newly_acked and is_ack_eliciting:
@@ -393,31 +407,28 @@ class QuicPacketRecovery:
                 congestion_window=self._cc.congestion_window,
                 smoothed_rtt=self._rtt_smoothed,
             )
-            # Dynamic decay with a clean RTT sample with no spurious adaptation
-            # relaxes K back toward the stock threshold.
+            # Dynamic decay: at most once per smoothed RTT of elapsed time.
+            # If no spurious loss raised K during that RTT, relax K back
+            # toward the stock threshold. Samples arrive on most ACKs, so
+            # decaying on every sample would drain K within a few RTTs.
             if self._dynamic_mode or self._dynamic_undo_mode:
-                if (
-                    not self._k_adapted_this_round
-                    and self._k_adaptive > K_PACKET_THRESHOLD
-                ):
-                    self._k_adaptive = max(
-                        self._k_adaptive * K_DECAY, float(K_PACKET_THRESHOLD)
-                    )
-                self._k_adapted_this_round = False
+                if now - self._k_last_decay_time >= self._rtt_smoothed:
+                    if (
+                        not self._k_adapted_this_round
+                        and self._k_adaptive > K_PACKET_THRESHOLD
+                    ):
+                        self._k_adaptive = max(
+                            self._k_adaptive * K_DECAY, float(K_PACKET_THRESHOLD)
+                        )
+                    self._k_adapted_this_round = False
+                    self._k_last_decay_time = now
 
         else:
             log_rtt = False
 
         # A late ACK for a packet still in _recent_lost means that loss
-        # declaration was spurious; the stored gap is the K that would have
-        # avoided it, so feed it to the adaptive threshold.
-        if (self._dynamic_mode or self._dynamic_undo_mode) and self._recent_lost:
-            for pn in list(self._recent_lost):
-                for r in ack_rangeset:
-                    if r.start <= pn < r.stop:
-                        _, _, gap = self._recent_lost.pop(pn)
-                        self._adapt_k(gap)
-                        break
+        # declaration was spurious, so feed its gap to the adaptive threshold.
+        self._process_late_acks(ack_rangeset)
 
         self._detect_loss(now=now, space=space)
 
