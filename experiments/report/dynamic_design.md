@@ -1,5 +1,10 @@
 # Dynamic Packet Threshold Algorithm Design
 
+**Status:** `dynamic` and `dynamic_undo` implemented on main (commit a8d846c,
+pinned as phase1).
+Time-threshold extension not triggered (section 6). Official matrix on the
+frozen pin pending (Reethika).
+
 ## 1. Motivation
 
 The static packet threshold K=3 (RFC 9002 default) causes spurious loss
@@ -26,9 +31,10 @@ self._k_adaptive: float = float(K_PACKET_THRESHOLD)    # starts at 3.0
 # pkt_num → (loss_time, sent_time, gap_at_declaration)
 self._recent_lost: dict[int, tuple[float, float, int]] = {}
 
-# dynamic_undo only (not yet used, see section 7)
-self._saved_cwnd: Optional[int] = None
-self._saved_ssthresh: Optional[int] = None
+# dynamic_undo only (section 7): congestion state saved just before a
+# loss cut the window, and the losses since then (pkt_num → loss time)
+self._undo_snapshot: Optional[dict[str, Any]] = None
+self._undo_pending: dict[int, float] = {}
 
 # set when K is raised; consulted and cleared once per RTT window
 self._k_adapted_this_round: bool = False
@@ -88,9 +94,8 @@ At the top of `on_ack_received()`, in dynamic modes, entries older than
 self._expire_recent_lost(now)
 ```
 
-After the newly acknowledged packets and the RTT estimate are processed, and
-just before `_detect_loss()`, every packet number in `_recent_lost` is checked
-against the ACK ranges:
+Every packet number in `_recent_lost` is then checked against the ACK
+ranges, in `_process_late_acks()`:
 
 ```python
 for pn in list(self._recent_lost):
@@ -103,8 +108,15 @@ for pn in list(self._recent_lost):
 
 A late ACK for a packet in `_recent_lost` means the packet was delivered, so
 its loss declaration was spurious. The raw ACK ranges must be checked because
-a declared-lost packet has already been removed from `sent_packets`. Placing
-the check before `_detect_loss()` means a raised K applies to the same ACK.
+a declared-lost packet has already been removed from `sent_packets`.
+
+`_process_late_acks()` is called from two places. Normally it runs after the
+newly acknowledged packets and the RTT estimate are processed, just before
+`_detect_loss()`, so a raised K applies to the same ACK. It also runs in the
+early-return branch taken when an ACK acknowledges nothing new: an ACK whose
+only new information is a late packet lands there, because that packet is no
+longer in `sent_packets`. Without this second call (commit c89a756, found by
+Shamili's tests) those late ACKs were silently ignored.
 
 ### 3.4 `_adapt_k(gap)`
 
@@ -137,10 +149,8 @@ only after a full RTT with no spurious loss detected.
 An earlier version (commit 0179440) decayed on every RTT sample. aioquic
 takes an RTT sample on most ACKs, several per round trip, so that version
 drained K from 22 to 3 in well under a second and every reordering burst
-started again from K=3. In a moderate-profile test (10 MB, one run each),
-dynamic with per-sample decay reached 0.961 Mbps against 0.945 Mbps for
-stock. With time-limited decay (commit b40f456) it reached 1.171 Mbps
-(+24%), and packet-rule losses fell from 680 (stock) to 474.
+started again from K=3. Time-limited decay (commit b40f456) fixed this.
+Decay steps are logged as `recovery:k_decayed` (section 8).
 
 ---
 
@@ -184,10 +194,13 @@ ln(3/40) / ln(0.9) ≈ 25 clean RTTs. The base path RTT is about 60 ms (30 ms
 each way, before jitter), and queueing under load makes the smoothed RTT
 larger, so this takes a few seconds: long enough to stay protected through
 bursty reordering, short enough to restore fast genuine-loss detection after
-it ends. In the moderate test run K still fell back to 3 before 22 of the
-451 confirmed spurious losses. If Day 5 runs show bursts arriving after such
-resets cost goodput, the Day 6 option is a slower decay (e.g. 0.95); if K
-stays high too long on clean paths, the fallback is 0.8 (about 11 RTTs).
+it ends.
+
+In 3-run tests at moderate, K still fell back to 3 about 30 times per run
+(once every 2 to 3 s). A slower decay (K_DECAY 0.97, about 85 clean RTTs from
+40 to 3) did not reduce the resets or improve goodput, so 0.9 was kept. The
+limit on threshold-only adaptation turned out not to be the decay rate but
+the cost of each burst that is declared lost before K rises (section 7).
 
 ---
 
@@ -201,50 +214,109 @@ behaviour is identical to stock. The existing test suite passes unchanged.
 
 ---
 
-## 6. Time Threshold Extension (conditional)
+## 6. Time Threshold Extension (not triggered)
 
-After Reethika's Day 3 attribution table: if the "time" rule and PTO together
-account for more than half of spurious losses at both moderate and severe,
-extend the design to adapt `K_TIME_THRESHOLD` using the same late-ACK
-evidence, with a separate cap on how far it may grow. This would be
-implemented on Day 4, or in the Day 6 tuning pass if the table arrives late.
+The decision rule from Day 2: if the "time" rule and PTO together account for
+more than half of spurious losses under stock at both moderate and severe,
+adapt `K_TIME_THRESHOLD` as well.
 
-If the condition is not met, the adaptive packet threshold alone is the final
-design. The evidence so far points this way:
+Reethika's instrumented attribution (commit 60a3fc8, 5 runs per cell) shows
+the condition is not met. Under stock, the packet rule dominates:
 
-- Shamili's Day 2 data: at K=3, about 90% of spurious losses had the packet
-  threshold crossed before the late ACK (recovery_tradeoff_summary_corrected.csv).
-- Instrumented stock run, moderate, 10 MB (one run): of 887 declared losses,
-  680 packet, 117 time, 87 both, 2 PTO, 2 handshake. Time + PTO is 13.4% of
-  all declared losses, so it cannot reach half of the spurious ones.
-- Dynamic run, same profile: raising K shifts some detection to the time rule
-  (time-rule losses 117 → 178), but time + PTO is still about 26% of declared
-  losses.
+| Profile | Variant | Losses | packet | time | both | pto |
+|---|---|---:|---:|---:|---:|---:|
+| moderate | stock | 3,902 | 3,038 (78%) | 504 (13%) | 360 | 0 |
+| moderate | k20 | 3,466 | 129 (4%) | 3,232 (93%) | 105 | 0 |
+| severe | stock | 3,321 | 2,581 (78%) | 417 (13%) | 322 | 1 |
+| severe | k20 | 2,823 | 358 (13%) | 2,406 (85%) | 59 | 0 |
 
-Reethika's attribution table needs reruns on the pinned commit (moderate and
-severe) before this is final; the Phase 0 qlogs carry no rule metadata.
+The k20 rows matter more for the design than the rule itself. Once K is
+high, almost every remaining loss is declared by the time threshold instead:
+raising K moves losses to the other rule rather than removing them. Total
+losses fall by only about 11 to 15%. This is why adapting the packet
+threshold alone cannot match the gains from undoing spurious congestion
+responses, and why `dynamic_undo` tracks losses from every rule (section 7).
 
 ---
 
-## 7. dynamic_undo Extension (optional, Day 5 checkpoint decides)
+## 7. dynamic_undo
 
-Save congestion state just before `_on_packets_lost()` reports a loss to the
-congestion controller:
+### 7.1 Why
 
-```python
-self._saved_cwnd = self._cc.congestion_window
-self._saved_ssthresh = self._cc.ssthresh
-```
+Threshold adaptation is reactive. K rises only after a late ACK proves a loss
+spurious, and by then the burst that produced it has already been declared
+lost and has cut the congestion window. With K falling back between bursts,
+dynamic alone performed at stock level. In the same moderate session as the
+numbers in 7.4, `dynamic` reached 0.938 Mbps against stock 0.958 and k20 1.324;
+Shamili's independent 3-run test on another machine gave 0.996 Mbps for
+dynamic. `dynamic_undo` removes the cost instead: it keeps the adaptive K
+and also rolls back the window cut once the losses that caused it prove
+spurious.
 
-When a spurious loss is confirmed in `_adapt_k()`, restore them. The
-congestion controller interface (congestion/base.py) has no restore method,
-so this needs either a small `restore_state()` added to the base class or
-direct assignment of `congestion_window` and `ssthresh`, plus a pacer rate
-update. Gated on `AIOQUIC_PACKET_THRESHOLD=dynamic_undo`.
+### 7.2 Algorithm
 
-Decision at the Day 5 checkpoint, based on whether dynamic alone meets the
-targets (baseline goodput within 2% of stock, and a clear gain over stock on
-moderate and severe).
+1. **Snapshot.** In `_detect_loss()`, in `dynamic_undo` mode and for the
+   application-data space, the congestion controller's state is copied just
+   before the losses are reported. The copy takes every scalar field
+   (`congestion_window`, `ssthresh` and, for Cubic, `_W_max`, `_W_est`,
+   `_cwnd_epoch`, `_t_epoch`, `K`, `_starting_congestion_avoidance`,
+   `_congestion_recovery_start_time`), except those in
+   `UNDO_EXCLUDED_FIELDS`: `bytes_in_flight`, which tracks packets actually
+   outstanding, and the measurements `rtt` and `last_ack`.
+2. **Open an episode.** After the losses are reported, the state is compared
+   with the snapshot. If it changed, the window was cut and an undo episode
+   opens: the snapshot is kept and every ack-eliciting lost packet is added
+   to `_undo_pending` with its loss time. Losses while an episode is open are
+   added to it whether or not they cut the window again, whatever rule
+   declared them.
+3. **Late ACKs.** `_process_late_acks()` removes each late-acknowledged
+   packet from `_undo_pending`. When the set is empty, every loss in the
+   episode was spurious: the snapshot is restored (unless the window has
+   already grown past it), the pacer rate is updated and
+   `recovery:cwnd_restored` is logged.
+4. **Abandon.** At the start of each ACK, if any pending loss is older than
+   2 × smoothed RTT without a late ACK, it is treated as genuine and the
+   episode is dropped; the cut stands. Persistent congestion, or more than
+   `MAX_UNDO_PENDING` (256) pending losses, also abandons the episode.
+   `recovery:undo_abandoned` records the reason.
+
+Restoring only when every loss in the episode proves spurious is the same
+conservative rule as TCP's Eifel response (RFC 4015) and Linux's congestion
+undo. A genuine loss in the episode always keeps the reduction, so the
+sender never becomes more aggressive than its congestion controller would
+be without the spurious losses.
+
+### 7.3 Tests
+
+`tests/test_dynamic_undo.py` (9 tests, Reno and Cubic): restore when all
+losses are spurious; no restore on partial late ACKs; abandon on a genuine
+loss, including a very late ACK afterwards; `bytes_in_flight` untouched by
+a restore; restore logged; no snapshot in `dynamic`, integer or unset modes;
+a second burst inside an open episode must also prove spurious; too many
+pending losses abandon; decay logged. Two deliberate faults (skipping the
+restore, and restoring `bytes_in_flight`) were each caught by the tests.
+
+### 7.4 First results
+
+Moderate profile, 10 MB, 3 runs per variant in one session (WSL laptop):
+
+| Variant | Runs (Mbps) | Mean | vs stock |
+|---|---|---:|---:|
+| stock | 0.969, 0.984, 1.038 | 0.997 | |
+| k20 | 1.263, 1.266, 1.320 | 1.283 | +29% |
+| dynamic_undo | 2.054, 1.834, 1.761 | 1.883 | +89% |
+
+The slowest `dynamic_undo` run was faster than the fastest k20 run. Each run
+had 104 to 135 restores and 27 to 35 abandoned episodes. At the profile's
+0.3% random loss, a 10 MB transfer (about 8,700 packets) is expected to lose
+about 26 packets genuinely, which matches the abandoned count: real losses
+keep their window reduction and only reordering is undone.
+
+On the loss-free baseline profile (10 MB, 3 runs each), `dynamic_undo`
+recorded no restores and reached 12.866, 12.912 and 12.713 Mbps (mean
+12.830) against stock's 12.918 and 12.929 Mbps (−0.7%), within the 2%
+target. A third stock run (10.270 Mbps) was a one-off slow start and is
+excluded from that comparison; including it, the stock mean is 12.039.
 
 ---
 
@@ -264,11 +336,34 @@ when K does not change because the gap is already covered:
 }
 ```
 
-Decay steps are not logged separately. A `k_adapted` event whose `old_k` is
-below the previous event's `new_k` shows that decay ran in between.
+### recovery:k_decayed
+
+Emitted at each decay step (at most once per smoothed RTT), with `old_k` and
+`new_k`. Together with `k_adapted`, this gives the full K timeline.
+
+### recovery:cwnd_restored
+
+Emitted when a `dynamic_undo` episode is restored, with `old_cwnd` (the cut
+window) and `new_cwnd` (the restored one).
+
+### recovery:undo_abandoned
+
+Emitted when an episode is dropped, with `reason` ("genuine_loss",
+"persistent_congestion" or "too_many_losses") and the number of losses still
+pending.
 
 ### recovery:packet_lost
 
 Carries `rule` ("packet", "time", "both", "pto" or "handshake"), `by_packet`
 and `by_time` from the Day 1 rule-attribution patch, which is how losses
 eligible for `_recent_lost` can be identified in the qlogs.
+
+---
+
+## 9. Open Questions
+
+- Other profiles: severe and handover may differ, especially handover with
+  1% genuine loss (more abandoned episodes).
+- Official numbers: Reethika's matrix on the frozen pin, all variants in one
+  session; the results in 7.4 come from a noisier WSL setup.
+- Fairness: a paragraph in the report on why undo is safe (section 7.2).
