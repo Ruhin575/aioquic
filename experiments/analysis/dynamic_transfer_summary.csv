@@ -1,0 +1,4 @@
+variant,profile,file_size,run,download_time_s,goodput_mbps,sha256_ok
+dynamic,moderate,10485760,1,88.174622,0.951,True
+dynamic,moderate,10485760,2,81.707724,1.027,True
+dynamic,moderate,10485760,3,82.947749,1.011,True

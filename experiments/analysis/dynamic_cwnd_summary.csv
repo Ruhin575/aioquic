@@ -1,0 +1,4 @@
+run,samples,first_cwnd,minimum_cwnd,maximum_cwnd,last_cwnd,decrease_samples,total_sampled_decrease_bytes,largest_sampled_decrease_bytes
+1,18920,12000,2400,71532,15140,262,1506930.0,38664.0
+2,18591,12000,2400,37704,23047,260,1648569.0,27461.0
+3,19098,12000,2400,57724,19948,178,1218905.0,36724.0

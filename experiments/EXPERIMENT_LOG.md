@@ -645,6 +645,7 @@
 
 - **2026-10-28T11:59:47** SUCCESS: profile=handover, file=10MB.bin, variant=huge-threshold, run=5
 
+
 - **2026-11-08T11:17:59** FAILED: profile=severe, file=1MB.bin, variant=stock, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
 
 - **2026-11-08T11:17:59** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
@@ -754,3 +755,17 @@
 - **2026-11-08T12:35:45** SUCCESS: profile=handover, file=10MB.bin, variant=k20, run=4
 
 - **2026-11-08T12:38:05** SUCCESS: profile=handover, file=10MB.bin, variant=k20, run=5
+
+- **2026-11-08T05:20:21** FAILED: profile=moderate, file=10MB.bin, variant=dynamic, run=1: Command '['sudo', 'bash', '/home/yshamili/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-08T05:20:21** FAILED: Command '['sudo', 'bash', '/home/yshamili/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-08T05:24:58** FAILED: profile=moderate, file=10MB.bin, variant=dynamic, run=1: Command '['/home/yshamili/aioquic/.venv/bin/python', '/home/yshamili/aioquic/experiments/transfer/run_transfer.py', '--file', '10MB.bin', '--variant', 'dynamic', '--profile', 'moderate', '--run', '1', '--output-dir', 'experiments/results/dynamic_test/', '--threshold', 'dynamic']' returned non-zero exit status 1.
+
+- **2026-11-08T05:24:58** FAILED: Command '['/home/yshamili/aioquic/.venv/bin/python', '/home/yshamili/aioquic/experiments/transfer/run_transfer.py', '--file', '10MB.bin', '--variant', 'dynamic', '--profile', 'moderate', '--run', '1', '--output-dir', 'experiments/results/dynamic_test/', '--threshold', 'dynamic']' returned non-zero exit status 1.
+
+- **2026-11-08T05:26:42** SUCCESS: profile=moderate, file=10MB.bin, variant=dynamic, run=1
+
+- **2026-11-08T05:35:04** SUCCESS: profile=moderate, file=10MB.bin, variant=dynamic, run=2
+
+- **2026-11-08T06:06:45** SUCCESS: profile=moderate, file=10MB.bin, variant=dynamic, run=3
