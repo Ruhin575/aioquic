@@ -22,6 +22,13 @@ K_SECOND = 1.0
 K_MAX = 40
 K_DECAY = 0.9  # per clean RTT, toward K_PACKET_THRESHOLD
 
+# dynamic_undo: congestion controller fields that are never rolled back.
+# Bytes in flight tracks the packets actually outstanding; the others are
+# measurements, not congestion state.
+UNDO_EXCLUDED_FIELDS = frozenset({"bytes_in_flight", "last_ack", "rtt"})
+# Give up on an undo episode if this many losses are awaiting late ACKs.
+MAX_UNDO_PENDING = 256
+
 # The number of ACK ranges kept. Duplicate detection accepts packets fewer than
 # twice this many below the largest received, and each range plus the gap above
 # it spans at least two, so the range dropped never holds a packet which was
@@ -180,8 +187,11 @@ class QuicPacketRecovery:
         self._dynamic_undo_mode = self._threshold_mode == "dynamic_undo"
         self._k_adaptive: float = float(K_PACKET_THRESHOLD)
         self._recent_lost: dict[int, tuple[float, float, int]] = {}
-        self._saved_cwnd: Optional[int] = None
-        self._saved_ssthresh: Optional[int] = None
+        # dynamic_undo: congestion state saved just before a loss cut the
+        # window, and the losses since then (packet number -> loss time),
+        # all of which must turn out spurious before the cut is undone
+        self._undo_snapshot: Optional[dict[str, Any]] = None
+        self._undo_pending: dict[int, float] = {}
         self._k_adapted_this_round: bool = False
         self._k_last_decay_time: float = 0.0
         self._pto_count = 0
@@ -297,7 +307,7 @@ class QuicPacketRecovery:
             )
 
     def _process_late_acks(self, ack_rangeset: RangeSet) -> None:
-        if not (self._dynamic_mode or self._dynamic_undo_mode) or not self._recent_lost:
+        if not (self._dynamic_mode or self._dynamic_undo_mode):
             return
         for pn in list(self._recent_lost):
             for r in ack_rangeset:
@@ -305,6 +315,102 @@ class QuicPacketRecovery:
                     _, _, gap = self._recent_lost.pop(pn)
                     self._adapt_k(gap)
                     break
+        if self._undo_pending:
+            for pn in list(self._undo_pending):
+                for r in ack_rangeset:
+                    if r.start <= pn < r.stop:
+                        del self._undo_pending[pn]
+                        break
+            if not self._undo_pending:
+                self._restore_undo()
+
+    def _cc_snapshot(self) -> dict[str, Any]:
+        return {
+            name: value
+            for name, value in vars(self._cc).items()
+            if name not in UNDO_EXCLUDED_FIELDS
+            and (value is None or isinstance(value, (bool, int, float)))
+        }
+
+    def _track_undo(
+        self,
+        *,
+        now: float,
+        snapshot: dict[str, Any],
+        packets: list[QuicSentPacket],
+        persistent_congestion: bool,
+    ) -> None:
+        """
+        Start or extend an undo episode after `packets` were declared lost.
+
+        `snapshot` is the congestion state from just before the losses were
+        reported. An episode starts only if reporting them changed that state,
+        i.e. the window was cut. Losses inside an open episode are added to it
+        whether or not they cut the window again, as they must also prove
+        spurious before the first snapshot is restored.
+        """
+        if persistent_congestion:
+            self._abandon_undo("persistent_congestion")
+            return
+        if self._undo_snapshot is None:
+            if self._cc_snapshot() == snapshot:
+                return
+            self._undo_snapshot = snapshot
+        for packet in packets:
+            if packet.is_ack_eliciting:
+                self._undo_pending[packet.packet_number] = now
+        if len(self._undo_pending) > MAX_UNDO_PENDING:
+            self._abandon_undo("too_many_losses")
+
+    def _expire_undo(self, now: float) -> None:
+        # A loss with no late ACK within 2 x smoothed RTT is treated as
+        # genuine, so the cut stands.
+        if not self._undo_pending or self._rtt_smoothed == 0:
+            return
+        if any(
+            loss_time + 2 * self._rtt_smoothed < now
+            for loss_time in self._undo_pending.values()
+        ):
+            self._abandon_undo("genuine_loss")
+
+    def _abandon_undo(self, reason: str) -> None:
+        if self._undo_snapshot is None and not self._undo_pending:
+            return
+        if self._quic_logger is not None:
+            self._quic_logger.log_event(
+                category="recovery",
+                event="undo_abandoned",
+                data={"reason": reason, "pending": len(self._undo_pending)},
+            )
+        self._undo_snapshot = None
+        self._undo_pending.clear()
+
+    def _restore_undo(self) -> None:
+        snapshot = self._undo_snapshot
+        self._undo_snapshot = None
+        if snapshot is None:
+            return
+        old_cwnd = self._cc.congestion_window
+        # If the window has already grown back past its pre-cut size, there
+        # is nothing to undo.
+        if old_cwnd >= snapshot["congestion_window"]:
+            return
+        for name, value in snapshot.items():
+            setattr(self._cc, name, value)
+        self._pacer.update_rate(
+            congestion_window=self._cc.congestion_window,
+            smoothed_rtt=self._rtt_smoothed,
+        )
+        if self._quic_logger is not None:
+            self._quic_logger.log_event(
+                category="recovery",
+                event="cwnd_restored",
+                data={
+                    "old_cwnd": old_cwnd,
+                    "new_cwnd": self._cc.congestion_window,
+                },
+            )
+            self._log_metrics_updated()
 
     def get_probe_timeout(self, *, include_max_ack_delay: bool = True) -> float:
         """
@@ -337,6 +443,7 @@ class QuicPacketRecovery:
         """
         if self._dynamic_mode or self._dynamic_undo_mode:
             self._expire_recent_lost(now)
+            self._expire_undo(now)
         is_ack_eliciting = False
         largest_acked = ack_rangeset.bounds().stop - 1
         largest_newly_acked = None
@@ -417,9 +524,16 @@ class QuicPacketRecovery:
                         not self._k_adapted_this_round
                         and self._k_adaptive > K_PACKET_THRESHOLD
                     ):
+                        old_k = self._k_adaptive
                         self._k_adaptive = max(
                             self._k_adaptive * K_DECAY, float(K_PACKET_THRESHOLD)
                         )
+                        if self._quic_logger is not None:
+                            self._quic_logger.log_event(
+                                category="recovery",
+                                event="k_decayed",
+                                data={"old_k": old_k, "new_k": self._k_adaptive},
+                            )
                     self._k_adapted_this_round = False
                     self._k_last_decay_time = now
 
@@ -591,12 +705,25 @@ class QuicPacketRecovery:
                 if space.loss_time is None or space.loss_time > packet_loss_time:
                     space.loss_time = packet_loss_time
 
+        persistent_congestion = self._in_persistent_congestion(packets=lost_packets)
+        undo_snapshot = None
+        if self._dynamic_undo_mode and space.is_application_data and lost_packets:
+            undo_snapshot = self._cc_snapshot()
+
         self._on_packets_lost(
             now=now,
             packets=lost_packets,
-            persistent_congestion=self._in_persistent_congestion(packets=lost_packets),
+            persistent_congestion=persistent_congestion,
             space=space,
         )
+
+        if undo_snapshot is not None:
+            self._track_undo(
+                now=now,
+                snapshot=undo_snapshot,
+                packets=lost_packets,
+                persistent_congestion=persistent_congestion,
+            )
 
     def _get_loss_space(self) -> Optional[QuicPacketSpace]:
         loss_space = None
