@@ -644,3 +644,17 @@
 - **2026-10-28T11:57:20** SUCCESS: profile=handover, file=10MB.bin, variant=huge-threshold, run=4
 
 - **2026-10-28T11:59:47** SUCCESS: profile=handover, file=10MB.bin, variant=huge-threshold, run=5
+
+- **2026-11-08T05:20:21** FAILED: profile=moderate, file=10MB.bin, variant=dynamic, run=1: Command '['sudo', 'bash', '/home/yshamili/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-08T05:20:21** FAILED: Command '['sudo', 'bash', '/home/yshamili/aioquic/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-08T05:24:58** FAILED: profile=moderate, file=10MB.bin, variant=dynamic, run=1: Command '['/home/yshamili/aioquic/.venv/bin/python', '/home/yshamili/aioquic/experiments/transfer/run_transfer.py', '--file', '10MB.bin', '--variant', 'dynamic', '--profile', 'moderate', '--run', '1', '--output-dir', 'experiments/results/dynamic_test/', '--threshold', 'dynamic']' returned non-zero exit status 1.
+
+- **2026-11-08T05:24:58** FAILED: Command '['/home/yshamili/aioquic/.venv/bin/python', '/home/yshamili/aioquic/experiments/transfer/run_transfer.py', '--file', '10MB.bin', '--variant', 'dynamic', '--profile', 'moderate', '--run', '1', '--output-dir', 'experiments/results/dynamic_test/', '--threshold', 'dynamic']' returned non-zero exit status 1.
+
+- **2026-11-08T05:26:42** SUCCESS: profile=moderate, file=10MB.bin, variant=dynamic, run=1
+
+- **2026-11-08T05:35:04** SUCCESS: profile=moderate, file=10MB.bin, variant=dynamic, run=2
+
+- **2026-11-08T06:06:45** SUCCESS: profile=moderate, file=10MB.bin, variant=dynamic, run=3
