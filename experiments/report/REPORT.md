@@ -213,7 +213,7 @@ K=100 achieved the highest mean goodput among these configurations, followed by 
 
 These results are descriptive comparisons rather than a fully controlled statistical comparison because the configurations belong to separate experiment datasets and have different run counts.
 
-Figure: `experiments/analysis/final_goodput_comparison.png`
+Figure: `../analysis/final_goodput_comparison.png`
 
 ### Congestion-Window Analysis
 
@@ -231,8 +231,8 @@ Congestion-window behaviour during the dynamic experiments was examined using se
 The congestion window varied considerably across the three runs. The decrease counts represent sample-to-sample decreases and do not necessarily correspond to distinct congestion events. The available measurements do not establish a causal relationship between adaptive threshold changes and congestion-window reductions.
 
 Figures:
-- `experiments/analysis/dynamic_cwnd_over_time.png`
-- `experiments/analysis/dynamic_cwnd_summary.csv`
+- `../analysis/dynamic_cwnd_over_time.png`
+- `../analysis/dynamic_cwnd_summary.csv`
 
 ## Limitations
 
