@@ -159,19 +159,103 @@ The confidence intervals shown are the individual, unadjusted 95% Welch confiden
 
 These results belong to the new instrumented experiment matrix and are reported separately from the earlier performance results. TCP was not included in this new matrix, so this analysis does not provide a new TCP comparison.
 
+## Offline Threshold Analysis and Dynamic Recovery
+
+### Offline Packet-Gap and Spurious-Loss Analysis
+
+Historical server-side qlogs from the `threshold_20` and `huge_threshold_100` datasets were analysed to examine packet reordering and spurious-loss indicators.
+
+The analysis covered 13,228 declared packet-loss events. Of these, 12,204 were identified as spurious-loss indicators based on subsequent acknowledgements, giving an aggregate indicator rate of approximately 92.26%.
+
+The analysis also examined the packet-number gap between a packet declared lost and the largest acknowledged packet at the time of the loss declaration. The observed gaps varied across network profiles and datasets. One negative-gap observation was retained in the validated dataset: `threshold_20`, severe profile, run 5, packet number 7. The available qlog information was insufficient to establish its exact cause.
+
+### Packet-Threshold Trade-off
+
+An offline analysis evaluated candidate packet thresholds K = 3, 5, 10, 20, 50 and 100 by replaying the observed acknowledgement timelines.
+
+The results showed a trade-off. Larger thresholds reduced the number of spurious-loss indicators for which the candidate packet threshold would have been crossed before the observed late acknowledgement. However, they also increased the delay before packet-threshold detection for packets without an observed late acknowledgement. These packets are treated as a proxy for genuine losses, not as confirmed genuine losses.
+
+For example, the pooled median positive crossing delays at K=20 were approximately 99 ms under moderate conditions and 130 ms under severe conditions. At K=50, these increased to approximately 307 ms and 396 ms, respectively.
+
+K=20 was identified as a useful candidate for further evaluation, while K=50 and K=100 represented more aggressive threshold settings. These are offline counterfactual estimates and do not simulate the complete QUIC recovery process, including retransmissions, congestion control and changes to subsequent ACK timelines.
+
+### Dynamic Recovery Experiments
+
+Three dynamic recovery experiments were conducted using a 10 MB file under the moderate network profile. All three transfers completed successfully and passed SHA-256 checksum validation.
+
+| Run | Download time (s) | Goodput (Mbps) | Adaptation events |
+|---|---:|---:|---:|
+| 1 | 88.17 | 0.951 | 461 |
+| 2 | 81.71 | 1.027 | 458 |
+| 3 | 82.95 | 1.011 | 490 |
+
+The average goodput was approximately 0.996 Mbps, and the average completion time was approximately 84.28 seconds.
+
+Across the three server-side qlogs, 1,409 `recovery:k_adapted` events were recorded. These include calls where the adaptive threshold remained unchanged and should not be interpreted as actual threshold increases. The observed actual increases were 65, 59 and 64 in runs 1, 2 and 3, respectively.
+
+The available qlogs did not record every internal threshold-decay operation. Therefore, the complete adaptive threshold timeline could not be reconstructed.
+
+### Performance Comparison of Static and Dynamic Configurations
+
+The following comparison uses separate 10 MB transfer datasets under the moderate network profile.
+
+| Configuration | Runs | Mean goodput (Mbps) | Sample SD (Mbps) | Mean completion time (s) |
+|---|---:|---:|---:|---:|
+| Stock, K20 dataset | 5 | 0.9924 | 0.0650 | 84.81 |
+| K=20 | 5 | 1.2802 | 0.0727 | 65.70 |
+| Stock, K100 dataset | 5 | 0.9784 | 0.0405 | 85.86 |
+| K=100 | 5 | 1.3634 | 0.1666 | 62.25 |
+| Dynamic | 3 | 0.9963 | 0.0401 | 84.28 |
+
+All reported transfers passed SHA-256 validation.
+
+K=100 achieved the highest mean goodput among these configurations, followed by K=20. However, K=100 also showed greater run-to-run variability. The dynamic configuration achieved mean goodput close to the two stock baselines in this three-run experiment.
+
+These results are descriptive comparisons rather than a fully controlled statistical comparison because the configurations belong to separate experiment datasets and have different run counts.
+
+Figure: `experiments/analysis/final_goodput_comparison.png`
+
+### Congestion-Window Analysis
+
+Congestion-window behaviour during the dynamic experiments was examined using server-side `recovery:metrics_updated` qlog events.
+
+| Metric | Run 1 | Run 2 | Run 3 |
+|---|---:|---:|---:|
+| CWND samples | 18,920 | 18,591 | 19,098 |
+| Initial CWND (bytes) | 12,000 | 12,000 | 12,000 |
+| Minimum CWND (bytes) | 2,400 | 2,400 | 2,400 |
+| Maximum CWND (bytes) | 71,532 | 37,704 | 57,724 |
+| Final CWND (bytes) | 15,140 | 23,047 | 19,948 |
+| Observed decrease samples | 262 | 260 | 178 |
+
+The congestion window varied considerably across the three runs. The decrease counts represent sample-to-sample decreases and do not necessarily correspond to distinct congestion events. The available measurements do not establish a causal relationship between adaptive threshold changes and congestion-window reductions.
+
+Figures:
+- `experiments/analysis/dynamic_cwnd_over_time.png`
+- `experiments/analysis/dynamic_cwnd_summary.csv`
+
 ## Limitations
 
-There are a few limitations to consider when interpreting the results.
+There are several limitations to consider when interpreting the results.
 
-First, the experiments used five repetitions for each QUIC configuration and network profile. Although this provides an initial comparison, more repetitions would help provide a stronger understanding of performance variability.
+First, the new instrumented goodput experiments used five repetitions for each QUIC configuration and network profile. Although this provides an initial comparison, more repetitions would help provide a stronger understanding of performance variability.
 
 Second, the experiments represent a limited set of network profiles and file-transfer conditions. The results may differ under other network conditions, file sizes, or configurations.
 
 Third, the TCP results were collected separately and have different numbers of runs in some profiles. Therefore, the TCP and QUIC comparisons should be interpreted with this difference in mind.
 
-Finally, the earlier performance results were not accompanied by statistical significance tests. Welch's t-tests with Holm correction were performed for the new instrumented goodput dataset, but these results are based on only five repetitions per configuration. Therefore, the findings should be treated as preliminary and may not generalize to all mobile networks.
+Fourth, the offline packet-threshold analysis replays observed ACK timelines and does not simulate the complete QUIC recovery process. Losses without observed late acknowledgements are treated as proxies rather than confirmed genuine losses.
+
+Fifth, the dynamic recovery evaluation consists of only three runs under the moderate network profile. The available qlogs do not expose the complete adaptive threshold and decay timeline. Therefore, the dynamic results are preliminary and do not establish a clear performance improvement over stock QUIC.
+
+Finally, CWND decreases observed in qlog samples do not independently establish their cause or demonstrate a causal relationship with adaptive threshold changes. The earlier performance results were also not accompanied by statistical significance tests. The new instrumented goodput results use five repetitions and should be treated as preliminary.
 
 ## Conclusion
 
-In the earlier performance experiments, increasing the loss detection threshold to 20 gave QUIC higher average goodput and shorter completion times than the default configuration across all five network profiles. The new instrumented experiments also showed higher mean goodput for K20 under mild, moderate, severe, and handover conditions, while baseline goodput was almost unchanged. After correcting for multiple comparisons using the Holm method, the improvements were statistically significant under moderate, severe, and handover conditions, but not under mild or baseline conditions. The new qlog analysis achieved 100% attribution coverage and showed differences in the distribution of packet-based and time-based loss attribution between stock and K20. TCP performed better than both QUIC configurations in the impaired profiles in the earlier comparison. Overall, the results suggest that the threshold modification can improve QUIC goodput under several impaired network conditions, although more repetitions and further analysis are needed.
-````
+The earlier performance experiments showed that increasing the packet loss detection threshold to 20 improved average goodput and reduced completion time compared with the default configuration across the five network profiles. The new instrumented experiments also showed higher mean goodput for K20 under mild, moderate, severe and handover conditions, while baseline goodput remained almost unchanged. After Holm correction, the improvements were statistically significant under moderate, severe and handover conditions, but not under mild or baseline conditions.
+
+The offline packet-gap and threshold analysis highlighted the trade-off between avoiding premature loss declarations and delaying packet-threshold detection. The new qlog analysis achieved 100% attribution coverage and showed differences in packet-based and time-based loss attribution between stock and K20.
+
+The static K=20 and K=100 experiments showed higher mean goodput than their respective stock baselines in the moderate-profile datasets. However, the three-run dynamic recovery experiment did not demonstrate a clear goodput improvement over stock QUIC. Its congestion-window measurements showed considerable variation, but did not establish a causal relationship between threshold adaptation and congestion-window changes.
+
+TCP performed better than both QUIC configurations in the impaired profiles in the earlier comparison. Overall, the results suggest that modifying QUIC loss detection can improve performance under some impaired network conditions, but further controlled experiments are needed to establish the effectiveness of dynamic recovery and the generality of these findings.
