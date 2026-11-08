@@ -296,6 +296,16 @@ class QuicPacketRecovery:
                 },
             )
 
+    def _process_late_acks(self, ack_rangeset: RangeSet) -> None:
+        if not (self._dynamic_mode or self._dynamic_undo_mode) or not self._recent_lost:
+            return
+        for pn in list(self._recent_lost):
+            for r in ack_rangeset:
+                if r.start <= pn < r.stop:
+                    _, _, gap = self._recent_lost.pop(pn)
+                    self._adapt_k(gap)
+                    break
+
     def get_probe_timeout(self, *, include_max_ack_delay: bool = True) -> float:
         """
         Return the PTO period, without backoff.
@@ -357,8 +367,11 @@ class QuicPacketRecovery:
                 for handler, args in packet.delivery_handlers:
                     handler(QuicDeliveryState.ACKED, *args)
 
-        # nothing to do if there are no newly acked packets
+        # nothing to do if there are no newly acked packets, except check for
+        # late ACKs: a declared-lost packet is no longer in sent_packets, so an
+        # ACK whose only new information is that late packet lands here
         if largest_newly_acked is None:
+            self._process_late_acks(ack_rangeset)
             return
 
         if largest_acked == largest_newly_acked and is_ack_eliciting:
@@ -414,15 +427,8 @@ class QuicPacketRecovery:
             log_rtt = False
 
         # A late ACK for a packet still in _recent_lost means that loss
-        # declaration was spurious; the stored gap is the K that would have
-        # avoided it, so feed it to the adaptive threshold.
-        if (self._dynamic_mode or self._dynamic_undo_mode) and self._recent_lost:
-            for pn in list(self._recent_lost):
-                for r in ack_rangeset:
-                    if r.start <= pn < r.stop:
-                        _, _, gap = self._recent_lost.pop(pn)
-                        self._adapt_k(gap)
-                        break
+        # declaration was spurious, so feed its gap to the adaptive threshold.
+        self._process_late_acks(ack_rangeset)
 
         self._detect_loss(now=now, space=space)
 
