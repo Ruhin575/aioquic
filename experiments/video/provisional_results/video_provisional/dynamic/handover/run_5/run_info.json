@@ -1,0 +1,26 @@
+{
+  "variant": "dynamic",
+  "profile": "handover",
+  "run": 5,
+  "run_id": "dynamic__handover__5",
+  "threshold_env": "dynamic",
+  "started": "2026-11-10T11:50:13",
+  "git": {
+    "commit": "82766da6815bdfd8e6c4f1bc6f7ce539e1399f9a",
+    "branch": "amrutha_video",
+    "dirty": false
+  },
+  "server_qlog_complete": true,
+  "result": {
+    "variant": "dynamic",
+    "profile": "handover",
+    "run": 5,
+    "startup_delay_s": 2.488,
+    "stall_count": 0,
+    "total_stall_s": 0.0,
+    "avg_bitrate_mbps": 0.283,
+    "quality_switches": 6,
+    "qoe_score": -0.3167
+  },
+  "finished": "2026-11-10T11:52:07"
+}
