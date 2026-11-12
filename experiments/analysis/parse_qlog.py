@@ -22,7 +22,8 @@ Format facts CONFIRMED from aioquic src/aioquic/quic/logger.py + recovery.py:
   * one file per connection, named <ODCID>.qlog; events are dicts
     {"name": "category:event", "time": <absolute wall-clock ms>, "data": {...}}
   * ACK ranges are inclusive [start, end]
-  * recovery:packet_lost data = {"type": "1RTT", "packet_number": N}
+  * recovery:packet_lost data includes type, packet_number, rule,
+    by_packet, and by_time.
   * recovery:metrics_updated data = cwnd, bytes_in_flight, ssthresh (only when set),
     cubic-wmax; RTT fields only on some events -> parser forward-fills
 
@@ -45,7 +46,7 @@ import pandas as pd
 METRIC_FIELDS = ["cwnd", "bytes_in_flight", "ssthresh",
                  "latest_rtt", "smoothed_rtt", "min_rtt"]
 COLUMNS = (["event_type", "time_s", "packet_number", "pn_space", "size",
-            "ack_delay"] + METRIC_FIELDS)
+            "ack_delay", "rule", "by_packet", "by_time"] + METRIC_FIELDS)
 APP_SPACE = "application"      # 0-RTT and 1-RTT packets share this packet-number space
 DEFAULT_SPACE = APP_SPACE
 
@@ -187,8 +188,15 @@ def parse_events(events, ranges_exclusive=False):
 
         elif short == "packet_lost":
             pn, space = _pn_and_space(data)
-            rows.append(dict(event_type="lost", time_s=t, packet_number=pn,
-                             pn_space=space))
+            rows.append(dict(
+                event_type="lost",
+                time_s=t,
+                packet_number=pn,
+                pn_space=space,
+                rule=data.get("rule"),
+                by_packet=data.get("by_packet"),
+                by_time=data.get("by_time"),
+            ))
 
         elif short == "metrics_updated":
             row = dict(event_type="metrics", time_s=t)
