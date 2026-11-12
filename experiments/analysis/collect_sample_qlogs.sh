@@ -13,7 +13,7 @@
 #
 # Existing sample data is never deleted silently: if logs for the variant already exist the
 # script stops and tells you the two ways to continue. Variant names must start with "p3sample"
-# so analyze_runs.py keeps excluding them from final results.
+# so analyze_run.py keeps excluding them from final results.
 #
 # Safety properties:
 #   * profile names are validated before anything is changed

@@ -1,0 +1,36 @@
+profile,weight_set,mean_base,mean_other,diff,winner,welch_p
+baseline,contract (0.3 / 0.05 / 0.1),4.475,4.475,0.0,tie,
+baseline,no switch penalty,4.675,4.675,0.0,tie,
+baseline,light switch penalty (0.05),4.575,4.575,0.0,tie,
+baseline,heavy switch penalty (0.2),4.275,4.275,0.0,tie,
+baseline,stall-heavy (1.0 / 0.2 / 0.1),4.475,4.475,0.0,tie,
+baseline,bitrate only,4.675,4.675,0.0,tie,
+baseline,MPC style: smoothness = mean |change| (weight 1),4.517,4.517,0.0,tie,
+mild,contract (0.3 / 0.05 / 0.1),0.54,0.775,0.235,k20,0.0913
+mild,no switch penalty,1.32,1.655,0.335,k20,0.0363
+mild,light switch penalty (0.05),0.93,1.215,0.285,k20,0.052
+mild,heavy switch penalty (0.2),-0.24,-0.105,0.135,k20,0.377
+mild,stall-heavy (1.0 / 0.2 / 0.1),0.365,0.775,0.41,k20,0.2083
+mild,bitrate only,1.392,1.655,0.263,k20,0.017
+mild,MPC style: smoothness = mean |change| (weight 1),0.932,1.24,0.308,k20,0.0314
+moderate,contract (0.3 / 0.05 / 0.1),-0.192,0.028,0.221,k20,0.2082
+moderate,no switch penalty,0.568,0.808,0.241,k20,0.0091
+moderate,light switch penalty (0.05),0.188,0.418,0.231,k20,0.0646
+moderate,heavy switch penalty (0.2),-0.952,-0.752,0.201,k20,0.4879
+moderate,stall-heavy (1.0 / 0.2 / 0.1),-0.344,0.028,0.372,k20,0.2512
+moderate,bitrate only,0.632,0.808,0.177,k20,0.0005
+moderate,MPC style: smoothness = mean |change| (weight 1),0.439,0.677,0.237,k20,0.0196
+severe,contract (0.3 / 0.05 / 0.1),-0.863,-0.082,0.781,k20,0.0003
+severe,no switch penalty,0.037,0.578,0.541,k20,0.0003
+severe,light switch penalty (0.05),-0.413,0.248,0.661,k20,0.0
+severe,heavy switch penalty (0.2),-1.763,-0.742,1.021,k20,0.005
+severe,stall-heavy (1.0 / 0.2 / 0.1),-2.006,-0.241,1.765,k20,0.0001
+severe,bitrate only,0.498,0.645,0.147,k20,0.0
+severe,MPC style: smoothness = mean |change| (weight 1),-0.083,0.46,0.543,k20,0.0002
+handover,contract (0.3 / 0.05 / 0.1),-0.386,-0.497,-0.11,stock,0.5412
+handover,no switch penalty,0.054,0.363,0.31,k20,0.0299
+handover,light switch penalty (0.05),-0.166,-0.067,0.1,k20,0.4321
+handover,heavy switch penalty (0.2),-0.826,-1.357,-0.53,stock,0.1231
+handover,stall-heavy (1.0 / 0.2 / 0.1),-0.951,-0.497,0.454,k20,0.2768
+handover,bitrate only,0.282,0.363,0.082,k20,0.001
+handover,MPC style: smoothness = mean |change| (weight 1),0.017,0.288,0.271,k20,0.0446
