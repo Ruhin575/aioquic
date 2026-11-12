@@ -1,307 +1,108 @@
-# Performance Analysis of QUIC under Packet Reordering
+# Loss Mechanism Analysis
 
-**Contributors:** Person 3 (Loss Mechanism Analysis); Pooja (Video Workload and QoE Analysis, with Amrutha for the testbed)
+*Section 3 and the gap analysis use the Phase 0 bulk matrix (`experiments/results/threshold_20`, 5 runs per cell, 10 MB download, 15 Mbit link, Cubic, base commit 342b224). Nothing in this section waits for other people's data; the only open items are the literature comparison (Section 7) and the dynamic variant's results, which belong to the team's dynamic analysis.*
 
-> **PRELIMINARY REPORT:** The loss-mechanism results currently include one 10 MB sample download per profile (`p3sample`, collected on 2026-10-22). The video section contains placeholders for results from the complete experiment matrix. Replace all preliminary values and `[X]` placeholders with verified results from the required real runs before finalizing this report. Files prefixed with `fake_` are test fixtures only and must never be treated as experimental results.
+## 1. The cascade
 
-## 1. Introduction
+QUIC loss detection (RFC 9002, Section 6.1.1) declares a packet lost when a packet sent later has been acknowledged and the unacknowledged packet is at least `kPacketThreshold` (3) packet numbers older. On mobile paths, reordering can make a packet arrive late without it being lost. The sender then goes through four steps:
 
-Packet reordering can occur on mobile network paths because of mechanisms such as carrier aggregation, PDCP processing, and handovers. When a transport protocol interprets a delayed packet as lost, it may trigger congestion-control responses even though the packet eventually arrives. In QUIC, this can lead to spurious loss declarations and unnecessary congestion-window reductions.
+1. Packets arrive out of order (carrier aggregation, PDCP, handovers).
+2. The sender sees an ACK for a newer packet while an older one is still missing, and declares the older packet lost.
+3. The congestion controller treats this as a congestion signal and reduces cwnd (Cubic multiplicatively decreases it).
+4. The "lost" packet's ACK arrives shortly after. The loss was **spurious**, and the rate cut was unnecessary.
 
-Bulk-download experiments help characterize the transport-level effects of reordering through metrics such as goodput, declared losses, spurious losses, and congestion-window behaviour. However, raw goodput does not fully describe the impact on an application such as video streaming. A video player buffers content ahead of playback and adapts its selected bitrate according to measured download throughput. A reduction in throughput may therefore appear as lower video quality, increased startup delay, playback stalls, or some combination of these effects.
+## 2. Packet sequence example
 
-This study examines both levels:
-
-1. **Transport-level behaviour:** how packet reordering interacts with QUIC loss detection and congestion control.
-2. **Application-level behaviour:** how the resulting network performance affects video playback and Quality of Experience (QoE).
-
-The central question is whether the transport-level effects observed in bulk transfers translate into measurable changes in video playback, and whether alternative QUIC configurations mitigate those effects.
-
-## 2. QUIC Loss-Detection Mechanism
-
-### 2.1 The loss-detection cascade
-
-QUIC loss detection (RFC 9002, Section 6.1.1) can declare a packet lost when a sufficiently newer packet has been acknowledged and the packet-number gap reaches the configured packet threshold, `kPacketThreshold` (3 in the current configuration).
-
-On mobile paths, packet reordering can cause a packet to arrive late without being lost. The sender may then go through the following sequence:
-
-1. Packets arrive out of order because of network effects such as carrier aggregation, PDCP processing, or handovers.
-2. The sender receives an ACK for a newer packet while an older packet remains unacknowledged. If the packet-number gap reaches the threshold, the sender declares the older packet lost.
-3. The congestion controller treats the loss declaration as a congestion signal and reduces the congestion window (`cwnd`).
-4. An ACK for the supposedly lost packet arrives later. The loss is classified as **spurious**, meaning that the original packet was acknowledged after being declared lost.
-
-This can cause an unnecessary congestion-window reduction when the loss declaration was caused by reordering rather than actual packet loss.
-
-### 2.2 Packet-sequence example
-
-```text
-Sender                                      Receiver
-  | send pkt 1,2,3,4,5,6,7 --------------------> |
-  |                                               | pkt 3 is delayed
-  | <-------------------- ACKs for 1,2,4,5,6,7 -- |
-  | largest acknowledged = 7                     |
-  | packet 3 meets the packet-threshold condition |
-  | pkt 3 declared LOST; congestion response      |
-  | <-------------------- ACK including pkt 3 --- |
-  | pkt 3 acknowledged after being declared lost |
-  |                  SPURIOUS LOSS                |
+```
+Sender                                   Receiver
+  | send pkt 1,2,3,4,5,6,7 ------------>  |
+  |                                       |  pkt 3 delayed in the network
+  |  <---------- ACK 1,2,4,5,6,7 -------  |
+  |  largest acked = 7, 7 - 3 = 4 >= 3:   |
+  |  pkt 3 declared LOST, cwnd cut        |
+  |  <---------- ACK 1-7 (3 arrives) ---  |
+  |  pkt 3 acked AFTER being declared     |
+  |  lost -> SPURIOUS LOSS                |
 ```
 
-The example illustrates the mechanism. The actual declaration depends on the packet-number gap and the recovery implementation's loss-detection rules.
+## 3. What we measured (bulk matrix, mean of 5 runs)
 
-### 2.3 Definition of spurious loss
+Definition: a spurious loss is a packet number declared lost at time L and first seen in an ACK at a later time A > L (sender-side server qlog, application packet-number space).
 
-A spurious loss is a packet declared lost at time \(L\) and subsequently acknowledged at time \(A\), where \(A > L\).
+| Profile | Goodput stock (Mbps) | Goodput k20 (Mbps) | Gain | Declared lost, stock | Spurious, stock | Declared lost, k20 | Spurious, k20 |
+|---|---|---|---|---|---|---|---|
+| baseline | 13.36 | 13.35 | 0% | 0 | n/a | 0 | n/a |
+| mild | 2.39 | 3.00 | +26% | 492 | 91.9% | 414 | 86.4% |
+| moderate | 0.99 | 1.28 | +29% | 781 | 95.0% | 703 | 94.0% |
+| severe | 0.75 | 1.02 | +35% | 708 | 91.2% | 582 | 89.5% |
+| handover | 0.48 | 0.59 | +23% | 943 | 87.8% | 850 | 85.9% |
 
-A declared loss may result from packet-threshold detection, time-threshold detection, or PTO-related recovery behaviour. The data belonging to a declared-lost packet may already have been retransmitted in another packet. Therefore, a late ACK does not mean the data was delivered only once. Additionally, aioquic retains a bounded ACK history, so sufficiently late acknowledgements may no longer be observable.
+A second set with a packet threshold of 100 gives the same picture (moderate 1.36 Mbps, severe 0.95 Mbps), so the effect is capped, not simply limited by a too-small threshold. TCP on the same profiles reaches 5.3 Mbps at moderate (P2's baseline).
 
-## 3. Experimental Methodology
+**Median late-ACK delay** (time between a packet being declared lost and the ACK that shows it arrived; pooled over the 5 runs, `detect_spurious.py`): stock 26 ms (mild), 26 ms (moderate), 39 ms (severe), 51 ms (handover); k20 9, 10, 17 and 28 ms. With k20 the remaining spurious declarations are wrong by only about 10 to 30 ms, which is consistent with the time rule being the one that fires.
 
-### 3.1 Shared testbed and network profiles
+**Congestion-window reductions** (`analyze_run.py`, `cwnd_decrease_events`: number of times the logged cwnd decreases, per run, mean of 5 runs):
 
-The experiments use the same namespace topology, netem profiles, 15 Mbit/s link, and server as the bulk-transfer matrix. The network profiles are:
+| Profile | Declared losses, stock | cwnd decreases, stock | Declared losses, k20 | cwnd decreases, k20 |
+|---|---|---|---|---|
+| mild | 492 | 35 | 414 | 34 |
+| moderate | 781 | 112 | 703 | 109 |
+| severe | 708 | 124 | 582 | 102 |
+| handover | 943 | 210 | 850 | 190 |
 
-- Baseline
-- Mild
-- Moderate
-- Severe
-- Handover
+There are many more declared losses than cwnd decreases because the controller reduces at most once per recovery period. k20 lowers declared losses by 10 to 18% but cuts the window almost as often (3% fewer on moderate, 18% fewer on severe), so most of its goodput gain is not explained by fewer cuts alone.
 
-The QUIC variants considered in the video workload are stock, K20, K100, and dynamic. The number of runs per cell is **[X]**. Client-side and server-side qlogs are retained for every run.
+Limitations: "declared lost" means removed as lost by any recovery rule (packet threshold, time threshold or PTO); the data of a packet declared lost may already have been retransmitted, so a late ACK does not prove the receiver got the data only once; aioquic keeps a bounded number of ACK ranges, so a very old late ACK may be invisible.
 
-### 3.2 Bulk-download workload
+## 4. Which rule declares the losses
 
-The loss-mechanism analysis uses sender-side (server) qlogs from the application packet-number space for a 10 MB download over the emulated 15 Mbit/s link.
+At the moment a loss is declared we reconstruct the gap = (largest acknowledged packet number) - (lost packet number) from the ACK frames (`loss_gap_by_rule.py`). The packet rule can only fire when the gap reaches the threshold.
 
-The bulk-transfer analysis records:
+| Profile | Stock: gap >= 3 | Stock: median gap | k20: gap >= 20 | k20: median gap |
+|---|---|---|---|---|
+| mild | 95.7% | 14 | 50.4% | 17 |
+| moderate | 87.4% | 7 | 10.1% | 8 |
+| severe | 86.6% | 6 | 11.8% | 9 |
+| handover | 81.9% | 5 | 5.7% | 6 |
 
-- Goodput
-- Number of packets declared lost
-- Number and rate of spurious losses
-- Median delay between loss declaration and late acknowledgement
-- Congestion-window behaviour
-- Cumulative acknowledged QUIC packet bytes
+With a threshold of 100, essentially none of the declared losses (about 8% in mild) reach a gap of 100. So most losses that remain after raising the threshold have a typical gap of only 6 to 9 packets: the packet rule cannot have declared them, and the time threshold or the PTO must have. The qlog does not say which, and some stock losses with gap >= 3 may also have been declared by the time rule. This is why a rule-attribution field is being added to `recovery.py`.
 
-The packet-byte metric includes QUIC packet headers and retransmitted copies. It is not a measure of unique file-payload bytes delivered.
+**Rule attribution from the instrumented build** (Reethika, `experiments/results/attribution_main`; 50 runs: stock and k20, 5 profiles, 5 runs each; every one of the 26,786 loss events carries a rule, coverage 100%). Counts are summed over the 5 runs; the rule categories are mutually exclusive:
 
-### 3.3 Video content and workload
+| Variant | Profile | Declared losses | Packet only | Time only | Both | PTO |
+|---|---|---|---|---|---|---|
+| stock | mild | 2095 | 91.2% | 4.9% | 3.9% | 0.00% |
+| stock | moderate | 3902 | 77.9% | 12.9% | 9.2% | 0.00% |
+| stock | severe | 3321 | 77.7% | 12.6% | 9.7% | 0.03% |
+| stock | handover | 4496 | 67.7% | 19.1% | 13.1% | 0.04% |
+| k20 | mild | 2477 | 52.3% | 44.3% | 3.4% | 0.00% |
+| k20 | moderate | 3466 | 3.7% | 93.2% | 3.0% | 0.00% |
+| k20 | severe | 2823 | 12.7% | 85.2% | 2.1% | 0.00% |
+| k20 | handover | 4206 | 3.4% | 95.4% | 1.2% | 0.02% |
 
-The video workload uses one 2-minute test video with five renditions: 0.25, 0.5, 1, 2.5, and 5 Mbps. Each rendition is divided into 4-second segments, with one manifest containing keyframe-aligned representations. The content is encoded at constant bitrate so that each rendition's measured bitrate matches its nominal value. Verify the real bitrates using ffprobe or file sizes and record them here: **[X: verified real bitrates]**.
+* **Stock:** the packet rule declares most losses (68 to 91%), as the cascade in Section 1 predicts.
+* **k20:** the time rule declares 93% (moderate), 85% (severe) and 95% (handover) of the losses; only mild stays mixed (52% packet, 44% time). PTO is negligible everywhere (at most 2 events).
+* **Agreement with the gap analysis above.** The share of k20 losses that the packet rule could have declared (packet only plus both) is 56% mild, 7% moderate, 15% severe and 5% handover, against 50%, 10%, 12% and 6% from the independent gap reconstruction on the earlier run set. The two methods agree within a few points. The instrumented rerun also reproduces the declared-loss counts (stock moderate 780 per run against 781; the largest difference, severe, is 6%).
+* Caution (as in `section_attribution.md`): this shows which rule recorded the declaration, not that the declarations are wrong. What shows they are wrong is the spurious share, which stays at 86 to 94% under k20.
 
-The bitrate ladder starts below 1 Mbps because stock QUIC reaches only approximately 0.5 to 3 Mbps on the impaired profiles in the bulk matrix (base commit `342b224`). This provides lower representations that the player can select when throughput is constrained.
+**Goodput with Holm-corrected tests on the instrumented set** (Reethika's Welch tests, adjusted across the 5 profiles): k20 over stock is +32.8% moderate, +31.7% severe and +27.2% handover (all significant after correction), +19.1% mild (raw p = 0.047, adjusted p = 0.095, not significant after correction) and no difference at baseline.
 
-### 3.4 Video client and playback simulation
+## 5. Figures
 
-The video client, `stream_client.py`, uses one persistent HTTP/3 connection (aioquic, Cubic) and requests segments sequentially.
+**Figure 2: cwnd over time, baseline vs moderate** (`plots/median_runs/plot2_cwnd.png`). Median-goodput stock run of each profile from the Phase 0 matrix (`threshold_20`): baseline run 3 (13.36 Mbps) and moderate run 2 (0.95 Mbps), picked with `plot_mechanism.py median-run`. Each panel has its own scales. Caption: baseline grows in slow start to about 340 KB within half a second, then keeps growing slowly to 434 KB with no declared losses. Moderate reaches about 240 KB in its first 0.7 s, is cut at its first declared losses and then stays in a sawtooth below about 40 KB for the remaining 90 s; 847 of its 883 declared losses (95.9%) are spurious (green triangles), and the window drops at nearly every cluster of them. (The 240 KB in the panel title is the start-up peak, not the steady-state window.)
 
-The client uses throughput-based bitrate adaptation:
+**Figure 4: cumulative acknowledged packet bytes, baseline vs severe** (`plots/median_runs/plot4_cumulative.png`). Median-goodput stock runs: baseline run 3 and severe run 4 (0.76 Mbps). This counts whole acknowledged packets (headers and retransmissions included), not unique file payload. Caption: the baseline run delivers 10.8 MB of acknowledged packet bytes in 6.4 s; the severe run needs 110 s for 11.6 MB, about 17 times longer.
 
-- It computes the harmonic mean of the last three segment-download throughput samples.
-- It applies a safety factor of 0.8.
-- The first segment is requested at the lowest bitrate rung.
+The earlier `plot2_cwnd.png` and `plot4_cumulative.png` in the same folder come from the Phase 0 pipeline and use different runs; these two figures replace them in this section.
 
-The playback buffer has a maximum capacity of **12 seconds**. This value is based on the dash.js `stableBufferTime` setting and is fixed before the experiment matrix so that all variants use the same buffer cap. Confirm that this is the final agreed value before running the complete matrix.
+## 6. Interpretation
 
-Playback is simulated in real time. Video decoding is not performed and audio is ignored.
+* Goodput falls from 13.4 Mbps (baseline) to 0.99 Mbps (moderate), about 93% lower, while the link is only about 7% utilised and baseline has no declared losses. The path is not congested; the sender is reacting to losses that did not happen.
+* 86 to 95% of declared losses are spurious in every impaired profile (stock 88 to 95%, k20 86 to 94%).
+* The few genuine losses (about 34 moderate, 67 severe in the first sample run) match the configured netem loss (0.3% and 0.5%), which supports the detector. They also trigger cwnd cuts, so reordering is not the only cause of cuts.
+* Raising the packet threshold to 20 or 100 gives only +23 to +35% goodput and reduces declared losses by only about 10 to 18%. Packet-threshold tuning alone does not close the gap to TCP, and the attribution table now shows why: once the packet threshold is raised, the time rule declares 85 to 95% of the remaining losses on moderate, severe and handover (PTO is negligible). The dynamic packet threshold only adapts the packet rule, so on its own it should behave like k20 at best; its first bulk results (3 runs, moderate) are 1.00 Mbps, no better than stock (0.99) and well below k20 (1.28), and are still being examined.
+* Limitations: simulated reordering from netem; one bulk size; one packet-number space analysed (application); medians of a stochastic emulation.
 
-- **Startup delay:** measured from before the QUIC handshake until one segment has been buffered.
-- **Stall start:** occurs when the playback buffer reaches zero before the video has finished downloading.
-- **Stall end:** occurs when one segment has been buffered again.
+## 7. Input for the literature comparison (for P5)
 
-### 3.5 Video metrics and QoE
-
-The video workload records the following metrics per run:
-
-- Startup delay
-- Stall count
-- Total stall time
-- Average bitrate
-- Number of quality switches
-- QoE score
-
-The proposed QoE model is:
-
-\[
-\mathrm{QoE}
-=
-\mathrm{avg\_bitrate\_mbps}
-- 0.3 \times \mathrm{stalls}
-- 0.05 \times \mathrm{stall\_seconds}
-- 0.1 \times \mathrm{quality\_switches}
-\]
-
-The final weights must be confirmed and recorded here: **[X: final QoE weights]**. Since the weights are a modelling choice, include a sensitivity check to determine whether the conclusions hold across reasonable alternative weights.
-
-### 3.6 Validation
-
-The video implementation has 21 offline tests covering the ABR rule, buffer and stall accounting, and manifest parser. Record the final test result and any changes made before the experiment matrix: **[X: validation result]**.
-
-For the baseline trace without netem, record:
-
-- Startup delay: **[X] s**
-- Number of stalls: **[X]**
-- Number of segments until the top rung is reached: **[X]**
-
-The baseline target is startup below 3 seconds, no stalls, and selection of the top bitrate rungs.
-
-## 4. Bulk-Transfer Results: Loss Mechanism Analysis
-
-### 4.1 Preliminary measurements
-
-**Data source:** Sender-side (server) qlog, application packet-number space, for a 10 MB download over the emulated 15 Mbit/s link.
-
-The values below are preliminary and come from one sample download per profile (`p3sample`, collected on 2026-10-22). Replace them with results from the complete experiment matrix (5 runs per cell) before finalizing the report.
-
-| Profile | Goodput (Mbps) | Declared lost | Spurious | Spurious rate | Median late-ACK delay |
-|---|---:|---:|---:|---:|---:|
-| Baseline | 13.34 | 0 | 0 | 0% | N/A |
-| Mild | Not run yet | — | — | — | — |
-| Moderate | 0.92 | 794 | 760 | 95.7% | [X] ms |
-| Severe | 0.81 | 630 | 563 | 89.4% | [X] ms |
-| Handover | Not run yet | — | — | — | — |
-
-The median late-ACK delay should be obtained from the corresponding JSON summary in `experiments/analysis/sample_data/` after running `detect_spurious.py` with the `--summary` option.
-
-### 4.2 Congestion-window behaviour
-
-**Figure 2: Congestion Window Over Time — Baseline vs Moderate**
-
-**File:** `plots/plot2_cwnd.png`
-
-The preliminary figure compares the baseline and moderate profiles using one sample run per profile. For the final report, use the median-goodput run of the stock variant and record its run identifier.
-
-In the baseline run, the congestion window grows rapidly during slow start, reaches approximately 290 KB within 0.5 seconds, and later grows to around 391 KB without declared losses. In the moderate run, the congestion window remains below approximately 35 KB and repeatedly falls to around 3–5 KB. These reductions coincide with clusters of declared losses, 760 of the 794 declared losses being classified as spurious.
-
-Each panel uses its own time and congestion-window scale.
-
-### 4.3 Cumulative acknowledged packet bytes
-
-**Figure 4: Cumulative Acknowledged Packet Bytes — Baseline vs Severe**
-
-**File:** `plots/plot4_cumulative.png`
-
-The preliminary baseline transfer finishes in approximately 6 seconds, while the severe-profile transfer takes approximately 103 seconds and progresses at a much lower rate.
-
-The plotted quantity counts acknowledged QUIC packet bytes, including packet headers and retransmitted copies. It is not a measure of unique file-payload bytes delivered.
-
-### 4.4 Preliminary interpretation
-
-- **Large throughput reduction:** Goodput falls from approximately 13.3 Mbps in the baseline run to 0.92 Mbps in the moderate run, a reduction of about 93%. The baseline run has no declared losses. This suggests that the observed throughput reduction is not explained simply by sustained link saturation.
-- **High spurious-loss rate:** Approximately 95.7% of declared losses in the moderate run and 89.4% in the severe run were classified as spurious.
-- **Random-loss consistency check:** The 34 moderate and 67 severe declared losses that were not classified as spurious can be compared with the configured netem loss rates of 0.3% and 0.5%. This is only a rough consistency check; it does not independently prove that these packets were genuinely lost.
-- **Packet-threshold attribution:** The qlog does not directly identify which loss-detection rule caused each loss declaration. The high-threshold control experiment is needed to help isolate the effect of packet-threshold detection. Record the control-run goodput for each profile here: **[X]**.
-- **Congestion-window reductions:** Number of congestion-window reductions following spurious loss declarations in the moderate run: **[X]**. Fill this using the verified analysis output.
-- **Study limitations:** These observations come from one run per profile and only the application packet-number space. A single run is one sample of a stochastic network emulation, so the results must be validated against the complete experiment matrix.
-
-## 5. Video Results: QoE under Reordering
-
-### 5.1 Results table
-
-Populate the following table using real runs only. Do not use `fake_video_results.csv` or other fake data as experimental results.
-
-| Profile | Variant | Startup (s) | Stalls / run | Stall time (s) | Avg bitrate (Mbps) | Switches | QoE |
-|---|---|---:|---:|---:|---:|---:|---:|
-| Baseline | Stock | [X] | [X] | [X] | [X] | [X] | [X] |
-| Mild | Stock | [X] | [X] | [X] | [X] | [X] | [X] |
-| Moderate | Stock | [X] | [X] | [X] | [X] | [X] | [X] |
-| Severe | Stock | [X] | [X] | [X] | [X] | [X] | [X] |
-| Handover | Stock | [X] | [X] | [X] | [X] | [X] | [X] |
-| Baseline | K20 | [X] | [X] | [X] | [X] | [X] | [X] |
-| Mild | K20 | [X] | [X] | [X] | [X] | [X] | [X] |
-| Moderate | K20 | [X] | [X] | [X] | [X] | [X] | [X] |
-| Severe | K20 | [X] | [X] | [X] | [X] | [X] | [X] |
-| Handover | K20 | [X] | [X] | [X] | [X] | [X] | [X] |
-| Baseline | K100 | [X] | [X] | [X] | [X] | [X] | [X] |
-| Mild | K100 | [X] | [X] | [X] | [X] | [X] | [X] |
-| Moderate | K100 | [X] | [X] | [X] | [X] | [X] | [X] |
-| Severe | K100 | [X] | [X] | [X] | [X] | [X] | [X] |
-| Handover | K100 | [X] | [X] | [X] | [X] | [X] | [X] |
-| Baseline | Dynamic | [X] | [X] | [X] | [X] | [X] | [X] |
-| Mild | Dynamic | [X] | [X] | [X] | [X] | [X] | [X] |
-| Moderate | Dynamic | [X] | [X] | [X] | [X] | [X] | [X] |
-| Severe | Dynamic | [X] | [X] | [X] | [X] | [X] | [X] |
-| Handover | Dynamic | [X] | [X] | [X] | [X] | [X] | [X] |
-
-Report the number of runs per cell and the aggregation method used. Error bars in the figures should represent 95% confidence intervals over the runs in each cell.
-
-### 5.2 QoE and bitrate figures
-
-- **Figure 5 — QoE per profile and variant:** `plot5_qoe.png`. Caption: **[X]**
-- **Figure 6 — Average bitrate:** `plot6_bitrate.png`. Caption: **[X]**
-- **Figure 7 — Stalls per run:** `plot7_stalls.png`. Caption: **[X]**
-- **Figure 8 — Playback timeline:** `plot8_timeline.png`. Show buffer level and bitrate over time for one stock run and one K20 run under the same profile. Caption: **[X]**
-
-All figures should be accompanied by their CSV data and alt-text files.
-
-### 5.3 Video interpretation
-
-Use the verified experiment matrix to address the following questions:
-
-1. **Goodput-to-QoE impact:** How much of the goodput reduction observed in the bulk matrix appears as lower video bitrate, and how much appears as playback stalls?
-2. **Variant comparison:** Does K20 improve QoE in the profiles where it improved goodput (reported as +23% to +35% in the bulk results)? Does dynamic go further? Include K100 in the comparison.
-3. **Loss mechanism in video runs:** What fraction of declared losses in the video runs are spurious, based on server qlogs analysed using `analyze_runs.py`?
-4. **Loss-rule attribution:** Which rule—packet threshold, time threshold, or PTO-related recovery—declares the losses in the video runs? Use Reethika's attribution table.
-5. **Buffer behaviour:** How do bitrate adaptation and the playback buffer interact under each profile? Distinguish a quality reduction from an actual playback stall.
-
-Do not infer causation from a correlation alone. Support explanations with the corresponding run-level measurements and qlog evidence.
-
-## 6. Cross-Workload Discussion
-
-This section connects the transport-level results in Section 4 with the application-level results in Section 5.
-
-### 6.1 From goodput to video quality
-
-Compare bulk goodput with average video bitrate for the same network profile and QUIC variant. Determine whether a reduction in available throughput primarily causes the player to select a lower representation, or whether it also causes the playback buffer to empty and produce stalls.
-
-A lower average video bitrate does not necessarily imply playback interruption: a player may preserve continuous playback by selecting a lower representation. Conversely, a shortfall in segment-download throughput can cause stalls if the playback buffer is depleted before the next segment is available.
-
-### 6.2 Do transport improvements translate into QoE improvements?
-
-Compare stock, K20, K100, and dynamic using both transport-level and video-level metrics. Determine whether improvements in goodput are accompanied by:
-
-- Higher average video bitrate
-- Lower startup delay
-- Fewer stalls or less total stall time
-- Fewer or more frequent quality switches
-- Higher QoE
-
-An improvement in one metric does not guarantee improvement in every other metric. Discuss any trade-offs observed in the data.
-
-### 6.3 Loss behaviour during video streaming
-
-Use the server qlogs from the video runs to calculate the spurious-loss share and relate it to bitrate adaptation and playback behaviour. Where possible, connect the observed losses to the loss-rule attribution results. State clearly when the available evidence cannot distinguish packet-threshold, time-threshold, and PTO-related loss declarations.
-
-## 7. Literature Comparison
-
-Compare the observed mechanism with the explanations in Marx (2023) and Palmer (2024).
-
-Address the following questions:
-
-- Do the papers describe a similar relationship between packet reordering, spurious loss detection, congestion-window reduction, and throughput?
-- Which aspects of the mechanism observed in the qlogs are consistent with their explanations?
-- What evidence from the bulk-transfer and video experiments supports or contradicts those explanations?
-
-Complete this comparison using the relevant findings from the papers and the verified results from the full experiment matrix. Avoid claiming that the experiments establish more than the measured evidence supports.
-
-## 8. Limitations
-
-### 8.1 Transport-level analysis
-
-- A declared loss may result from packet-threshold detection, time-threshold detection, or PTO-related recovery behaviour.
-- The data belonging to a declared-lost packet may already have been retransmitted in another packet. A late ACK therefore does not imply that the data was delivered only once.
-- aioquic retains a bounded ACK history, so sufficiently late acknowledgements may no longer be observable.
-- The preliminary observations come from one run per profile and only the application packet-number space. The complete experiment matrix is required to assess variability.
-
-### 8.2 Video workload
-
-- Playback is simulated: no video decoding is performed, audio is ignored, and the experiment represents one viewer using one connection.
-- The content is synthetic and encoded at constant bitrate. Real video has variable segment sizes, which can change throughput samples and adaptation behaviour.
-- The QoE weights are a modelling choice. Conclusions should be checked across reasonable alternative weights: **[X: sensitivity-check result]**.
-- The final number of runs per cell is **[X]**. Differences between close variants may not be statistically significant; report the results of the statistical analysis.
-- The buffer cap and all other client parameters must remain fixed across variants and profiles for a fair comparison.
-
-## 9. Conclusion
-
-**[X: Complete this section after the full experiment matrix has been analysed.]**
-
-Summarize the principal transport-level findings, the effect of packet reordering on loss detection and congestion control, and the extent to which those effects translate into video QoE degradation. State which QUIC variants perform better under which network profiles, identify relevant trade-offs, and distinguish statistically supported findings from observations that remain inconclusive.
+* [Marx 2023 and Palmer 2024: does our mechanism match their explanation? Note that our data shows a second rule, the time threshold, declaring most of the remaining losses once the packet threshold is raised.]

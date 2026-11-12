@@ -1,0 +1,16 @@
+variant,profile,n,mean,ci95
+dynamic,baseline,5,4.475,0.0
+dynamic,handover,5,-0.7979,1.2285
+dynamic,mild,5,0.4017,0.5624
+dynamic,moderate,5,-0.0726,0.1815
+dynamic,severe,5,-0.4486,0.5439
+k20,baseline,5,4.475,0.0
+k20,handover,5,-0.4967,0.2368
+k20,mild,5,0.775,0.1642
+k20,moderate,5,0.0283,0.2905
+k20,severe,5,-0.0815,0.1764
+stock,baseline,5,4.475,0.0
+stock,handover,5,-0.3865,0.4108
+stock,mild,5,0.54,0.2846
+stock,moderate,5,-0.1922,0.3387
+stock,severe,5,-0.8627,0.2753
