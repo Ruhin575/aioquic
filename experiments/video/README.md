@@ -11,7 +11,7 @@ Pooja owns everything in this folder except the encoded content and `run_video.p
 | `parse_video_results.py` | per-segment logs -> one QoE summary row per run (Day 0 schema) | Pooja |
 | `plot_qoe.py` | Plots 5, 6, 7 (summary) and 8 (timeline), each with CSV data and alt-text | Pooja |
 | `test_video_core.py`, `test_data/manifest_20s.mpd` | 21 offline tests; the MPD is a real ffmpeg-written manifest | Pooja |
-| `local_smoke_test.sh` | real client vs a real local aioquic server on loopback (no sudo, no namespaces) | Pooja |
+| `smoke_test.sh` | real client vs a real local aioquic server on loopback (no sudo, no namespaces) | Pooja |
 | `make_video_content.sh`, `check_video_content.py`, `run_video.py`, `fake_video_results.csv`, `make_fake_video_results.py` | content build, acceptance checks, runner, Day 0 stub | Amrutha (already on main) |
 
 
@@ -21,7 +21,7 @@ Pooja owns everything in this folder except the encoded content and `run_video.p
 python -m pytest experiments/video/test_video_core.py -q          # 21 tests, offline
 python experiments/video/plot_qoe.py summary --results experiments/video/fake_video_results.csv --out experiments/video/plots   # Amrutha's stub
 bash experiments/video/make_video_content.sh                       # once, about 40 s, needs ffmpeg
-bash experiments/video/local_smoke_test.sh                         # real client vs a real local aioquic server
+bash experiments/video/smoke_test.sh                         # real client vs a real local aioquic server
 ```
 The smoke test needs the aioquic example dependencies (`pip install wsproto starlette jinja2 dnslib httpx`).
 On loopback the link is fast, so expect no stalls, startup well under 3 s and a climb to the 5 Mbps rung.
