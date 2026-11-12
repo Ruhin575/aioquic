@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""analyze_runs.py - analyse every selected run listed in P1's results CSV.
+"""analyze_run.py - analyse every selected run listed in P1's results CSV.
 
 For each selected row of experiments/results/transfers.csv it:
   1. derives the SERVER qlog directory (the sender in a download) from the CSV's
@@ -20,9 +20,9 @@ A run whose qlog directory is missing or holds several .qlog files is SKIPPED an
 any selected run was skipped, so a partial summary cannot pass for a complete one.
 
 Run from the repository root:
-    python experiments/analysis/analyze_runs.py
-    python experiments/analysis/analyze_runs.py --variant stock --profile moderate
-    python experiments/analysis/analyze_runs.py --include-samples \\
+    python experiments/analysis/analyze_run.py
+    python experiments/analysis/analyze_run.py --variant stock --profile moderate
+    python experiments/analysis/analyze_run.py --include-samples \\
         --results experiments/analysis/sample_data/transfers_p3sample.csv
 """
 import argparse
@@ -42,18 +42,30 @@ SAMPLE_PREFIX = "p3sample"
 
 
 def server_dir_for(qlog_path):
-    parts = Path(str(qlog_path)).parts
-    if "client-qlog" not in parts:
-        raise ValueError("qlog_path has no 'client-qlog' component: %s" % qlog_path)
-    return Path(*["server-qlog" if p == "client-qlog" else p for p in parts])
+    """Return the SERVER qlog directory (relative to the repo root) for a CSV qlog_path.
+
+    Two layouts are supported:
+      * P1 layout : <...>/client-qlog/<variant>/<profile>/<run>      -> swap client-qlog for server-qlog
+      * P4 matrix : <...>/<variant>/<profile>/run_N  (a run directory holding client-qlog/ and server-qlog/)
+                                                                     -> <run dir>/server-qlog
+    Absolute paths written on another machine (e.g. /home/x/project/experiments/...) are mapped
+    onto this repository by keeping the part that starts at the "experiments" folder."""
+    parts = Path(str(qlog_path).replace("\\", "/")).parts
+    if "experiments" in parts:
+        parts = parts[parts.index("experiments"):]
+    if "client-qlog" in parts:
+        return Path(*["server-qlog" if p == "client-qlog" else p for p in parts])
+    if parts and parts[-1].startswith("run"):
+        return Path(*parts) / "server-qlog"
+    raise ValueError("cannot derive a server qlog directory from qlog_path: %s" % qlog_path)
 
 
-def analyze_row(row, root, parsed_dir, strict):
+def analyze_row(row, root, parsed_dir, strict, tag=""):
     srv = root / server_dir_for(row["qlog_path"])
     if not srv.is_dir():
         raise FileNotFoundError("server qlog directory not found: %s" % srv)
     df = parse_file(srv, strict=strict)
-    name = "%s__%s__%s" % (row["variant"], row["profile"], row["run"])
+    name = "%s%s__%s__%s" % (tag + "__" if tag else "", row["variant"], row["profile"], row["run"])
     parsed_path = parsed_dir / (name + ".csv")
     df.to_csv(parsed_path, index=False)
 
@@ -85,6 +97,8 @@ def main(argv=None):
     ap.add_argument("--out", default=None, help="summary CSV (default experiments/results/p3_summary.csv)")
     ap.add_argument("--variant", help="only this variant")
     ap.add_argument("--profile", help="only this profile")
+    ap.add_argument("--tag", default="", help="prefix for parsed CSV names (use when analysing several result sets, "
+                                              "so same variant/profile/run names do not collide)")
     ap.add_argument("--include-samples", action="store_true", help="also analyse p3sample* variants")
     ap.add_argument("--pick-largest", action="store_true",
                     help="if a run directory has several .qlog files, use the largest instead of skipping")
@@ -125,7 +139,7 @@ def main(argv=None):
     rows, skipped = [], []
     for _, r in df.iterrows():
         try:
-            rows.append(analyze_row(r, root, parsed_dir, strict=not a.pick_largest))
+            rows.append(analyze_row(r, root, parsed_dir, strict=not a.pick_largest, tag=a.tag))
             x = rows[-1]
             print("OK   %-26s %-9s run %-3s lost=%-5d spurious=%-5d (%5.1f%%)  [%s]" % (
                 x["variant"], x["profile"], x["run"], x["declared_lost"], x["spurious"],

@@ -6,7 +6,7 @@ Bars use different hatch patterns per variant, so colour is never the only cue.
     python experiments/video/plot_qoe.py summary --results video_results.csv --out plots/
 
     # Plot 8: buffer level and chosen bitrate over time for one or more runs (per-segment CSV)
-    python experiments/video/plot_qoe.py timeline --segments segments.csv \
+    python experiments/video/plot_qoe.py timeline --segments results/video_provisional \
         --run-id stock__moderate__1 --run-id k20__moderate__1 --out plots/
 
 Plot 5  QoE score per profile and variant        (higher is better)
@@ -96,15 +96,26 @@ def summary(results_csv, out_dir):
              "Lower is better.")
 
 
-def timeline(segments_csv, run_ids, out_dir):
-    df = pd.read_csv(segments_csv)
+def load_segments(paths):
+    """One or more segments CSVs or directories (searched recursively for segments*.csv)."""
+    from pathlib import Path
+    files = []
+    for p in map(Path, paths):
+        files += sorted(p.rglob("segments*.csv")) if p.is_dir() else [p]
+    if not files:
+        raise SystemExit("no segments*.csv found in %s" % ", ".join(map(str, paths)))
+    return pd.concat([pd.read_csv(f) for f in files], ignore_index=True)
+
+
+def timeline(segments_paths, run_ids, out_dir):
+    df = load_segments(segments_paths)
     os.makedirs(out_dir, exist_ok=True)
     fig, (ax_b, ax_q) = plt.subplots(2, 1, figsize=(10, 6), sharex=True)
     parts, alt = [], []
     for i, rid in enumerate(run_ids):
         g = df[df["run_id"] == rid].sort_values("segment_index")
         if g.empty:
-            raise SystemExit("run_id %r not found in %s" % (rid, segments_csv))
+            raise SystemExit("run_id %r not found in the given segment files" % rid)
         ls = LINESTYLES[i % len(LINESTYLES)]
         ax_b.plot(g["timestamp"], g["buffer_level_s"], linestyle=ls, linewidth=1.6, label=rid)
         st = g[g["stall"] > 0]
@@ -140,7 +151,8 @@ def main(argv=None):
     s.add_argument("--results", required=True)
     s.add_argument("--out", default="plots")
     t = sub.add_parser("timeline", help="Plot 8")
-    t.add_argument("--segments", required=True)
+    t.add_argument("--segments", action="append", required=True,
+                   help="segments CSV file or directory (repeat, or pass the results directory)")
     t.add_argument("--run-id", action="append", required=True)
     t.add_argument("--out", default="plots")
     a = ap.parse_args(argv)

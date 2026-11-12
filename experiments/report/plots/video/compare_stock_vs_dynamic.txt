@@ -1,0 +1,62 @@
+== stock vs dynamic: mean per profile (diff = dynamic - stock; p = Welch, NaN without scipy) ==
+
+startup_delay_s
+ profile  mean_base  mean_other    diff  diff_pct  welch_p  welch_p_holm
+baseline     0.6043      0.5647 -0.0397      -6.6   0.4466           1.0
+    mild     0.6541      0.7619  0.1078      16.5   0.2764           1.0
+moderate     1.1569      1.2300  0.0731       6.3   0.7566           1.0
+  severe     1.5202      1.2587 -0.2615     -17.2   0.4991           1.0
+handover     2.0770      1.9386 -0.1383      -6.7   0.7709           1.0
+
+stall_count
+ profile  mean_base  mean_other  diff  diff_pct  welch_p  welch_p_holm
+baseline        0.0         0.0   0.0       NaN      NaN           NaN
+    mild        0.2         0.6   0.4     200.0   0.4062        1.0000
+moderate        0.2         0.2   0.0       0.0   1.0000        1.0000
+  severe        1.2         0.6  -0.6     -50.0   0.0958        0.3832
+handover        0.6         1.2   0.6     100.0   0.5070        1.0000
+
+total_stall_s
+ profile  mean_base  mean_other    diff  diff_pct  welch_p  welch_p_holm
+baseline     0.0000      0.0000  0.0000       NaN      NaN           NaN
+    mild     0.2339      0.9317  0.6978     298.4   0.4747           1.0
+moderate     0.0765      0.0178 -0.0587     -76.7   0.4928           1.0
+  severe     2.0195      1.4386 -0.5808     -28.8   0.6082           1.0
+handover     0.9625      2.5577  1.5952     165.7   0.3942           1.0
+
+avg_bitrate_mbps
+ profile  mean_base  mean_other   diff  diff_pct  welch_p  welch_p_holm
+baseline     4.6750      4.6750 0.0000       0.0      NaN           NaN
+    mild     1.3917      1.4683 0.0767       5.5   0.4495        0.4674
+moderate     0.6317      0.6883 0.0567       9.0   0.2009        0.4674
+  severe     0.4983      0.5633 0.0650      13.0   0.0015        0.0060
+handover     0.2817      0.3100 0.0283      10.1   0.1558        0.4674
+
+quality_switches
+ profile  mean_base  mean_other  diff  diff_pct  welch_p  welch_p_holm
+baseline        2.0         2.0   0.0       0.0      NaN           NaN
+    mild        7.8         8.4   0.6       7.7   0.5289           1.0
+moderate        7.6         7.0  -0.6      -7.9   0.5596           1.0
+  severe        9.0         7.6  -1.4     -15.6   0.4239           1.0
+handover        4.4         6.2   1.8      40.9   0.3655           1.0
+
+qoe_score
+ profile  mean_base  mean_other    diff  diff_pct  welch_p  welch_p_holm
+baseline     4.4750      4.4750  0.0000       NaN      NaN           NaN
+    mild     0.5400      0.4017 -0.1382       NaN   0.5653        1.0000
+moderate    -0.1922     -0.0726  0.1196       NaN   0.4202        1.0000
+  severe    -0.8627     -0.4486  0.4141       NaN   0.1089        0.4356
+handover    -0.3865     -0.7979 -0.4114       NaN   0.4192        1.0000
+
+== QoE winner under different weights (winner by mean QoE) ==
+profile                                          baseline     mild moderate   severe handover
+weight_set                                                                                   
+contract (0.3 / 0.05 / 0.1)                           tie    stock  dynamic  dynamic    stock
+no switch penalty                                     tie    stock  dynamic  dynamic    stock
+light switch penalty (0.05)                           tie    stock  dynamic  dynamic    stock
+heavy switch penalty (0.2)                            tie    stock  dynamic  dynamic    stock
+stall-heavy (1.0 / 0.2 / 0.1)                         tie    stock  dynamic  dynamic    stock
+bitrate only                                          tie  dynamic  dynamic  dynamic  dynamic
+MPC style: smoothness = mean |change| (weight 1)      tie    stock  dynamic  dynamic    stock
+
+Wrote experiments/video/analysis_out/compare_stock_vs_dynamic/{video_comparison,qoe_sensitivity,median_runs}.csv
