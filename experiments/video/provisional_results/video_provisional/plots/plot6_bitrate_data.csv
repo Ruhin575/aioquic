@@ -1,0 +1,11 @@
+variant,profile,n,mean,ci95
+k20,baseline,5,4.675,0.0
+k20,handover,5,0.3632,0.014
+k20,mild,5,1.655,0.136
+k20,moderate,5,0.8084,0.0654
+k20,severe,5,0.645,0.0308
+stock,baseline,5,4.675,0.0
+stock,handover,5,0.2816,0.0322
+stock,mild,5,1.3916,0.1934
+stock,moderate,5,0.6316,0.056
+stock,severe,5,0.4982,0.0285

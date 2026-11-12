@@ -1,0 +1,1 @@
+Two stacked line charts over time. Top: playback buffer level in seconds, with red triangles at stalls. Bottom: selected video bitrate in Mbps as a step line. Runs use different line styles. stock__moderate__1 has 0 stall events and 6 bitrate switches; k20__moderate__1 has 0 stall events and 7 bitrate switches.
