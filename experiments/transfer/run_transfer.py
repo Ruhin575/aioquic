@@ -32,7 +32,7 @@ def validate_threshold(threshold):
     if threshold is None:
         return
 
-    if threshold in ("dynamic", "dynamic_undo"):
+    if threshold in ("dynamic", "dynamic_undo", "undo"):
         return
 
     try:
@@ -40,7 +40,7 @@ def validate_threshold(threshold):
     except (TypeError, ValueError):
         raise ValueError(
             "Threshold must be a positive integer, "
-            "'dynamic', or 'dynamic_undo'"
+            "'dynamic', 'dynamic_undo', or 'undo'"
         )
 
     if value <= 0:

@@ -47,7 +47,7 @@ TRANSFER_DIR = ROOT / "experiments" / "transfer"
 CONTENT = HERE / "content"
 SERVER_IP, SERVER_PORT = "10.10.2.2", 4433
 PROFILES = ["baseline", "mild", "moderate", "severe", "handover"]
-VARIANTS = ["stock", "k5", "k10", "k20", "k100", "dynamic", "dynamic_undo"]
+VARIANTS = ["stock", "k5", "k10", "k20", "k100", "dynamic", "dynamic_undo", "undo"]
 THRESHOLD_ENV = "AIOQUIC_PACKET_THRESHOLD"
 RESULT_COLUMNS = ["variant", "profile", "run", "startup_delay_s", "stall_count", "total_stall_s",
                   "avg_bitrate_mbps", "quality_switches", "qoe_score"]      # = fake_video_results.csv header
@@ -60,7 +60,7 @@ def threshold_value(variant):
     m = re.fullmatch(r"k(\d+)", variant)
     if m:
         return m.group(1)
-    if variant in ("dynamic", "dynamic_undo"):
+    if variant in ("dynamic", "dynamic_undo", "undo"):
         return variant
     raise ValueError("unknown variant %r" % variant)
 
