@@ -234,28 +234,267 @@ Figures:
 - `../analysis/dynamic_cwnd_over_time.png`
 - `../analysis/dynamic_cwnd_summary.csv`
 
+## Video Streaming Workload Evaluation
+
+### Motivation and Methodology
+
+Bulk-transfer goodput does not fully describe the quality experienced by a video-streaming user. A video player buffers content ahead of playback and adapts its bitrate according to observed throughput. Network impairment can therefore affect startup delay, playback stalls, delivered bitrate and quality changes.
+
+To study these effects, we evaluated a DASH playback simulator over the same namespace topology, server, 15 Mbit link and five netem profiles used in the bulk-transfer experiments.
+
+The workload used a two-minute test video with five nominal renditions (0.25, 0.5, 1, 2.5 and 5 Mbps), four-second segments and a common manifest with keyframe-aligned representations. The client used one persistent HTTP/3 connection with Cubic and sequential segment requests. Its bitrate adaptation rule used the harmonic mean of the last three segment download throughputs multiplied by 0.8. The first segment was requested at the lowest quality, and the playback buffer was capped at 12 seconds.
+
+Playback was simulated in real time; decoding was not performed and audio was ignored. Startup delay was measured from before the QUIC handshake until one segment was buffered. A stall began when the playback buffer reached zero before the video finished and ended when another segment was buffered.
+
+The measured metrics were startup delay, stall count, total stall time, average delivered bitrate and number of quality switches. We also calculated a QoE score:
+
+\[
+\mathrm{QoE} =
+\mathrm{avg\_bitrate}_{Mbps}
+- 0.3(\mathrm{stalls})
+- 0.05(\mathrm{stall\_seconds})
+- 0.1(\mathrm{quality\_switches})
+\]
+
+The weights are implemented in `video_core.py` as `QOE_STALL_COUNT = 0.3`, `QOE_STALL_SECONDS = 0.05` and `QOE_SWITCH = 0.1`. They are fixed modelling choices; a sensitivity analysis over alternative weights has not been performed.
+
+The available video results contain three variants: stock, K20 and dynamic. Each variant was tested under five profiles with five repetitions per profile, giving 75 runs in total.
+
+**Run provenance.** The 50 stock/K20 runs report commit `337f6f560f41e58029dd9209a28c70e5fc788571` and a dirty working tree. This commit is an ancestor of the frozen Phase 1 implementation commit `a8d846cd48deeda588146bee145d4da74fadfa46`; the source/test diff between these commits was checked and no differences were found. The 25 dynamic runs report commit `82766da6815bdfd8e6c4f1bc6f7ce539e1399f9a` and a clean working tree; this commit is a descendant of the frozen Phase 1 commit. The 75 runs are therefore reported with their respective provenance rather than being described as having been executed from one identical commit.
+
+### Video Results
+
+The following table reports means across five runs for each profile and variant. Values are rounded to three decimal places.
+
+| Profile | Variant | Startup (s) | Stalls / run | Stall time (s) | Avg bitrate (Mbps) | Switches | QoE |
+|---|---|---:|---:|---:|---:|---:|---:|
+| Baseline | Stock | 0.604 | 0.000 | 0.000 | 4.675 | 2.0 | 4.475 |
+| Baseline | K20 | 0.554 | 0.000 | 0.000 | 4.675 | 2.0 | 4.475 |
+| Baseline | Dynamic | 0.565 | 0.000 | 0.000 | 4.675 | 2.0 | 4.475 |
+| Mild | Stock | 0.654 | 0.200 | 0.234 | 1.392 | 7.8 | 0.540 |
+| Mild | K20 | 0.664 | 0.000 | 0.000 | 1.655 | 8.8 | 0.775 |
+| Mild | Dynamic | 0.762 | 0.600 | 0.932 | 1.468 | 8.4 | 0.402 |
+| Moderate | Stock | 1.157 | 0.200 | 0.077 | 0.632 | 7.6 | -0.192 |
+| Moderate | K20 | 1.062 | 0.000 | 0.000 | 0.808 | 7.8 | 0.028 |
+| Moderate | Dynamic | 1.230 | 0.200 | 0.018 | 0.688 | 7.0 | -0.073 |
+| Severe | Stock | 1.520 | 1.200 | 2.020 | 0.498 | 9.0 | -0.863 |
+| Severe | K20 | 1.015 | 0.200 | 0.130 | 0.645 | 6.6 | -0.081 |
+| Severe | Dynamic | 1.259 | 0.600 | 1.439 | 0.563 | 7.6 | -0.449 |
+| Handover | Stock | 2.077 | 0.600 | 0.962 | 0.282 | 4.4 | -0.386 |
+| Handover | K20 | 1.767 | 0.000 | 0.000 | 0.363 | 8.6 | -0.497 |
+| Handover | Dynamic | 1.939 | 1.200 | 2.558 | 0.310 | 6.2 | -0.798 |
+
+### Video Figures
+
+Figures 5–8 use the provisional 50-run stock/K20 video subset, with five repetitions per profile and variant. These results are preliminary and do not include the dynamic or dynamic_undo variants. The corresponding plot data and alt-text files are available alongside the figures.
+
+**Figure 5 — QoE by profile and variant.** Bars compare mean QoE for stock and K20; error bars show 95% confidence intervals across runs in each cell.
+
+![Figure 5: QoE by profile and variant](../video/provisional_results/video_provisional/plots/plot5_qoe.png)
+
+**Figure 6 — Average video bitrate.** Comparison of mean delivered bitrate for stock and K20 across the five network profiles.
+
+![Figure 6: Average bitrate](../video/provisional_results/video_provisional/plots/plot6_bitrate.png)
+
+**Figure 7 — Playback stalls.** Comparison of mean stall counts for stock and K20 across the five network profiles.
+
+![Figure 7: Stall counts](../video/provisional_results/video_provisional/plots/plot7_stalls.png)
+
+**Figure 8 — Moderate-profile playback timeline.** Buffer level and selected bitrate over time for one stock run and one K20 run under the moderate profile. This is a representative single-run comparison, not an average across repetitions. Both selected runs had zero stall events; the stock run had six bitrate switches and the K20 run had seven.
+
+![Figure 8: Moderate-profile stock and K20 timeline](../video/provisional_results/video_provisional/plots/plot8_timeline.png)
+
+### Discussion
+
+K20 achieved a higher mean delivered bitrate than stock in all four impaired profiles: mild (1.392 to 1.655 Mbps), moderate (0.632 to 0.808 Mbps), severe (0.498 to 0.645 Mbps) and handover (0.282 to 0.363 Mbps).
+
+K20 also achieved a higher mean QoE under mild (0.540 to 0.775), moderate (-0.192 to 0.028) and severe (-0.863 to -0.081) conditions. Its mean stall count was lower under mild (0.2 to 0), moderate (0.2 to 0) and severe (1.2 to 0.2) conditions.
+
+Handover illustrates why bitrate alone does not determine playback QoE. K20 delivered a higher mean bitrate than stock (0.363 versus 0.282 Mbps) and had no mean stalls, compared with 0.6 mean stalls for stock. However, K20 had more quality switches (8.6 versus 4.4). Under the selected QoE formula, the quality-switch penalty offsets the bitrate and stall improvements: mean QoE was -0.497 for K20 and -0.386 for stock. Stock therefore achieved the highest mean QoE in the handover profile.
+
+Dynamic did not consistently outperform stock or K20. Its mean QoE was lower than K20 in every impaired profile. K20 achieved the highest mean QoE under mild, moderate and severe conditions, while stock achieved the highest mean QoE under handover. All three variants had the same mean bitrate and QoE under baseline conditions.
+
+These are descriptive comparisons based on five runs per cell. Statistical significance testing has not been established for the video metrics. Video-run server qlogs have also not been analyzed and linked to playback outcomes; therefore, the bulk-transfer loss-attribution distribution must not be assumed to apply to the video workload.
+
+## Final Phase 1 Recovery-Variant Matrix: Dynamic Undo
+
+### Scope and methodology
+
+A separate final experiment matrix evaluated seven recovery variants at frozen source revision `a8d846cd48deeda588146bee145d4da74fadfa46` (`a8d846c`): stock, K5, K10, K20, K100, dynamic, and dynamic undo. Each variant was tested under baseline, mild, moderate, severe, and handover profiles, with five repetitions per combination, giving \(7 \times 5 \times 5 = 175\) runs. Each run transferred a 10 MiB file. Download integrity was checked using SHA-256, and server-side qlogs were retained.
+
+This dataset is separate from the earlier three-run dynamic-only experiment and the earlier instrumented stock/K20 matrix. Their results are not pooled.
+
+### Goodput results
+
+| Network profile | Dynamic Undo mean goodput (Mbps) | Improvement over stock |
+|---|---:|---:|
+| Baseline | 13.3708 | 0.10% |
+| Mild | 5.3402 | 142.78% |
+| Moderate | 1.9408 | 107.08% |
+| Severe | 1.2028 | 52.91% |
+| Handover | 0.6948 | 81.13% |
+
+The best-performing variant by mean goodput in each profile was:
+
+| Network profile | Best-performing variant | Mean goodput (Mbps) |
+|---|---|---:|
+| Baseline | K10 | 13.3882 |
+| Mild | Dynamic Undo | 5.3402 |
+| Moderate | Dynamic Undo | 1.9408 |
+| Severe | Dynamic Undo | 1.2028 |
+| Handover | Dynamic Undo | 0.6948 |
+
+Dynamic Undo achieved the highest mean goodput among the seven variants in all four impaired profiles. K10 achieved the highest mean under baseline conditions, where differences between configurations were small.
+
+### Statistical analysis
+
+Welch's two-sample t-tests compared each alternative variant with stock within each profile. Holm correction was applied separately within each profile across the six comparisons against stock.
+
+| Profile | Welch p-value | Holm-adjusted p-value | Significant at 0.05? |
+|---|---:|---:|---|
+| Baseline | 0.138150 | 0.276301 | No |
+| Mild | 0.000115 | 0.000690 | Yes |
+| Moderate | 0.000069 | 0.000277 | Yes |
+| Severe | 0.000053 | 0.000320 | Yes |
+| Handover | 0.026163 | 0.156979 | No |
+
+The improvements over stock were statistically significant after within-profile Holm correction under mild, moderate, and severe conditions. The handover improvement was not significant after correction, despite its higher observed mean goodput. The baseline difference was small and statistically insignificant. These tests compare each variant with stock; they do not establish that Dynamic Undo is statistically superior to every other variant. Each comparison uses five runs per group and should be interpreted accordingly.
+
+### Recovery-event analysis
+
+Server-side qlogs from the 25 Dynamic Undo runs were examined for `recovery:packet_lost`, `recovery:cwnd_restored`, and `recovery:undo_abandoned` events.
+
+| Profile | Packet-loss events | CWND restorations | Undo abandonments |
+|---|---:|---:|---:|
+| Baseline | 0 | 0 | 0 |
+| Mild | 3,724 | 128 | 47 |
+| Moderate | 6,150 | 532 | 158 |
+| Severe | 4,800 | 356 | 246 |
+| Handover | 5,627 | 494 | 472 |
+| **Total** | **20,301** | **1,510** | **923** |
+
+All 923 observed undo-abandonment events were logged with reason `genuine_loss`. The implementation also supports abandonment for persistent congestion and excessive pending losses, but neither reason appeared in this dataset.
+
+The implementation saves a congestion-control snapshot before processing eligible losses and tracks ACK-eliciting packets declared lost. When late acknowledgements remove all pending losses in an undo episode, the saved congestion-control state can be restored, provided the current congestion window has not already recovered to at least its pre-reduction value. The pacing rate is then recalculated. If any pending loss remains unacknowledged beyond twice the smoothed RTT, the episode is abandoned and the congestion reduction is retained. Persistent congestion and exceeding the configured pending-loss limit also trigger abandonment.
+
+The magnitude of recorded congestion-window restorations was:
+
+| Profile | Restorations | Mean absolute increase (bytes) | Median absolute increase (bytes) | Median relative increase |
+|---|---:|---:|---:|---:|
+| Mild | 128 | 41,000.9 | 35,812.0 | 110.8% |
+| Moderate | 532 | 17,296.8 | 15,292.0 | 83.4% |
+| Severe | 356 | 14,404.9 | 12,643.5 | 102.1% |
+| Handover | 494 | 10,104.8 | 9,152.5 | 121.1% |
+
+Moderate conditions produced the largest number of restorations and the highest restoration share among restoration and abandonment events. Handover produced the largest abandonment activity relative to packet-loss events.
+
+| Profile | Restorations per 100 loss events | Abandonments per 100 loss events | Restoration share |
+|---|---:|---:|---:|
+| Mild | 3.44 | 1.26 | 73.14% |
+| Moderate | 8.65 | 2.57 | 77.10% |
+| Severe | 7.42 | 5.12 | 59.14% |
+| Handover | 8.78 | 8.39 | 51.14% |
+
+These are event-count ratios, not probabilities of successful recovery. Individual packet-loss events do not necessarily correspond one-to-one with undo episodes.
+
+### Why Dynamic Undo works, and why it is safe
+
+Raising the packet threshold alone has a ceiling. In the instrumented
+stock/K20 matrix, K20 shifted most remaining losses to the time threshold:
+under K20, time-rule losses accounted for 93% of losses at moderate and
+85% at severe, compared with 13% under stock. Total losses fell by only
+about 11–15%. This shows why increasing the packet threshold alone cannot
+eliminate all premature loss declarations.
+
+The threshold-only `dynamic` variant has a further limitation: it raises K
+only after a late acknowledgement provides evidence of spurious loss. By
+that point, the loss may already have reduced the congestion window.
+Consistent with this, `dynamic` achieved lower mean goodput than K20 in
+every impaired profile of the final matrix.
+
+Dynamic Undo addresses the cost of spurious loss declarations. It saves
+congestion-control state before eligible losses are reported to Cubic and
+restores that state when every tracked loss in the episode is acknowledged
+late. Because it tracks losses independently of the detection rule, it can
+also undo reductions caused by time-threshold losses that a higher packet
+threshold cannot prevent.
+
+The rollback is conservative. If any pending loss remains unacknowledged
+beyond twice the smoothed RTT, the episode is abandoned and the congestion
+reduction is retained. Persistent congestion and exceeding the pending-loss
+limit also trigger abandonment.
+
+The abandonment counts are consistent with genuine losses continuing to
+reduce the congestion window. A 10 MiB transfer represents approximately
+8,700 packets. Using the configured random-loss rates gives the following
+rough expected counts across five runs:
+
+| Profile | Random loss rate | Expected genuine losses | Observed abandonments |
+|---|---:|---:|---:|
+| Mild | 0.1% | 44 | 47 |
+| Moderate | 0.3% | 131 | 158 |
+| Severe | 0.5% | 218 | 246 |
+| Handover | 1.0% | 437 | 472 |
+
+The observed counts are within approximately 8–21% of these rough
+expectations. This is only an approximate consistency check: packet counts
+are estimated from file size, and an abandoned episode can contain more
+than one genuine loss. On the loss-free baseline profile, there were no
+restorations and no abandonments. These observations are consistent with
+Dynamic Undo retaining reductions for genuine losses while rolling back
+reductions associated with spurious losses; they do not independently prove
+the cause of each event. The design is described in `dynamic_design.md`.
+
+### Exploratory correlation analysis
+
+Per-run recovery-event counts and event rates were compared with goodput across the five runs in each profile. The relationships varied by profile. Restoration counts were positively correlated with goodput under mild and severe conditions but negatively correlated under moderate conditions. Abandonment counts were negatively correlated with goodput in all four impaired profiles.
+
+Event rates normalized by download duration produced different correlations. However, goodput and event rates both contain download duration in their denominators, creating mathematical coupling that can influence the observed relationships. These correlations are exploratory and do not establish causation. With only five runs per profile, they should not be treated as strong statistical evidence.
+
+### Dataset validation and tests
+
+The final matrix contained all 175 expected records, exactly five runs for each of the 35 variant-profile combinations, no duplicate run keys, and no missing expected runs. All 175 downloaded files passed SHA-256 verification. The server-side qlogs were analysed and passed JSON parsing during the experiment; raw qlog files are not included in the repository because of their size.
+
+The recovery tests also passed: 9 tests in `tests/test_dynamic_undo.py` (including 5 subtests), and 36 tests across `tests/test_recovery.py` and `tests/test_dynamic_recovery.py`, for 45 passing tests in total.
+
+### Discussion
+
+The final matrix provides evidence that Dynamic Undo can improve bulk-transfer goodput under several impaired network profiles. Its mean goodput was highest among the tested variants under mild, moderate, severe, and handover conditions. The improvements over stock were statistically significant after within-profile Holm correction under mild, moderate, and severe conditions, but not under handover.
+
+The qlog evidence is consistent with the intended conditional rollback behaviour: congestion-control state was restored when all tracked losses in an undo episode were acknowledged late, while observed abandonment events retained the congestion reduction because the implementation classified the pending losses as genuine. Event counts alone do not prove that restorations caused the measured goodput improvements.
+
+This final Dynamic Undo matrix is distinct from the earlier three-run dynamic-only experiment. The earlier experiment evaluated adaptive thresholding without the same rollback variant and remains a separate preliminary result.
+
 ## Limitations
+
+The final Dynamic Undo matrix contains five repetitions per variant-profile combination. Its statistical comparisons are pairwise against stock, with Holm correction applied within each profile; they do not establish statistical superiority over every alternative variant. The handover goodput improvement was not significant after correction. Event counts and event-count ratios are not counts or probabilities of unique recovery episodes, and exploratory correlations cannot establish causation. This matrix is separate from the earlier three-run dynamic-only experiment and the earlier instrumented stock/K20 matrix.
 
 There are several limitations to consider when interpreting the results.
 
 First, the new instrumented goodput experiments used five repetitions for each QUIC configuration and network profile. Although this provides an initial comparison, more repetitions would help provide a stronger understanding of performance variability.
 
-Second, the experiments represent a limited set of network profiles and file-transfer conditions. The results may differ under other network conditions, file sizes, or configurations.
+Second, the experiments represent a limited set of network profiles and file-transfer conditions. The results may differ under other network conditions, file sizes or configurations.
 
 Third, the TCP results were collected separately and have different numbers of runs in some profiles. Therefore, the TCP and QUIC comparisons should be interpreted with this difference in mind.
 
 Fourth, the offline packet-threshold analysis replays observed ACK timelines and does not simulate the complete QUIC recovery process. Losses without observed late acknowledgements are treated as proxies rather than confirmed genuine losses.
 
-Fifth, the dynamic recovery evaluation consists of only three runs under the moderate network profile. The available qlogs do not expose the complete adaptive threshold and decay timeline. Therefore, the dynamic results are preliminary and do not establish a clear performance improvement over stock QUIC.
+Fifth, the threshold-only `dynamic` variant had a smaller mean goodput gain than static K20 in every impaired profile of the final matrix. Its gains over stock were 21.45% under mild, 7.32% under moderate, 6.20% under severe, and 27.32% under handover, compared with K20 gains of approximately 33.14%, 40.13%, 24.40%, and 47.40%, respectively. Its adaptation is reactive: K rises only after a late acknowledgement provides evidence of spurious loss, by which time the congestion window may already have been reduced. The earlier three-run dynamic-only experiment is superseded by the five-run-per-profile results in the final matrix. Although threshold adaptation and decay events are logged, K trajectories were not analysed in this report.
 
-Finally, CWND decreases observed in qlog samples do not independently establish their cause or demonstrate a causal relationship with adaptive threshold changes. The earlier performance results were also not accompanied by statistical significance tests. The new instrumented goodput results use five repetitions and should be treated as preliminary.
+Sixth, CWND decreases observed in qlog samples do not independently establish their cause or demonstrate a causal relationship with adaptive threshold changes. The earlier performance results were also not accompanied by statistical significance tests. The new instrumented goodput results use five repetitions and should be treated as preliminary.
+
+Finally, the video workload is a simulation: it does not perform video decoding or model audio, and it uses one viewer and one connection. The content uses synthetic constant-bitrate renditions, whereas real video may have variable segment sizes. The QoE weights are modelling choices, and no sensitivity analysis across alternative weights has been performed. Each video profile-variant cell contains five runs; the reported means are descriptive and no statistical significance analysis has been established for the video metrics. The stock/K20 and dynamic video runs also have different commit and working-tree provenance, as documented in the video evaluation section. Video-run qlogs have not been linked to playback outcomes, so the bulk-transfer loss-attribution results cannot be used to explain individual video results.
 
 ## Conclusion
+
+The final 175-run Dynamic Undo matrix provides a separate evaluation of the rollback variant. Dynamic Undo achieved the highest mean goodput among the seven tested variants in all four impaired profiles, with improvements over stock of 142.78% (mild), 107.08% (moderate), 52.91% (severe), and 81.13% (handover). After within-profile Holm correction, the improvements were statistically significant under mild, moderate, and severe conditions, but not under handover or baseline conditions. The qlog analysis recorded 1,510 congestion-window restorations and 923 undo abandonments across the 25 Dynamic Undo runs; all observed abandonments were attributed to genuine loss. These findings are distinct from the earlier three-run dynamic-only results and should be interpreted within the scope and limitations of the final matrix.
 
 The earlier performance experiments showed that increasing the packet loss detection threshold to 20 improved average goodput and reduced completion time compared with the default configuration across the five network profiles. The new instrumented experiments also showed higher mean goodput for K20 under mild, moderate, severe and handover conditions, while baseline goodput remained almost unchanged. After Holm correction, the improvements were statistically significant under moderate, severe and handover conditions, but not under mild or baseline conditions.
 
 The offline packet-gap and threshold analysis highlighted the trade-off between avoiding premature loss declarations and delaying packet-threshold detection. The new qlog analysis achieved 100% attribution coverage and showed differences in packet-based and time-based loss attribution between stock and K20.
 
-The static K=20 and K=100 experiments showed higher mean goodput than their respective stock baselines in the moderate-profile datasets. However, the three-run dynamic recovery experiment did not demonstrate a clear goodput improvement over stock QUIC. Its congestion-window measurements showed considerable variation, but did not establish a causal relationship between threshold adaptation and congestion-window changes.
+The static K=20 and K=100 experiments showed higher mean goodput than their respective stock baselines in the moderate-profile datasets. In the final matrix, the threshold-only `dynamic` variant achieved higher mean goodput than stock in every impaired profile, with gains ranging from 6.20% to 27.32%, but remained below static K20. This is consistent with its reactive adaptation: the threshold is raised only after evidence of spurious loss arrives, potentially after the congestion window has already been reduced. Adding congestion-state rollback through Dynamic Undo produced the highest mean goodput among the tested variants in all four impaired profiles, while baseline goodput remained effectively unchanged.
 
-TCP performed better than both QUIC configurations in the impaired profiles in the earlier comparison. Overall, the results suggest that modifying QUIC loss detection can improve performance under some impaired network conditions, but further controlled experiments are needed to establish the effectiveness of dynamic recovery and the generality of these findings.
+The video workload extended the evaluation beyond bulk goodput to startup delay, playback stalls, delivered bitrate and a modelled QoE score. Across the five-run video cells, K20 achieved the highest mean QoE under mild, moderate and severe conditions. Under handover, stock achieved a higher mean QoE despite lower bitrate and more stalls, because K20 incurred more quality switches under the selected QoE formula. The dynamic video variant did not consistently outperform the other configurations. These video findings are descriptive and have not been validated through statistical significance testing or QoE-weight sensitivity analysis.
+
+TCP performed better than both QUIC configurations in the impaired profiles in the earlier comparison. Overall, the results suggest that modifying QUIC loss detection can improve performance under some impaired network conditions, and that these effects can also be reflected in video playback metrics. Further controlled experiments, additional repetitions and analysis of video-run qlogs are needed to establish the effectiveness and generality of these findings.
