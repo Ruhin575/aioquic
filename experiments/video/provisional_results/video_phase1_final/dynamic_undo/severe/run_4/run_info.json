@@ -1,0 +1,26 @@
+{
+  "variant": "dynamic_undo",
+  "profile": "severe",
+  "run": 4,
+  "run_id": "dynamic_undo__severe__4",
+  "threshold_env": "dynamic_undo",
+  "started": "2026-11-13T17:42:42",
+  "git": {
+    "commit": "32ca59eebaeb48507be15f0e9a0ff60b99e43028",
+    "branch": "main",
+    "dirty": false
+  },
+  "server_qlog_complete": true,
+  "result": {
+    "variant": "dynamic_undo",
+    "profile": "severe",
+    "run": 4,
+    "startup_delay_s": 0.992,
+    "stall_count": 1,
+    "total_stall_s": 0.327,
+    "avg_bitrate_mbps": 0.708,
+    "quality_switches": 6,
+    "qoe_score": -0.208
+  },
+  "finished": "2026-11-13T17:44:34"
+}

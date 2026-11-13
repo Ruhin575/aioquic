@@ -1,0 +1,26 @@
+{
+  "variant": "stock",
+  "profile": "moderate",
+  "run": 4,
+  "run_id": "stock__moderate__4",
+  "threshold_env": null,
+  "started": "2026-11-13T17:33:14",
+  "git": {
+    "commit": "32ca59eebaeb48507be15f0e9a0ff60b99e43028",
+    "branch": "main",
+    "dirty": false
+  },
+  "server_qlog_complete": true,
+  "result": {
+    "variant": "stock",
+    "profile": "moderate",
+    "run": 4,
+    "startup_delay_s": 0.685,
+    "stall_count": 2,
+    "total_stall_s": 0.98,
+    "avg_bitrate_mbps": 0.592,
+    "quality_switches": 8,
+    "qoe_score": -0.8573
+  },
+  "finished": "2026-11-13T17:35:07"
+}

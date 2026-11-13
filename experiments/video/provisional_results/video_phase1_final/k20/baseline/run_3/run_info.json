@@ -1,0 +1,26 @@
+{
+  "variant": "k20",
+  "profile": "baseline",
+  "run": 3,
+  "run_id": "k20__baseline__3",
+  "threshold_env": "20",
+  "started": "2026-11-13T16:55:06",
+  "git": {
+    "commit": "32ca59eebaeb48507be15f0e9a0ff60b99e43028",
+    "branch": "main",
+    "dirty": false
+  },
+  "server_qlog_complete": true,
+  "result": {
+    "variant": "k20",
+    "profile": "baseline",
+    "run": 3,
+    "startup_delay_s": 0.518,
+    "stall_count": 0,
+    "total_stall_s": 0.0,
+    "avg_bitrate_mbps": 4.675,
+    "quality_switches": 2,
+    "qoe_score": 4.475
+  },
+  "finished": "2026-11-13T16:57:01"
+}
