@@ -2,7 +2,7 @@
 # Video matrix (provisional): variants x profiles x runs. Skips runs that already exist, so it is safe to restart.
 set -uo pipefail
 cd "$(git rev-parse --show-toplevel)"
-OUT=experiments/video/results/video_provisional
+OUT="${OUT:-experiments/video/results/video_provisional}"
 VARIANTS="${VARIANTS:-stock k20}"
 PROFILES="${PROFILES:-baseline mild moderate severe handover}"
 RUNS="${RUNS:-1 2 3 4 5}"
