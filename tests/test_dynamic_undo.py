@@ -7,6 +7,7 @@ from unittest import TestCase, mock
 from aioquic.quic.logger import QuicLogger
 from aioquic.quic.rangeset import RangeSet
 from aioquic.quic.recovery import (
+    K_PACKET_THRESHOLD,
     MAX_UNDO_PENDING,
     QuicPacketRecovery,
     QuicPacketSpace,
@@ -148,6 +149,81 @@ class DynamicUndoTest(TestCase):
                 ack(recovery, space, 2, 10, now=1.1)
                 self.assertIsNone(recovery._undo_snapshot)
                 self.assertEqual(recovery._undo_pending, {})
+
+    def test_undo_mode_restores_without_adapting_k(self):
+        # The "undo" ablation runs the congestion-undo snapshot with K pinned
+        # at the stock threshold. The window is restored on all-spurious
+        # losses, exactly as in dynamic_undo, but the adaptive threshold never
+        # engages: no packet-rule loss is recorded for adaptation and K stays
+        # at K_PACKET_THRESHOLD throughout. Checked under both controllers.
+        for algorithm in ("reno", "cubic"):
+            with self.subTest(algorithm=algorithm):
+                recovery, space, _ = make_recovery(mode="undo", algorithm=algorithm)
+                send(recovery, space, {pn: 1.0 + pn * 0.0001 for pn in range(10)})
+                cc = recovery._cc
+
+                ack(recovery, space, 2, 10, now=1.1)
+                snapshot = recovery._undo_snapshot
+                self.assertIsNotNone(snapshot)
+                self.assertEqual(set(recovery._undo_pending), {0, 1})
+                pre_cut = snapshot["congestion_window"]
+                self.assertLess(cc.congestion_window, pre_cut)
+
+                # The adaptive machinery never engaged: losses were not recorded
+                # for adaptation and K is still the stock threshold.
+                self.assertEqual(recovery._recent_lost, {})
+                self.assertEqual(recovery._k_adaptive, float(K_PACKET_THRESHOLD))
+
+                # Late ACK for both "lost" packets restores the window, as in
+                # dynamic_undo.
+                ack(recovery, space, 0, 2, now=1.12)
+                self.assertEqual(cc.congestion_window, pre_cut)
+                self.assertIsNone(recovery._undo_snapshot)
+                self.assertEqual(recovery._undo_pending, {})
+
+                # Still no adaptation after the restore.
+                self.assertEqual(recovery._recent_lost, {})
+                self.assertEqual(recovery._k_adaptive, float(K_PACKET_THRESHOLD))
+
+    def test_undo_mode_pins_k_where_dynamic_undo_would_raise_it(self):
+        # The same spurious-loss sequence in both modes: dynamic_undo raises
+        # the adaptive threshold off the late ACKs, the undo-only ablation
+        # leaves it pinned at the stock threshold. This isolates the undo
+        # mechanism from threshold adaptation.
+        def final_k(mode):
+            recovery, space, _ = make_recovery(mode=mode)
+            send(recovery, space, {pn: 1.0 + pn * 0.0001 for pn in range(10)})
+            ack(recovery, space, 2, 10, now=1.1)   # declares 0, 1 lost by packet rule
+            ack(recovery, space, 0, 2, now=1.12)   # late ACK proves them spurious
+            return recovery._k_adaptive
+
+        self.assertGreater(final_k("dynamic_undo"), float(K_PACKET_THRESHOLD))
+        self.assertEqual(final_k("undo"), float(K_PACKET_THRESHOLD))
+
+    def test_undo_mode_abandons_on_genuine_loss(self):
+        # Safety under the ablation: a loss that is never late-ACKed abandons
+        # the episode so the cut stands, with K still pinned and no adaptation
+        # events logged.
+        recovery, space, quic_logger = make_recovery(mode="undo", logger=True)
+        send(recovery, space, {pn: 1.0 + pn * 0.0001 for pn in range(10)})
+        ack(recovery, space, 2, 10, now=1.1)
+        cut_cwnd = recovery._cc.congestion_window
+        ack(recovery, space, 0, 1, now=1.12)  # packet 0 comes late; packet 1 never arrives
+
+        # An ACK more than 2 x smoothed RTT after the loss abandons the episode.
+        send(recovery, space, {10: 1.4})
+        ack(recovery, space, 10, 11, now=1.5)
+        self.assertIsNone(recovery._undo_snapshot)
+        self.assertEqual(recovery._undo_pending, {})
+        self.assertLessEqual(recovery._cc.congestion_window, cut_cwnd + 1280)
+        self.assertEqual(recovery._k_adaptive, float(K_PACKET_THRESHOLD))
+
+        events = [e["name"] for e in quic_logger.to_dict()["events"]]
+        self.assertIn("recovery:undo_abandoned", events)
+        self.assertNotIn("recovery:cwnd_restored", events)
+        self.assertNotIn("recovery:k_adapted", events)
+        self.assertNotIn("recovery:k_decayed", events)
+
 
     def test_loss_within_open_episode_must_also_be_spurious(self):
         recovery, space, _ = make_recovery()

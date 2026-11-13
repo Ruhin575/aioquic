@@ -163,7 +163,7 @@ class QuicPacketRecovery:
         # loss detection
         threshold_env = os.environ.get("AIOQUIC_PACKET_THRESHOLD", "").strip()
         self._threshold_mode = "static"
-        if threshold_env in ("dynamic", "dynamic_undo"):
+        if threshold_env in ("dynamic", "dynamic_undo", "undo"):
             self._threshold_mode = threshold_env
             self._packet_threshold = K_PACKET_THRESHOLD
         elif threshold_env == "":
@@ -174,17 +174,22 @@ class QuicPacketRecovery:
             except ValueError as exc:
                 raise ValueError(
                     "AIOQUIC_PACKET_THRESHOLD must be a non-negative integer, "
-                    "'dynamic' or 'dynamic_undo'"
+                    "'dynamic', 'dynamic_undo' or 'undo'"
                 ) from exc
             if self._packet_threshold < 0:
                 raise ValueError(
                     "AIOQUIC_PACKET_THRESHOLD must be a non-negative integer, "
-                    "'dynamic' or 'dynamic_undo'"
+                    "'dynamic', 'dynamic_undo' or 'undo'"
                 )
 
         # dynamic threshold state (always defined; only used in dynamic modes)
         self._dynamic_mode = self._threshold_mode == "dynamic"
         self._dynamic_undo_mode = self._threshold_mode == "dynamic_undo"
+        # The undo-only ablation ("undo") runs the congestion-undo snapshot with
+        # K fixed at the stock threshold, to isolate the undo mechanism from the
+        # adaptive threshold. dynamic_undo runs both; undo runs the snapshot
+        # only; dynamic runs the adaptive threshold only.
+        self._undo_enabled = self._threshold_mode in ("dynamic_undo", "undo")
         self._k_adaptive: float = float(K_PACKET_THRESHOLD)
         self._recent_lost: dict[int, tuple[float, float, int]] = {}
         # dynamic_undo: congestion state saved just before a loss cut the
@@ -307,7 +312,7 @@ class QuicPacketRecovery:
             )
 
     def _process_late_acks(self, ack_rangeset: RangeSet) -> None:
-        if not (self._dynamic_mode or self._dynamic_undo_mode):
+        if not (self._dynamic_mode or self._undo_enabled):
             return
         for pn in list(self._recent_lost):
             for r in ack_rangeset:
@@ -441,7 +446,7 @@ class QuicPacketRecovery:
         """
         Update metrics as the result of an ACK being received.
         """
-        if self._dynamic_mode or self._dynamic_undo_mode:
+        if self._dynamic_mode or self._undo_enabled:
             self._expire_recent_lost(now)
             self._expire_undo(now)
         is_ack_eliciting = False
@@ -707,7 +712,7 @@ class QuicPacketRecovery:
 
         persistent_congestion = self._in_persistent_congestion(packets=lost_packets)
         undo_snapshot = None
-        if self._dynamic_undo_mode and space.is_application_data and lost_packets:
+        if self._undo_enabled and space.is_application_data and lost_packets:
             undo_snapshot = self._cc_snapshot()
 
         self._on_packets_lost(
