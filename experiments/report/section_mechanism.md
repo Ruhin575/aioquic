@@ -1,6 +1,6 @@
 # Loss Mechanism Analysis
 
-*Section 3 and the gap analysis use the Phase 0 bulk matrix (`experiments/results/threshold_20`, 5 runs per cell, 10 MB download, 15 Mbit link, Cubic, base commit 342b224). Nothing in this section waits for other people's data; the only open items are the literature comparison (Section 7) and the dynamic variant's results, which belong to the team's dynamic analysis.*
+*Author: Pooja. Section 3 and the gap analysis use the Phase 0 bulk matrix (`experiments/results/threshold_20`, 5 runs per cell, 10 MB download, 15 Mbit link, Cubic, base commit 342b224). Nothing in this section waits for other people's data; the only open items are the literature comparison (Section 7) and the dynamic variants' results, which are the team's dynamic analysis (final bulk results: `dynamic_undo` is +143% mild, +107% moderate, +53% severe and +81% handover goodput over stock, `dynamic` alone +21%, +7%, +6% and +27%; `phase1_all_variants_final_5runs`).*
 
 ## 1. The cascade
 
@@ -41,7 +41,7 @@ A second set with a packet threshold of 100 gives the same picture (moderate 1.3
 
 **Median late-ACK delay** (time between a packet being declared lost and the ACK that shows it arrived; pooled over the 5 runs, `detect_spurious.py`): stock 26 ms (mild), 26 ms (moderate), 39 ms (severe), 51 ms (handover); k20 9, 10, 17 and 28 ms. With k20 the remaining spurious declarations are wrong by only about 10 to 30 ms, which is consistent with the time rule being the one that fires.
 
-**Congestion-window reductions** (`analyze_run.py`, `cwnd_decrease_events`: number of times the logged cwnd decreases, per run, mean of 5 runs):
+**Congestion-window reductions** (`analyze_runs.py`, `cwnd_decrease_events`: number of times the logged cwnd decreases, per run, mean of 5 runs):
 
 | Profile | Declared losses, stock | cwnd decreases, stock | Declared losses, k20 | cwnd decreases, k20 |
 |---|---|---|---|---|
@@ -89,9 +89,9 @@ With a threshold of 100, essentially none of the declared losses (about 8% in mi
 
 ## 5. Figures
 
-**Figure 2: cwnd over time, baseline vs moderate** (`plots/median_runs/plot2_cwnd.png`). Median-goodput stock run of each profile from the Phase 0 matrix (`threshold_20`): baseline run 3 (13.36 Mbps) and moderate run 2 (0.95 Mbps), picked with `plot_mechanism.py median-run`. Each panel has its own scales. Caption: baseline grows in slow start to about 340 KB within half a second, then keeps growing slowly to 434 KB with no declared losses. Moderate reaches about 240 KB in its first 0.7 s, is cut at its first declared losses and then stays in a sawtooth below about 40 KB for the remaining 90 s; 847 of its 883 declared losses (95.9%) are spurious (green triangles), and the window drops at nearly every cluster of them. (The 240 KB in the panel title is the start-up peak, not the steady-state window.)
+**Figure 2: cwnd over time, baseline vs moderate** (`plots/figure2_cwnd_median_runs.png`). Median-goodput stock run of each profile from the Phase 0 matrix (`threshold_20`): baseline run 3 (13.36 Mbps) and moderate run 2 (0.95 Mbps), picked with `plot_mechanism.py median-run`. Each panel has its own scales. Caption: baseline grows in slow start to about 340 KB within half a second, then keeps growing slowly to 434 KB with no declared losses. Moderate reaches about 240 KB in its first 0.7 s, is cut at its first declared losses and then stays in a sawtooth below about 40 KB for the remaining 90 s; 847 of its 883 declared losses (95.9%) are spurious (green triangles), and the window drops at nearly every cluster of them. (The 240 KB in the panel title is the start-up peak, not the steady-state window.)
 
-**Figure 4: cumulative acknowledged packet bytes, baseline vs severe** (`plots/median_runs/plot4_cumulative.png`). Median-goodput stock runs: baseline run 3 and severe run 4 (0.76 Mbps). This counts whole acknowledged packets (headers and retransmissions included), not unique file payload. Caption: the baseline run delivers 10.8 MB of acknowledged packet bytes in 6.4 s; the severe run needs 110 s for 11.6 MB, about 17 times longer.
+**Figure 4: cumulative acknowledged packet bytes, baseline vs severe** (`plots/figure4_cumulative_median_runs.png`). Median-goodput stock runs: baseline run 3 and severe run 4 (0.76 Mbps). This counts whole acknowledged packets (headers and retransmissions included), not unique file payload. Caption: the baseline run delivers 10.8 MB of acknowledged packet bytes in 6.4 s; the severe run needs 110 s for 11.6 MB, about 17 times longer.
 
 The earlier `plot2_cwnd.png` and `plot4_cumulative.png` in the same folder come from the Phase 0 pipeline and use different runs; these two figures replace them in this section.
 
@@ -100,7 +100,7 @@ The earlier `plot2_cwnd.png` and `plot4_cumulative.png` in the same folder come 
 * Goodput falls from 13.4 Mbps (baseline) to 0.99 Mbps (moderate), about 93% lower, while the link is only about 7% utilised and baseline has no declared losses. The path is not congested; the sender is reacting to losses that did not happen.
 * 86 to 95% of declared losses are spurious in every impaired profile (stock 88 to 95%, k20 86 to 94%).
 * The few genuine losses (about 34 moderate, 67 severe in the first sample run) match the configured netem loss (0.3% and 0.5%), which supports the detector. They also trigger cwnd cuts, so reordering is not the only cause of cuts.
-* Raising the packet threshold to 20 or 100 gives only +23 to +35% goodput and reduces declared losses by only about 10 to 18%. Packet-threshold tuning alone does not close the gap to TCP, and the attribution table now shows why: once the packet threshold is raised, the time rule declares 85 to 95% of the remaining losses on moderate, severe and handover (PTO is negligible). The dynamic packet threshold only adapts the packet rule, so on its own it should behave like k20 at best; its first bulk results (3 runs, moderate) are 1.00 Mbps, no better than stock (0.99) and well below k20 (1.28), and are still being examined.
+* Raising the packet threshold to 20 or 100 gives only +23 to +35% goodput and reduces declared losses by only about 10 to 18%. Packet-threshold tuning alone does not close the gap to TCP, and the attribution table now shows why: once the packet threshold is raised, the time rule declares 85 to 95% of the remaining losses on moderate, severe and handover (PTO is negligible). The dynamic packet threshold only adapts the packet rule, so on its own it behaves like k20 at best, and the final bulk matrix confirms it: `dynamic` gains +21% (mild), +7% (moderate), +6% (severe) and +27% (handover) over stock, against +33%, +40%, +24% and +47% for k20. What changes the result is the congestion undo: `dynamic_undo` reaches +143%, +107%, +53% and +81%, with no difference on baseline (`experiments/results/phase1_all_variants_final_5runs/transfers.csv`, 5 runs per cell, means).
 * Limitations: simulated reordering from netem; one bulk size; one packet-number space analysed (application); medians of a stochastic emulation.
 
 ## 7. Input for the literature comparison (for P5)

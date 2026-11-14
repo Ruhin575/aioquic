@@ -14,3 +14,8 @@ stock,handover,5,-0.2232,0.3073
 stock,mild,5,0.4098,0.5733
 stock,moderate,5,-0.446,0.6515
 stock,severe,5,-0.1108,0.1926
+undo,baseline,5,4.475,0.0
+undo,handover,5,-0.7397,0.4002
+undo,mild,5,1.8017,0.4109
+undo,moderate,5,0.5917,0.1333
+undo,severe,5,-0.1352,0.288

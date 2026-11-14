@@ -14,3 +14,8 @@ stock,handover,5,-0.1167,stock__handover__5
 stock,mild,3,0.525,stock__mild__3
 stock,moderate,1,-0.404,stock__moderate__1
 stock,severe,4,-0.1083,stock__severe__4
+undo,baseline,3,4.475,undo__baseline__3
+undo,handover,1,-0.7981,undo__handover__1
+undo,mild,2,1.9083,undo__mild__2
+undo,moderate,4,0.6083,undo__moderate__4
+undo,severe,1,-0.0917,undo__severe__1
