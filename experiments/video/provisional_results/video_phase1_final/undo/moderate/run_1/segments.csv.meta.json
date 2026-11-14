@@ -1,0 +1,27 @@
+{
+  "run_id": "undo__moderate__1",
+  "startup_delay_s": 0.755273609000028,
+  "stall_count": 0,
+  "total_stall_s": 0.0,
+  "n_segments": 30,
+  "video_duration_s": 120.0,
+  "ladder_mbps": [
+    0.25,
+    0.5,
+    1.0,
+    2.5,
+    5.0
+  ],
+  "completed": true,
+  "wall_time_s": 114.262,
+  "params": {
+    "url": "https://10.10.2.2:4433/manifest.mpd",
+    "max_buffer_s": 12.0,
+    "abr_window": 3,
+    "safety": 0.8,
+    "initial_index": 0,
+    "startup_buffer_s": null,
+    "resume_buffer_s": null,
+    "congestion_control": "cubic"
+  }
+}

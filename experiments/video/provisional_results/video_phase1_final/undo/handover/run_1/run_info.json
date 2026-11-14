@@ -1,0 +1,26 @@
+{
+  "variant": "undo",
+  "profile": "handover",
+  "run": 1,
+  "run_id": "undo__handover__1",
+  "threshold_env": "undo",
+  "started": "2026-11-14T04:29:36",
+  "git": {
+    "commit": "0daf55fbe74244dddcd0b578a0e4e6e2c553b9fd",
+    "branch": "main",
+    "dirty": false
+  },
+  "server_qlog_complete": true,
+  "result": {
+    "variant": "undo",
+    "profile": "handover",
+    "run": 1,
+    "startup_delay_s": 2.429,
+    "stall_count": 1,
+    "total_stall_s": 0.296,
+    "avg_bitrate_mbps": 0.417,
+    "quality_switches": 9,
+    "qoe_score": -0.7981
+  },
+  "finished": "2026-11-14T04:31:37"
+}
