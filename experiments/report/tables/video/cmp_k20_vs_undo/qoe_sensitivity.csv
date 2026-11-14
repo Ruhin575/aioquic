@@ -1,0 +1,31 @@
+profile,weight_set,mean_base,mean_other,diff,winner,welch_p
+baseline,contract (0.3 / 0.05 / 0.1),4.475,4.475,0.0,tie,
+baseline,no switch penalty,4.675,4.675,0.0,tie,
+baseline,light switch penalty (0.05),4.575,4.575,0.0,tie,
+baseline,heavy switch penalty (0.2),4.275,4.275,0.0,tie,
+baseline,stall-heavy (1.0 / 0.2 / 0.1),4.475,4.475,0.0,tie,
+baseline,bitrate only,4.675,4.675,0.0,tie,
+mild,contract (0.3 / 0.05 / 0.1),0.945,1.958,1.013,dynamic_undo,0.0001
+mild,no switch penalty,1.965,2.798,0.833,dynamic_undo,0.0006
+mild,light switch penalty (0.05),1.455,2.378,0.923,dynamic_undo,0.0001
+mild,heavy switch penalty (0.2),-0.075,1.118,1.193,dynamic_undo,0.0034
+mild,stall-heavy (1.0 / 0.2 / 0.1),0.945,1.958,1.013,dynamic_undo,0.0001
+mild,bitrate only,1.965,2.798,0.833,dynamic_undo,0.0006
+moderate,contract (0.3 / 0.05 / 0.1),0.029,0.675,0.646,dynamic_undo,0.0089
+moderate,no switch penalty,0.769,1.115,0.346,dynamic_undo,0.011
+moderate,light switch penalty (0.05),0.399,0.895,0.496,dynamic_undo,0.0096
+moderate,heavy switch penalty (0.2),-0.711,0.235,0.946,dynamic_undo,0.0086
+moderate,stall-heavy (1.0 / 0.2 / 0.1),-0.168,0.675,0.843,dynamic_undo,0.0594
+moderate,bitrate only,0.848,1.115,0.267,dynamic_undo,0.0
+severe,contract (0.3 / 0.05 / 0.1),-0.119,0.048,0.167,dynamic_undo,0.1745
+severe,no switch penalty,0.461,0.708,0.247,dynamic_undo,0.0896
+severe,light switch penalty (0.05),0.171,0.378,0.207,dynamic_undo,0.1049
+severe,heavy switch penalty (0.2),-0.699,-0.612,0.087,dynamic_undo,0.5669
+severe,stall-heavy (1.0 / 0.2 / 0.1),-0.439,-0.101,0.338,dynamic_undo,0.3545
+severe,bitrate only,0.595,0.772,0.177,dynamic_undo,0.0006
+handover,contract (0.3 / 0.05 / 0.1),-0.8,-0.285,0.515,dynamic_undo,0.1585
+handover,no switch penalty,0.06,0.415,0.355,dynamic_undo,0.13
+handover,light switch penalty (0.05),-0.37,0.065,0.435,dynamic_undo,0.1412
+handover,heavy switch penalty (0.2),-1.66,-0.985,0.675,dynamic_undo,0.1949
+handover,stall-heavy (1.0 / 0.2 / 0.1),-1.551,-0.285,1.266,dynamic_undo,0.1663
+handover,bitrate only,0.363,0.415,0.052,dynamic_undo,0.029

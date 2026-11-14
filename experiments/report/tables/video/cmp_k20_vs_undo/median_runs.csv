@@ -1,0 +1,16 @@
+variant,profile,run,qoe_score,run_id
+dynamic_undo,baseline,3,4.475,dynamic_undo__baseline__3
+dynamic_undo,handover,4,-0.425,dynamic_undo__handover__4
+dynamic_undo,mild,1,1.975,dynamic_undo__mild__1
+dynamic_undo,moderate,5,0.625,dynamic_undo__moderate__5
+dynamic_undo,severe,1,0.1417,dynamic_undo__severe__1
+k20,baseline,3,4.475,k20__baseline__3
+k20,handover,3,-0.5917,k20__handover__3
+k20,mild,1,0.8583,k20__mild__1
+k20,moderate,5,0.1417,k20__moderate__5
+k20,severe,2,-0.0417,k20__severe__2
+stock,baseline,3,4.475,stock__baseline__3
+stock,handover,5,-0.1167,stock__handover__5
+stock,mild,3,0.525,stock__mild__3
+stock,moderate,1,-0.404,stock__moderate__1
+stock,severe,4,-0.1083,stock__severe__4

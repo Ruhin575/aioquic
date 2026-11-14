@@ -6,10 +6,12 @@ by Amrutha's `run_video_matrix.sh`; nothing here needs fake data any more.
 ## One command
 ```bash
 bash experiments/video/run_video_analysis.sh RESULTS_DIR OUT_DIR [OTHER_VARIANT ...]
-# now (provisional stock vs k20 matrix):
-bash experiments/video/run_video_analysis.sh experiments/video/provisional_results/video_provisional /tmp/video_analysis
-# final data, all variants compared with stock:
-bash experiments/video/run_video_analysis.sh <final results dir> experiments/video/analysis_final k20 dynamic dynamic_undo
+# final matrix (stock, k20, dynamic_undo; commit 32ca59e = pin a8d846c source, clean tree):
+TIMELINE_PROFILE=moderate bash experiments/video/run_video_analysis.sh \
+    experiments/video/provisional_results/video_phase1_final /tmp/video_final dynamic_undo k20
+# the k20-vs-dynamic_undo comparison (second command of the report section):
+python experiments/video/compare_variants.py --results /tmp/video_final/video_results_parsed.csv \
+    --base k20 --other dynamic_undo --out /tmp/video_final/cmp_k20_vs_undo
 ```
 `TIMELINE_PROFILE=moderate` changes the profile used for Plot 8 (default severe). Needs pandas and matplotlib; scipy is
 optional (without it the p-values are NaN).
@@ -36,28 +38,29 @@ It is tested on synthetic qlogs only and has not yet been run on real video qlog
 * QoE (Day 0 contract) = avg_bitrate_mbps - 0.3 x stalls - 0.05 x stall seconds - 0.1 x quality switches.
 * p-values: Welch t-test, Holm-adjusted across the profiles of each metric, the same method as Reethika's bulk statistics.
 
-## Reading the results (provisional matrix, 5 runs per cell)
-* k20 plays 19 to 29% higher bitrate than stock on every impaired profile (significant after Holm correction).
-* Stalls are rare (12 events in 50 runs, 9 of them in the first four segments); only severe differs significantly
-  (1.2 vs 0.2 per run, adjusted p = 0.031).
-* QoE with the contract weights is significantly higher for k20 only in severe. At handover k20 ranks lower under the
-  contract and heavy-switch weights and higher under five other weight sets; that difference is not significant, so
-  report bitrate, stalls and switches next to the headline QoE and show the sensitivity table.
+## Reading the results (final matrix: stock, k20, dynamic_undo; 5 runs per cell)
+* `dynamic_undo` plays 35 to 88% higher bitrate than stock on every impaired profile (+88% mild, +88% moderate, +35% severe,
+  +43% handover), all significant after Holm correction. It is also 14 to 42% above k20.
+* k20 plays +32% (mild), +43% (moderate), +25% (handover) above stock; severe (+4%) is not significant. The earlier
+  provisional k20 runs showed +19 to +29% on all four profiles, so the severe gain did not reproduce in the rerun.
+* Stalls are rare (18 events in 75 runs: stock 10, k20 7, dynamic_undo 1; 16 of them in the first four segments). No
+  stall difference survives Holm correction (moderate stock 1.2 vs dynamic_undo 0.0 per run: raw p = 0.033, adjusted 0.13).
+* QoE with the contract weights is significantly higher for dynamic_undo than stock in mild and moderate; severe and
+  handover are not significant. At handover dynamic_undo ranks lower than stock under the contract and heavy-switch
+  weights (-0.29 vs -0.22) and higher under five other weight sets; k20 is lowest at handover.
 
 ## Before quoting any number (checklist)
-1. `provisional_results` runs came from a working tree with uncommitted changes and from before the Phase 1 pin. Use them
-   only as provisional; the final numbers must come from runs made at the pinned commit (`experiments/BASE_COMMIT.txt`,
-   currently `phase1 a8d846c`), including `dynamic` and `dynamic_undo` if they go into the video comparison.
+1. The final matrix was run by Amrutha in one session on commit `32ca59e`, whose `src/` is identical to the pin `a8d846c`
+   (`git diff a8d846c 32ca59e -- src` is empty), with `"dirty": false` in all 75 `run_info.json` files. The older
+   `video_provisional` runs (stock and k20 of 6 Nov, `dynamic` of 10 Nov) are superseded; do not mix them in one table.
 2. Every run has `completed: true` in its `.meta.json`, the same buffer cap (`params.max_buffer_s`) and the same congestion
    control. `parse_video_results.py` skips incomplete runs with a warning: count the runs per cell (5 expected).
-3. Compare the parsed summary with the runner's own `video_results.csv`; they should agree within rounding (they did for
-   all 50 provisional runs).
+3. Compare the parsed summary with the runner's own `video_results.csv`; they should agree within rounding.
 4. Do not mix variants or profiles from different pins in one table.
 
 ## Open items
 | Item | Waiting for |
 |---|---|
-| Video-run spurious share and rule shares (step 5) | the server qlogs of the video runs (Amrutha) |
-| Final stock and k20 video matrix | a rerun at the final pin (Amrutha) |
-| `dynamic` / `dynamic_undo` video results | those runs (Amrutha, with Reethika), after the code is final |
-| Video section in `REPORT.md` | Reethika, from `section_video.md` once it is final |
+| Video-run spurious share, rule shares and undo events (`cwnd_restored`, `undo_abandoned`) for the final runs (step 5) | the server qlogs of the final runs (Amrutha has them; they are not on GitHub) |
+| `undo` (K fixed at 3) ablation on video | merged by Ruhin; Amrutha has not run it |
+| Video section in `REPORT.md` | Reethika, from `section_video.md` |

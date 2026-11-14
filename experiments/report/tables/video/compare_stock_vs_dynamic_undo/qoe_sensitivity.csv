@@ -1,0 +1,36 @@
+profile,weight_set,mean_base,mean_other,diff,winner,welch_p
+baseline,contract (0.3 / 0.05 / 0.1),4.475,4.475,0.0,tie,
+baseline,no switch penalty,4.675,4.675,0.0,tie,
+baseline,light switch penalty (0.05),4.575,4.575,0.0,tie,
+baseline,heavy switch penalty (0.2),4.275,4.275,0.0,tie,
+baseline,stall-heavy (1.0 / 0.2 / 0.1),4.475,4.475,0.0,tie,
+baseline,bitrate only,4.675,4.675,0.0,tie,
+baseline,MPC style: smoothness = mean |change| (weight 1),4.517,4.517,0.0,tie,
+mild,contract (0.3 / 0.05 / 0.1),0.41,1.958,1.548,dynamic_undo,0.0008
+mild,no switch penalty,1.31,2.798,1.488,dynamic_undo,0.0002
+mild,light switch penalty (0.05),0.86,2.378,1.518,dynamic_undo,0.0004
+mild,heavy switch penalty (0.2),-0.49,1.118,1.608,dynamic_undo,0.0018
+mild,stall-heavy (1.0 / 0.2 / 0.1),-0.046,1.958,2.004,dynamic_undo,0.0373
+mild,bitrate only,1.488,2.798,1.31,dynamic_undo,0.0001
+mild,MPC style: smoothness = mean |change| (weight 1),0.871,2.23,1.358,dynamic_undo,0.0015
+moderate,contract (0.3 / 0.05 / 0.1),-0.446,0.675,1.121,dynamic_undo,0.0083
+moderate,no switch penalty,0.154,1.115,0.961,dynamic_undo,0.0024
+moderate,light switch penalty (0.05),-0.146,0.895,1.041,dynamic_undo,0.005
+moderate,heavy switch penalty (0.2),-1.046,0.235,1.281,dynamic_undo,0.0172
+moderate,stall-heavy (1.0 / 0.2 / 0.1),-1.519,0.675,2.194,dynamic_undo,0.023
+moderate,bitrate only,0.592,1.115,0.523,dynamic_undo,0.0
+moderate,MPC style: smoothness = mean |change| (weight 1),0.036,0.92,0.884,dynamic_undo,0.0061
+severe,contract (0.3 / 0.05 / 0.1),-0.111,0.048,0.159,dynamic_undo,0.1917
+severe,no switch penalty,0.509,0.708,0.199,dynamic_undo,0.0889
+severe,light switch penalty (0.05),0.199,0.378,0.179,dynamic_undo,0.1145
+severe,heavy switch penalty (0.2),-0.731,-0.612,0.119,dynamic_undo,0.4683
+severe,stall-heavy (1.0 / 0.2 / 0.1),-0.258,-0.101,0.157,dynamic_undo,0.6179
+severe,bitrate only,0.572,0.772,0.2,dynamic_undo,0.0004
+severe,MPC style: smoothness = mean |change| (weight 1),0.424,0.597,0.173,dynamic_undo,0.1383
+handover,contract (0.3 / 0.05 / 0.1),-0.223,-0.285,-0.062,stock,0.6946
+handover,no switch penalty,0.217,0.415,0.198,dynamic_undo,0.0472
+handover,light switch penalty (0.05),-0.003,0.065,0.068,dynamic_undo,0.538
+handover,heavy switch penalty (0.2),-0.663,-0.985,-0.322,stock,0.2493
+handover,stall-heavy (1.0 / 0.2 / 0.1),-0.403,-0.285,0.118,dynamic_undo,0.7182
+handover,bitrate only,0.29,0.415,0.125,dynamic_undo,0.0008
+handover,MPC style: smoothness = mean |change| (weight 1),0.18,0.35,0.17,dynamic_undo,0.0827

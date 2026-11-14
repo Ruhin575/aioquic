@@ -1,0 +1,36 @@
+profile,weight_set,mean_base,mean_other,diff,winner,welch_p
+baseline,contract (0.3 / 0.05 / 0.1),4.475,4.475,0.0,tie,
+baseline,no switch penalty,4.675,4.675,0.0,tie,
+baseline,light switch penalty (0.05),4.575,4.575,0.0,tie,
+baseline,heavy switch penalty (0.2),4.275,4.275,0.0,tie,
+baseline,stall-heavy (1.0 / 0.2 / 0.1),4.475,4.475,0.0,tie,
+baseline,bitrate only,4.675,4.675,0.0,tie,
+baseline,MPC style: smoothness = mean |change| (weight 1),4.517,4.517,0.0,tie,
+mild,contract (0.3 / 0.05 / 0.1),0.41,0.945,0.535,k20,0.0614
+mild,no switch penalty,1.31,1.965,0.655,k20,0.0178
+mild,light switch penalty (0.05),0.86,1.455,0.595,k20,0.0329
+mild,heavy switch penalty (0.2),-0.49,-0.075,0.415,k20,0.2231
+mild,stall-heavy (1.0 / 0.2 / 0.1),-0.046,0.945,0.991,k20,0.2072
+mild,bitrate only,1.488,1.965,0.477,k20,0.0005
+mild,MPC style: smoothness = mean |change| (weight 1),0.871,1.42,0.548,k20,0.051
+moderate,contract (0.3 / 0.05 / 0.1),-0.446,0.029,0.475,k20,0.129
+moderate,no switch penalty,0.154,0.769,0.615,k20,0.0082
+moderate,light switch penalty (0.05),-0.146,0.399,0.545,k20,0.0421
+moderate,heavy switch penalty (0.2),-1.046,-0.711,0.335,k20,0.4264
+moderate,stall-heavy (1.0 / 0.2 / 0.1),-1.519,-0.168,1.351,k20,0.0984
+moderate,bitrate only,0.592,0.848,0.257,k20,0.0
+moderate,MPC style: smoothness = mean |change| (weight 1),0.036,0.624,0.589,k20,0.0212
+severe,contract (0.3 / 0.05 / 0.1),-0.111,-0.119,-0.008,stock,0.9388
+severe,no switch penalty,0.509,0.461,-0.048,stock,0.6957
+severe,light switch penalty (0.05),0.199,0.171,-0.028,stock,0.796
+severe,heavy switch penalty (0.2),-0.731,-0.699,0.032,k20,0.7879
+severe,stall-heavy (1.0 / 0.2 / 0.1),-0.258,-0.439,-0.181,stock,0.6016
+severe,bitrate only,0.572,0.595,0.023,k20,0.5371
+severe,MPC style: smoothness = mean |change| (weight 1),0.424,0.363,-0.061,stock,0.6148
+handover,contract (0.3 / 0.05 / 0.1),-0.223,-0.8,-0.577,stock,0.1235
+handover,no switch penalty,0.217,0.06,-0.157,stock,0.4663
+handover,light switch penalty (0.05),-0.003,-0.37,-0.367,stock,0.2063
+handover,heavy switch penalty (0.2),-0.663,-1.66,-0.997,stock,0.0719
+handover,stall-heavy (1.0 / 0.2 / 0.1),-0.403,-1.551,-1.149,stock,0.2099
+handover,bitrate only,0.29,0.363,0.073,k20,0.0033
+handover,MPC style: smoothness = mean |change| (weight 1),0.18,-0.022,-0.202,stock,0.3876

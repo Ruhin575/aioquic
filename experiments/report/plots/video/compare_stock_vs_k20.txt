@@ -2,61 +2,61 @@
 
 startup_delay_s
  profile  mean_base  mean_other    diff  diff_pct  welch_p  welch_p_holm
-baseline     0.6043      0.5539 -0.0504      -8.3   0.2532         1.000
-    mild     0.6541      0.6638  0.0097       1.5   0.5515         1.000
-moderate     1.1569      1.0618 -0.0950      -8.2   0.6641         1.000
-  severe     1.5202      1.0151 -0.5051     -33.2   0.1854         0.927
-handover     2.0770      1.7673 -0.3096     -14.9   0.4700         1.000
+baseline     0.5548      0.5081 -0.0467      -8.4   0.3852        0.7570
+    mild     0.7695      0.6195 -0.1501     -19.5   0.3785        0.7570
+moderate     0.8678      0.7081 -0.1597     -18.4   0.1544        0.4632
+  severe     1.8743      1.0494 -0.8249     -44.0   0.0268        0.1340
+handover     2.4372      1.6582 -0.7790     -32.0   0.0564        0.2256
 
 stall_count
  profile  mean_base  mean_other  diff  diff_pct  welch_p  welch_p_holm
 baseline        0.0         0.0   0.0       NaN      NaN           NaN
-    mild        0.2         0.0  -0.2    -100.0   0.3739        0.7478
-moderate        0.2         0.0  -0.2    -100.0   0.3739        0.7478
-  severe        1.2         0.2  -1.0     -83.3   0.0077        0.0308
-handover        0.6         0.0  -0.6    -100.0   0.0705        0.2115
+    mild        0.4         0.0  -0.4    -100.0   0.3739        0.9165
+moderate        1.2         0.2  -1.0     -83.3   0.0557        0.2228
+  severe        0.2         0.4   0.2     100.0   0.5454        0.9165
+handover        0.2         0.8   0.6     300.0   0.3055        0.9165
 
 total_stall_s
  profile  mean_base  mean_other    diff  diff_pct  welch_p  welch_p_holm
-baseline     0.0000        0.00  0.0000       NaN      NaN           NaN
-    mild     0.2339        0.00 -0.2339    -100.0   0.3739        0.7478
-moderate     0.0765        0.00 -0.0765    -100.0   0.3739        0.7478
-  severe     2.0195        0.13 -1.8895     -93.6   0.0841        0.3364
-handover     0.9625        0.00 -0.9625    -100.0   0.1570        0.4710
+baseline     0.0000      0.0000  0.0000       NaN      NaN           NaN
+    mild     1.1697      0.0000 -1.1697    -100.0   0.3739           1.0
+moderate     1.5533      0.3810 -1.1723     -75.5   0.3338           1.0
+  severe     0.0490      0.2715  0.2225     454.5   0.2592           1.0
+handover     0.2636      1.2731  1.0095     383.0   0.2847           1.0
 
 avg_bitrate_mbps
  profile  mean_base  mean_other   diff  diff_pct  welch_p  welch_p_holm
 baseline     4.6750      4.6750 0.0000       0.0      NaN           NaN
-    mild     1.3917      1.6550 0.2633      18.9   0.0170        0.0170
-moderate     0.6317      0.8083 0.1767      28.0   0.0005        0.0015
-  severe     0.4983      0.6450 0.1467      29.4   0.0000        0.0000
-handover     0.2817      0.3633 0.0817      29.0   0.0010        0.0020
+    mild     1.4883      1.9650 0.4767      32.0   0.0005        0.0015
+moderate     0.5917      0.8483 0.2567      43.4   0.0000        0.0000
+  severe     0.5717      0.5950 0.0233       4.1   0.5371        0.5371
+handover     0.2900      0.3633 0.0733      25.3   0.0033        0.0066
 
 quality_switches
  profile  mean_base  mean_other  diff  diff_pct  welch_p  welch_p_holm
 baseline        2.0         2.0   0.0       0.0      NaN           NaN
-    mild        7.8         8.8   1.0      12.8   0.1460        0.3780
-moderate        7.6         7.8   0.2       2.6   0.8700        0.8700
-  severe        9.0         6.6  -2.4     -26.7   0.1260        0.3780
-handover        4.4         8.6   4.2      95.5   0.0221        0.0884
+    mild        9.0        10.2   1.2      13.3   0.3334        0.9363
+moderate        6.0         7.4   1.4      23.3   0.3121        0.9363
+  severe        6.2         5.8  -0.4      -6.5   0.5358        0.9363
+handover        4.4         8.6   4.2      95.5   0.0282        0.1128
 
 qoe_score
  profile  mean_base  mean_other    diff  diff_pct  welch_p  welch_p_holm
 baseline     4.4750      4.4750  0.0000       NaN      NaN           NaN
-    mild     0.5400      0.7750  0.2350       NaN   0.0913        0.2739
-moderate    -0.1922      0.0283  0.2205       NaN   0.2082        0.4164
-  severe    -0.8627     -0.0815  0.7812       NaN   0.0003        0.0012
-handover    -0.3865     -0.4967 -0.1102       NaN   0.5413        0.5413
+    mild     0.4098      0.9450  0.5351       NaN   0.0614        0.2456
+moderate    -0.4460      0.0293  0.4753       NaN   0.1290        0.3705
+  severe    -0.1108     -0.1186 -0.0078       NaN   0.9389        0.9389
+handover    -0.2232     -0.8003 -0.5772       NaN   0.1235        0.3705
 
 == QoE winner under different weights (winner by mean QoE) ==
 profile                                          baseline mild moderate severe handover
 weight_set                                                                             
-contract (0.3 / 0.05 / 0.1)                           tie  k20      k20    k20    stock
-no switch penalty                                     tie  k20      k20    k20      k20
-light switch penalty (0.05)                           tie  k20      k20    k20      k20
+contract (0.3 / 0.05 / 0.1)                           tie  k20      k20  stock    stock
+no switch penalty                                     tie  k20      k20  stock    stock
+light switch penalty (0.05)                           tie  k20      k20  stock    stock
 heavy switch penalty (0.2)                            tie  k20      k20    k20    stock
-stall-heavy (1.0 / 0.2 / 0.1)                         tie  k20      k20    k20      k20
+stall-heavy (1.0 / 0.2 / 0.1)                         tie  k20      k20  stock    stock
 bitrate only                                          tie  k20      k20    k20      k20
-MPC style: smoothness = mean |change| (weight 1)      tie  k20      k20    k20      k20
+MPC style: smoothness = mean |change| (weight 1)      tie  k20      k20  stock    stock
 
-Wrote experiments/video/analysis_out/compare_stock_vs_k20/{video_comparison,qoe_sensitivity,median_runs}.csv
+Wrote /tmp/video_final/compare_stock_vs_k20/{video_comparison,qoe_sensitivity,median_runs}.csv
