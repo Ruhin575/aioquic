@@ -21,6 +21,7 @@ VARIANTS = [
     "k100",
     "dynamic",
     "dynamic_undo",
+    "undo",
 ]
 STAGES = {
     "smoke": {

@@ -25,6 +25,7 @@ VARIANTS = {
     "k100": "100",
     "dynamic": "dynamic",
     "dynamic_undo": "dynamic_undo",
+    "undo": "undo",
 }
 
 def run_command(command, dry_run=False, check=True):

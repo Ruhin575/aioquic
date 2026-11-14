@@ -1376,3 +1376,163 @@
 - **2026-11-12T15:29:51** SUCCESS: profile=handover, file=10MB.bin, variant=dynamic_undo, run=4
 
 - **2026-11-12T15:32:13** SUCCESS: profile=handover, file=10MB.bin, variant=dynamic_undo, run=5
+
+- **2026-11-14T14:12:48** FAILED: profile=baseline, file=10MB.bin, variant=undo, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:48** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:48** FAILED: profile=baseline, file=10MB.bin, variant=undo, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:48** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:48** FAILED: profile=baseline, file=10MB.bin, variant=undo, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:48** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:49** FAILED: profile=baseline, file=10MB.bin, variant=undo, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:49** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:49** FAILED: profile=baseline, file=10MB.bin, variant=undo, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:49** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'baseline', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:49** FAILED: profile=mild, file=10MB.bin, variant=undo, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:49** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:49** FAILED: profile=mild, file=10MB.bin, variant=undo, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:49** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:49** FAILED: profile=mild, file=10MB.bin, variant=undo, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:49** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:49** FAILED: profile=mild, file=10MB.bin, variant=undo, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:49** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:50** FAILED: profile=mild, file=10MB.bin, variant=undo, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:50** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'mild', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:50** FAILED: profile=moderate, file=10MB.bin, variant=undo, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:50** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:50** FAILED: profile=moderate, file=10MB.bin, variant=undo, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:50** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:50** FAILED: profile=moderate, file=10MB.bin, variant=undo, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:50** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:50** FAILED: profile=moderate, file=10MB.bin, variant=undo, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:50** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:50** FAILED: profile=moderate, file=10MB.bin, variant=undo, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:50** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'moderate', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:51** FAILED: profile=severe, file=10MB.bin, variant=undo, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:51** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:51** FAILED: profile=severe, file=10MB.bin, variant=undo, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:51** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:51** FAILED: profile=severe, file=10MB.bin, variant=undo, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:51** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:51** FAILED: profile=severe, file=10MB.bin, variant=undo, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:51** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:51** FAILED: profile=severe, file=10MB.bin, variant=undo, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:51** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'severe', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:51** FAILED: profile=handover, file=10MB.bin, variant=undo, run=1: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:51** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:51** FAILED: profile=handover, file=10MB.bin, variant=undo, run=2: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:52** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:52** FAILED: profile=handover, file=10MB.bin, variant=undo, run=3: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:52** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:52** FAILED: profile=handover, file=10MB.bin, variant=undo, run=4: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:52** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:52** FAILED: profile=handover, file=10MB.bin, variant=undo, run=5: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:12:52** FAILED: Command '['sudo', 'bash', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/netem/setup.sh', 'handover', 'rc0', 'rs0', 'ns-router']' returned non-zero exit status 1.
+
+- **2026-11-14T14:16:54** FAILED: profile=baseline, file=10MB.bin, variant=undo, run=1: Command '['/usr/bin/python3', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/transfer/run_transfer.py', '--file', '10MB.bin', '--variant', 'undo', '--profile', 'baseline', '--run', '1', '--output-dir', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/results/phase1_undo_ablation_5runs', '--threshold', 'undo', '--results-file', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/results/phase1_undo_ablation_5runs/transfers.csv']' returned non-zero exit status 1.
+
+- **2026-11-14T14:16:54** FAILED: Command '['/usr/bin/python3', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/transfer/run_transfer.py', '--file', '10MB.bin', '--variant', 'undo', '--profile', 'baseline', '--run', '1', '--output-dir', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/results/phase1_undo_ablation_5runs', '--threshold', 'undo', '--results-file', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/results/phase1_undo_ablation_5runs/transfers.csv']' returned non-zero exit status 1.
+
+- **2026-11-14T14:19:23** FAILED: profile=baseline, file=10MB.bin, variant=undo, run=1: Command '['/home/reethika/networks_project/aioquic/.venv/bin/python3', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/transfer/run_transfer.py', '--file', '10MB.bin', '--variant', 'undo', '--profile', 'baseline', '--run', '1', '--output-dir', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/results/phase1_undo_ablation_5runs', '--threshold', 'undo', '--results-file', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/results/phase1_undo_ablation_5runs/transfers.csv']' returned non-zero exit status 1.
+
+- **2026-11-14T14:19:23** FAILED: Command '['/home/reethika/networks_project/aioquic/.venv/bin/python3', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/transfer/run_transfer.py', '--file', '10MB.bin', '--variant', 'undo', '--profile', 'baseline', '--run', '1', '--output-dir', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/results/phase1_undo_ablation_5runs', '--threshold', 'undo', '--results-file', '/home/reethika/networks_project/aioquic-phase1-final-undo/experiments/results/phase1_undo_ablation_5runs/transfers.csv']' returned non-zero exit status 1.
+
+- **2026-11-14T14:22:27** SUCCESS: profile=baseline, file=10MB.bin, variant=undo, run=1
+
+- **2026-11-14T14:23:21** SUCCESS: profile=baseline, file=10MB.bin, variant=undo, run=1
+
+- **2026-11-14T14:23:33** SUCCESS: profile=baseline, file=10MB.bin, variant=undo, run=2
+
+- **2026-11-14T14:23:45** SUCCESS: profile=baseline, file=10MB.bin, variant=undo, run=3
+
+- **2026-11-14T14:23:58** SUCCESS: profile=baseline, file=10MB.bin, variant=undo, run=4
+
+- **2026-11-14T14:24:10** SUCCESS: profile=baseline, file=10MB.bin, variant=undo, run=5
+
+- **2026-11-14T14:24:32** SUCCESS: profile=mild, file=10MB.bin, variant=undo, run=1
+
+- **2026-11-14T14:25:00** SUCCESS: profile=mild, file=10MB.bin, variant=undo, run=2
+
+- **2026-11-14T14:25:24** SUCCESS: profile=mild, file=10MB.bin, variant=undo, run=3
+
+- **2026-11-14T14:25:49** SUCCESS: profile=mild, file=10MB.bin, variant=undo, run=4
+
+- **2026-11-14T14:26:15** SUCCESS: profile=mild, file=10MB.bin, variant=undo, run=5
+
+- **2026-11-14T14:27:11** SUCCESS: profile=moderate, file=10MB.bin, variant=undo, run=1
+
+- **2026-11-14T14:27:55** SUCCESS: profile=moderate, file=10MB.bin, variant=undo, run=2
+
+- **2026-11-14T14:28:56** SUCCESS: profile=moderate, file=10MB.bin, variant=undo, run=3
+
+- **2026-11-14T14:29:53** SUCCESS: profile=moderate, file=10MB.bin, variant=undo, run=4
+
+- **2026-11-14T14:30:48** SUCCESS: profile=moderate, file=10MB.bin, variant=undo, run=5
+
+- **2026-11-14T14:32:06** SUCCESS: profile=severe, file=10MB.bin, variant=undo, run=1
+
+- **2026-11-14T14:33:28** SUCCESS: profile=severe, file=10MB.bin, variant=undo, run=2
+
+- **2026-11-14T14:34:35** SUCCESS: profile=severe, file=10MB.bin, variant=undo, run=3
+
+- **2026-11-14T14:35:51** SUCCESS: profile=severe, file=10MB.bin, variant=undo, run=4
+
+- **2026-11-14T14:37:05** SUCCESS: profile=severe, file=10MB.bin, variant=undo, run=5
+
+- **2026-11-14T14:39:23** SUCCESS: profile=handover, file=10MB.bin, variant=undo, run=1
+
+- **2026-11-14T14:41:47** SUCCESS: profile=handover, file=10MB.bin, variant=undo, run=2
+
+- **2026-11-14T14:44:11** SUCCESS: profile=handover, file=10MB.bin, variant=undo, run=3
+
+- **2026-11-14T14:46:28** SUCCESS: profile=handover, file=10MB.bin, variant=undo, run=4
+
+- **2026-11-14T14:48:41** SUCCESS: profile=handover, file=10MB.bin, variant=undo, run=5
