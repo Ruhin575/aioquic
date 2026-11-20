@@ -1536,3 +1536,39 @@
 - **2026-11-14T14:46:28** SUCCESS: profile=handover, file=10MB.bin, variant=undo, run=4
 
 - **2026-11-14T14:48:41** SUCCESS: profile=handover, file=10MB.bin, variant=undo, run=5
+
+- **2026-11-20T06:26:58** FAILED: profile=safety, file=10MB.bin, variant=stock, run=1: Command '['/usr/bin/python3', '/home/yshamili/aioquic/experiments/transfer/run_transfer.py', '--file', '10MB.bin', '--variant', 'stock', '--profile', 'safety', '--run', '1', '--output-dir', '/home/yshamili/aioquic/experiments/results']' returned non-zero exit status 1.
+
+- **2026-11-20T06:26:58** FAILED: Command '['/usr/bin/python3', '/home/yshamili/aioquic/experiments/transfer/run_transfer.py', '--file', '10MB.bin', '--variant', 'stock', '--profile', 'safety', '--run', '1', '--output-dir', '/home/yshamili/aioquic/experiments/results']' returned non-zero exit status 1.
+
+- **2026-11-20T06:28:30** FAILED: profile=safety, file=10MB.bin, variant=stock, run=1: Command '['/usr/bin/python3', '/home/yshamili/aioquic/experiments/transfer/run_transfer.py', '--file', '10MB.bin', '--variant', 'stock', '--profile', 'safety', '--run', '1', '--output-dir', '/home/yshamili/aioquic/experiments/results']' returned non-zero exit status 1.
+
+- **2026-11-20T06:28:30** FAILED: Command '['/usr/bin/python3', '/home/yshamili/aioquic/experiments/transfer/run_transfer.py', '--file', '10MB.bin', '--variant', 'stock', '--profile', 'safety', '--run', '1', '--output-dir', '/home/yshamili/aioquic/experiments/results']' returned non-zero exit status 1.
+
+- **2026-11-20T06:30:23** FAILED: profile=safety, file=10MB.bin, variant=stock, run=1: Command '['/home/yshamili/aioquic/.venv/bin/python', '/home/yshamili/aioquic/experiments/transfer/run_transfer.py', '--file', '10MB.bin', '--variant', 'stock', '--profile', 'safety', '--run', '1', '--output-dir', '/home/yshamili/aioquic/experiments/results']' returned non-zero exit status 1.
+
+- **2026-11-20T06:30:23** FAILED: Command '['/home/yshamili/aioquic/.venv/bin/python', '/home/yshamili/aioquic/experiments/transfer/run_transfer.py', '--file', '10MB.bin', '--variant', 'stock', '--profile', 'safety', '--run', '1', '--output-dir', '/home/yshamili/aioquic/experiments/results']' returned non-zero exit status 1.
+
+- **2026-11-20T06:32:16** FAILED: profile=safety, file=10MB.bin, variant=stock, run=1: Command '['/home/yshamili/aioquic/.venv/bin/python', '/home/yshamili/aioquic/experiments/transfer/run_transfer.py', '--file', '10MB.bin', '--variant', 'stock', '--profile', 'safety', '--run', '1', '--output-dir', '/home/yshamili/aioquic/experiments/results']' returned non-zero exit status 1.
+
+- **2026-11-20T06:32:16** FAILED: Command '['/home/yshamili/aioquic/.venv/bin/python', '/home/yshamili/aioquic/experiments/transfer/run_transfer.py', '--file', '10MB.bin', '--variant', 'stock', '--profile', 'safety', '--run', '1', '--output-dir', '/home/yshamili/aioquic/experiments/results']' returned non-zero exit status 1.
+
+- **2026-11-20T06:33:36** SUCCESS: profile=safety, file=10MB.bin, variant=stock, run=1
+
+- **2026-11-20T06:34:56** SUCCESS: profile=safety, file=10MB.bin, variant=stock, run=2
+
+- **2026-11-20T06:35:20** SUCCESS: profile=safety, file=10MB.bin, variant=stock, run=3
+
+- **2026-11-20T06:35:42** SUCCESS: profile=safety, file=10MB.bin, variant=stock, run=4
+
+- **2026-11-20T06:36:06** SUCCESS: profile=safety, file=10MB.bin, variant=stock, run=5
+
+- **2026-11-20T06:36:29** SUCCESS: profile=safety, file=10MB.bin, variant=dynamic_undo, run=1
+
+- **2026-11-20T06:36:52** SUCCESS: profile=safety, file=10MB.bin, variant=dynamic_undo, run=2
+
+- **2026-11-20T06:37:15** SUCCESS: profile=safety, file=10MB.bin, variant=dynamic_undo, run=3
+
+- **2026-11-20T06:37:37** SUCCESS: profile=safety, file=10MB.bin, variant=dynamic_undo, run=4
+
+- **2026-11-20T06:38:01** SUCCESS: profile=safety, file=10MB.bin, variant=dynamic_undo, run=5

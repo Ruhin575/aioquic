@@ -25,7 +25,7 @@ set -euo pipefail
 
 if [ "$#" -lt 3 ] || [ "$#" -gt 4 ]; then
     echo "Usage: $0 <profile> <DL_IF> <UL_IF> [ROUTER_NS]" >&2
-    echo "Profiles: baseline mild moderate severe handover" >&2
+    echo "Profiles: baseline mild moderate severe handover safety" >&2
     exit 2
 fi
 
@@ -94,9 +94,13 @@ case "$PROFILE" in
         # to collapse to zero at small p when correlation is high.
         DL_NETEM="delay 80ms 40ms distribution normal loss random 1% reorder 30% 80% rate ${RATE_CAP}"
         ;;
+    safety)
+        # No loss or reordering: fixed 30ms delay, 15Mbit, queue limit 30.
+        DL_NETEM="limit 30 delay 30ms rate ${RATE_CAP}"
+        ;;
     *)
         echo "Unknown profile: $PROFILE" >&2
-        echo "Profiles: baseline mild moderate severe handover" >&2
+        echo "Profiles: baseline mild moderate severe handover safety" >&2
         exit 2
         ;;
 esac
@@ -106,7 +110,11 @@ esac
 "${NS_EXEC[@]}" tc qdisc add dev "$DL_IF" root handle 10: netem ${DL_NETEM}
 
 # Uplink: fixed delay + same rate cap (no jitter/loss/reorder).
-"${NS_EXEC[@]}" tc qdisc add dev "$UL_IF" root handle 10: netem delay "${UL_DELAY}" rate "${RATE_CAP}"
+if [ "$PROFILE" = "safety" ]; then
+    "${NS_EXEC[@]}" tc qdisc add dev "$UL_IF" root handle 10: netem limit 30 delay "${UL_DELAY}" rate "${RATE_CAP}"
+else
+    "${NS_EXEC[@]}" tc qdisc add dev "$UL_IF" root handle 10: netem delay "${UL_DELAY}" rate "${RATE_CAP}"
+fi
 
 echo "Applied profile: ${PROFILE} (${WHERE}) "
 echo "${DL_IF} (downlink, server -> client) "

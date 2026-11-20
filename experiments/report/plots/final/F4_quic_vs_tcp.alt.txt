@@ -1,0 +1,1 @@
+Grouped bar chart comparing Stock QUIC, K20 QUIC, Dynamic Undo QUIC and Linux TCP across baseline, mild, moderate, severe and handover profiles. Only 10 MB transfers are included, with five runs per variant/profile. Error bars show 95% Student-t confidence intervals.

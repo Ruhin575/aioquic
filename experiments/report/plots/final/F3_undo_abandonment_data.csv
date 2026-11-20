@@ -1,0 +1,4 @@
+profile,expected_genuine_losses,observed_abandonments,observed_to_expected_pct
+Mild,44,47,106.8
+Moderate,131,158,120.6
+Severe,218,246,112.8

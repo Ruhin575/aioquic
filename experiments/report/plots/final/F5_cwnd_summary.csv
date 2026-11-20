@@ -1,0 +1,4 @@
+variant,run,qlog_file,cwnd_samples,cwnd_restored_events,duration_s
+stock,1,483fa0f54e653755.qlog,19055,0,83.044
+k20,1,54079aa51596bb8a.qlog,18845,0,68.864
+dynamic_undo,1,d451e6c5653937fd.qlog,18575,126,49.909

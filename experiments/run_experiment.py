@@ -14,7 +14,7 @@ TRANSFER_DIR = ROOT / "experiments" / "transfer"
 TRANSFER = TRANSFER_DIR / "run_transfer.py"
 LOG = ROOT / "experiments" / "EXPERIMENT_LOG.md"
 
-PROFILES = {"baseline", "mild", "moderate", "severe", "handover"}
+PROFILES = {"baseline", "mild", "moderate", "severe", "handover", "safety"}
 ALLOWED_FILES = {"1MB.bin", "10MB.bin", "50MB.bin"}
 
 VARIANTS = {

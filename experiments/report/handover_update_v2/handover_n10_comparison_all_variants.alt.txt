@@ -1,0 +1,1 @@
+Bar chart of mean handover goodput with 95% t confidence intervals. Stock, K20 and Dynamic Undo each include 10 runs (runs 1–10); K5, K10, K100 and threshold-only Dynamic each include 5 runs (runs 1–5). Stock includes run 4 at 0.012 Mbps, retained pending investigation of its exact final-matrix server qlog.

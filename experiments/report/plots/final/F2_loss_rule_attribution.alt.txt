@@ -1,0 +1,1 @@
+Two 100% stacked bar charts compare Stock and K20 loss-rule attribution under moderate and severe profiles. Segments show packet-threshold, time-threshold, both, PTO and unavailable attribution as percentages of each variant's total loss declarations. Counts and percentages are provided in F2_loss_attribution_data.csv.

@@ -4,3 +4,13 @@ smoke_stock,clean,1048576,2,0.316595,26.496,True,experiments/transfer/client-qlo
 auto_server_stock,clean,1048576,1,0.312505,26.843,True,experiments/transfer/client-qlog/auto_server_stock/clean/1
 auto_server_high_threshold,clean,1048576,1,0.305284,27.478,True,experiments/transfer/client-qlog/auto_server_high_threshold/clean/1
 qlog_check,baseline,1048576,1,0.337784,24.834,True,experiments/transfer/client-qlog/qlog_check/baseline/1
+stock,safety,10485760,1,19.371293,4.330,True,experiments/results/stock/safety/run_1
+stock,safety,10485760,2,18.785214,4.466,True,experiments/results/stock/safety/run_2
+stock,safety,10485760,3,19.182475,4.373,True,experiments/results/stock/safety/run_3
+stock,safety,10485760,4,18.168757,4.617,True,experiments/results/stock/safety/run_4
+stock,safety,10485760,5,19.483636,4.305,True,experiments/results/stock/safety/run_5
+dynamic_undo,safety,10485760,1,19.053792,4.403,True,experiments/results/dynamic_undo/safety/run_1
+dynamic_undo,safety,10485760,2,19.018218,4.411,True,experiments/results/dynamic_undo/safety/run_2
+dynamic_undo,safety,10485760,3,18.980639,4.420,True,experiments/results/dynamic_undo/safety/run_3
+dynamic_undo,safety,10485760,4,18.234223,4.600,True,experiments/results/dynamic_undo/safety/run_4
+dynamic_undo,safety,10485760,5,18.961610,4.424,True,experiments/results/dynamic_undo/safety/run_5

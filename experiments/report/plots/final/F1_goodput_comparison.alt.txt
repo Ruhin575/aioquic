@@ -1,0 +1,1 @@
+Five-panel comparison of Stock, K5, K10, K20, K100, Dynamic and Dynamic Undo goodput across baseline, mild, moderate, severe and handover profiles. Each bar is the mean of five 10 MB runs; error bars show two-sided 95% Student-t confidence intervals.

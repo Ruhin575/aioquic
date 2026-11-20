@@ -74,6 +74,12 @@ The following metrics were used to analyze the experiment results.
 
 ## Results and Discussion
 
+The report presents results from several related but separate experimental
+datasets. The initial stock and huge-threshold comparison, the instrumented
+Stock/K20 experiments, the final seven-variant recovery matrix, and the
+video and undo-only ablation experiments are reported separately. Their
+results are not pooled unless explicitly stated.
+
 The results were calculated from the 50 QUIC runs, with five repetitions for each configuration and network profile. The following table shows the average goodput obtained for each configuration.
 
 | Network profile | Stock QUIC(Mbps) | Huge-threshold QUIC(Mbps) | TCP(Mbps) |
@@ -345,7 +351,7 @@ All figures come with CSV data and alt-text files. Error bars are 95% confidence
 ### 5. Interpretation
 
 * Most of the goodput loss in the bulk matrix shows up as lower bitrate, not as stalls: with a 12 s buffer and a throughput-based rule the player lowers quality to stay ahead of the link, so stock plays about 0.6 Mbps in moderate where the baseline plays 4.7 Mbps. Stalls are the minority outcome (24 events in 100 runs: stock 10, k20 7, `undo` 6, `dynamic_undo` 1).
-* The `dynamic_undo` gain in bulk goodput (+143% mild, +107% moderate, +53% severe, +81% handover) carries over to video as +88%, +88%, +35% and +43% average bitrate, about 0.4 to 0.8 of the bulk gain. The video gain is smaller, as expected: the player cannot use more than the 5 Mbps top rung and it stops fetching while its buffer is full. The largest effects are on mild and moderate, where QoE is also significantly higher.
+* The `dynamic_undo` gain in bulk goodput (+143% mild, +107% moderate, +53% severe, +59% handover in the updated supplementary handover analysis) carries over to video as +88%, +88%, +35% and +43% average bitrate, about 0.4 to 0.8 of the bulk gain. The video gain is smaller, as expected: the player cannot use more than the 5 Mbps top rung and it stops fetching while its buffer is full. The largest effects are on mild and moderate, where QoE is also significantly higher.
 * The k20 improvement is smaller and less stable than the `dynamic_undo` improvement, and `dynamic_undo` is significantly above k20 in bitrate on every impaired profile. The earlier provisional k20 runs showed +19 to +29% bitrate on all four impaired profiles; in the rerun at the pin severe is +4% and not significant. With 5 runs per cell the size of a k20 gain varies between sessions, so the k20 figures should be read as indicative.
 * Stalls concentrate at the start of a session: 19 of the 24 stall events occur in the first four segments. The player starts after one 4 s segment and picks the second rung from a single throughput sample, so this is partly a property of the client and applies equally to all variants. The stall reduction for `dynamic_undo` (moderate 1.2 to 0.0 per run) does not survive Holm correction and is reported as a trend, not a finding.
 * The QoE ranking at handover depends on how rung changes are penalised (see the sensitivity table); the other profiles do not.
@@ -375,7 +381,9 @@ All figures come with CSV data and alt-text files. Error bars are 95% confidence
 
 ### Scope and methodology
 
-A separate final experiment matrix evaluated seven recovery variants at frozen source revision `a8d846cd48deeda588146bee145d4da74fadfa46` (`a8d846c`): stock, K5, K10, K20, K100, dynamic, and dynamic undo. Each variant was tested under baseline, mild, moderate, severe, and handover profiles, with five repetitions per combination, giving \(7 \times 5 \times 5 = 175\) runs. Each run transferred a 10 MiB file. Download integrity was checked using SHA-256, and server-side qlogs were retained.
+The original final experiment matrix evaluated seven recovery variants at frozen source revision `a8d846cd48deeda588146bee145d4da74fadfa46` (`a8d846c`): stock, K5, K10, K20, K100, dynamic, and dynamic undo. Each variant was tested under baseline, mild, moderate, severe, and handover profiles, with five repetitions per combination, giving \(7 \times 5 \times 5 = 175\) runs. Each run transferred a 10 MiB file. Download integrity was checked using SHA-256, and server-side qlogs were retained.
+
+The handover evaluation was subsequently extended with 15 additional runs: five each for Stock, K20, and Dynamic Undo (runs 6–10). The combined dataset therefore contains 190 observations. Stock, K20, and Dynamic Undo each have 10 handover repetitions, while the other four variants retain five handover repetitions. The original 175-run matrix remains identifiable as the initial experiment; the additional runs are a supplementary handover extension.
 
 This dataset is separate from the earlier three-run dynamic-only experiment and the earlier instrumented stock/K20 matrix. Their results are not pooled.
 
@@ -387,7 +395,7 @@ This dataset is separate from the earlier three-run dynamic-only experiment and 
 | Mild | 5.3402 | 142.78% |
 | Moderate | 1.9408 | 107.08% |
 | Severe | 1.2028 | 52.91% |
-| Handover | 0.6948 | 81.13% |
+| Handover | 0.6843 | 59.14% |
 
 The best-performing variant by mean goodput in each profile was:
 
@@ -397,23 +405,32 @@ The best-performing variant by mean goodput in each profile was:
 | Mild | Dynamic Undo | 5.3402 |
 | Moderate | Dynamic Undo | 1.9408 |
 | Severe | Dynamic Undo | 1.2028 |
-| Handover | Dynamic Undo | 0.6948 |
+| Handover | Dynamic Undo | 0.6843 |
 
-Dynamic Undo achieved the highest mean goodput among the seven variants in all four impaired profiles. K10 achieved the highest mean under baseline conditions, where differences between configurations were small.
+Dynamic Undo achieved the highest mean goodput among the seven variants in all four impaired profiles. K10 achieved the highest mean under baseline conditions, where differences between configurations were small. The supplementary handover runs increased the sample size for Stock, K20, and Dynamic Undo to ten repetitions each.
 
 ### Statistical analysis
 
-Welch's two-sample t-tests compared each alternative variant with stock within each profile. Holm correction was applied separately within each profile across the six comparisons against stock.
+For the original 175-run matrix, Welch's two-sample t-tests compared each alternative variant with Stock within each profile. Holm correction was applied separately within each profile across the six comparisons against Stock. These original results remain applicable to the baseline, mild, moderate, and severe profiles, which retain five repetitions per variant.
 
-| Profile | Welch p-value | Holm-adjusted p-value | Significant at 0.05? |
-|---|---:|---:|---|
-| Baseline | 0.138150 | 0.276301 | No |
-| Mild | 0.000115 | 0.000690 | Yes |
-| Moderate | 0.000069 | 0.000277 | Yes |
-| Severe | 0.000053 | 0.000320 | Yes |
-| Handover | 0.026163 | 0.156979 | No |
+The supplementary handover runs increased the sample sizes for Stock, K20, and Dynamic Undo from five to ten. The handover comparisons were therefore recalculated using the combined dataset. Welch's two-sample t-tests compared each of the six alternative variants with Stock, and Holm correction was applied across all six comparisons.
 
-The improvements over stock were statistically significant after within-profile Holm correction under mild, moderate, and severe conditions. The handover improvement was not significant after correction, despite its higher observed mean goodput. The baseline difference was small and statistically insignificant. These tests compare each variant with stock; they do not establish that Dynamic Undo is statistically superior to every other variant. Each comparison uses five runs per group and should be interpreted accordingly.
+The updated handover results are:
+
+| Variant compared with Stock | Mean goodput (Mbps) | Improvement over Stock | Welch p-value | Holm-adjusted p-value | Significant at 0.05? |
+|---|---:|---:|---:|---:|---|
+| Dynamic | 0.4884 | 13.58% | 0.252522 | 0.252522 | No |
+| Dynamic Undo | 0.6843 | 59.14% | 0.000319 | 0.001911 | Yes |
+| K5 | 0.5242 | 21.91% | 0.077281 | 0.154562 | No |
+| K10 | 0.5762 | 34.00% | 0.012417 | 0.037250 | Yes |
+| K20 | 0.5848 | 36.00% | 0.008982 | 0.035927 | Yes |
+| K100 | 0.5940 | 38.14% | 0.006785 | 0.033924 | Yes |
+
+Dynamic Undo achieved the highest mean handover goodput among the seven variants. Its improvement over Stock was statistically significant after Holm correction. K10, K20, and K100 also showed statistically significant improvements over Stock, whereas K5 and Dynamic did not.
+
+The original Stock handover run 4, with a recorded goodput of 0.012 Mbps, remains included in the primary combined dataset. A fresh rerun was separately reported by the experiment team at 0.435 Mbps with SHA-256 verification passing. The fresh rerun has not been incorporated into the updated statistical analysis because its matching result record and complete data bundle have not been integrated. The original result and fresh rerun must therefore be treated as separate observations.
+
+All statistical comparisons are based on small samples and should be interpreted as experimental evidence rather than a guarantee of performance. These tests compare each alternative variant with Stock; they do not establish statistical superiority between every pair of alternative variants.
 
 ### Recovery-event analysis
 
@@ -451,6 +468,48 @@ Moderate conditions produced the largest number of restorations and the highest 
 | Handover | 8.78 | 8.39 | 51.14% |
 
 These are event-count ratios, not probabilities of successful recovery. Individual packet-loss events do not necessarily correspond one-to-one with undo episodes.
+
+### Figures: Final Recovery-Variant and Supporting Analysis
+
+The following figures provide visual summaries of the experiment results and supporting analyses. Each figure is accompanied by its corresponding CSV data and alt-text file.
+
+**Figure F1 – Goodput Comparison Across Recovery Variants**
+
+![Figure F1: Goodput comparison across recovery variants](plots/final/F1_goodput_comparison.png)
+
+Compares the mean goodput of seven recovery variants across five network profiles. This figure summarizes the original 175-run experiment matrix, with five runs per variant-profile combination. The supplementary handover runs are reported separately in the updated handover analysis.
+
+**Figure F2 – Loss Rule Attribution**
+
+![Figure F2: Loss rule attribution](plots/final/F2_loss_rule_attribution.png)
+
+Shows the distribution of packet-threshold, time-threshold, combined, and PTO-based loss attribution for Stock and K20 across the five network profiles. This figure is based on the separately instrumented experiment matrix.
+
+**Figure F3 – Dynamic Undo Restoration and Abandonment**
+
+![Figure F3: Dynamic Undo restoration and abandonment](plots/final/F3_undo_abandonment.png)
+
+Summarizes congestion-window restoration and undo-abandonment activity across the network profiles. It illustrates how the rollback mechanism responds to suspected spurious losses while retaining congestion reductions when genuine losses are detected.
+
+**Figure F4 – QUIC and TCP Goodput Comparison**
+
+![Figure F4: QUIC versus TCP goodput comparison](plots/final/F4_quic_vs_tcp.png)
+
+Compares goodput across the tested QUIC configurations and TCP under different network profiles. The TCP results were collected separately and should be interpreted in light of the experimental differences described earlier.
+
+**Figure F5 – Congestion Window Over Time**
+
+![Figure F5: Congestion window over time](plots/final/F5_cwnd_over_time.png)
+
+Shows representative server-side congestion-window traces for Stock, K20, and Dynamic Undo under the moderate network profile. The figure uses one run per configuration and illustrates the observed congestion-window changes and restoration events. It is a representative trace comparison, not an aggregate over all repetitions.
+
+**Figure F6 – Adaptive Threshold Over Time (Exploratory)**
+
+![Figure F6: Adaptive threshold over time](plots/final/F6_adaptive_k_over_time.png)
+
+Shows adaptive-threshold activity from the earlier three-run threshold-only Dynamic experiment. This is an exploratory figure and does not represent the final Dynamic Undo variant. The available qlogs do not contain enough information to reconstruct a complete threshold trajectory.
+
+All six figures have corresponding CSV data and alt-text files in `plots/final/`.
 
 ### Why Dynamic Undo works, and why it is safe
 
@@ -508,13 +567,15 @@ Event rates normalized by download duration produced different correlations. How
 
 ### Dataset validation and tests
 
-The final matrix contained all 175 expected records, exactly five runs for each of the 35 variant-profile combinations, no duplicate run keys, and no missing expected runs. All 175 downloaded files passed SHA-256 verification. The server-side qlogs were analysed and passed JSON parsing during the experiment; raw qlog files are not included in the repository because of their size.
+The original final matrix contained all 175 expected records, with exactly five runs for each of the 35 variant-profile combinations, no duplicate run keys, and no missing expected runs. All 175 downloaded files passed SHA-256 verification.
+
+The handover evaluation was subsequently extended with 15 additional runs: runs 6–10 for Stock, K20, and Dynamic Undo. All 15 additional downloads were 10 MiB and passed SHA-256 verification. The combined dataset therefore contains 190 observations. The handover sample size is ten for Stock, K20, and Dynamic Undo, and five for each of the other four variants. The original 175-run dataset remains unchanged; the supplementary handover results are stored separately in the updated analysis files.
 
 The recovery tests also passed: 9 tests in `tests/test_dynamic_undo.py` (including 5 subtests), and 36 tests across `tests/test_recovery.py` and `tests/test_dynamic_recovery.py`, for 45 passing tests in total.
 
 ### Discussion
 
-The final matrix provides evidence that Dynamic Undo can improve bulk-transfer goodput under several impaired network profiles. Its mean goodput was highest among the tested variants under mild, moderate, severe, and handover conditions. The improvements over stock were statistically significant after within-profile Holm correction under mild, moderate, and severe conditions, but not under handover.
+The original 175-run matrix and the supplementary handover extension provide evidence that Dynamic Undo can improve bulk-transfer goodput under impaired network profiles. Dynamic Undo achieved the highest mean goodput among the seven variants under mild, moderate, severe, and handover conditions. The improvements over Stock were statistically significant after within-profile Holm correction under mild, moderate, and severe conditions. In the updated handover analysis, using ten runs each for Stock and Dynamic Undo and correcting across all six comparisons against Stock, the Dynamic Undo improvement was also statistically significant (59.14%, Holm-adjusted p = 0.001911). Baseline differences remained statistically insignificant.
 
 The qlog evidence is consistent with the intended conditional rollback behaviour: congestion-control state was restored when all tracked losses in an undo episode were acknowledged late, while observed abandonment events retained the congestion reduction because the implementation classified the pending losses as genuine. Event counts alone do not prove that restorations caused the measured goodput improvements.
 
@@ -560,7 +621,7 @@ The comparison has five repetitions per group and uses stock results from the se
 
 ## Limitations
 
-The final Dynamic Undo matrix contains five repetitions per variant-profile combination. Its statistical comparisons are pairwise against stock, with Holm correction applied within each profile; they do not establish statistical superiority over every alternative variant. The handover goodput improvement was not significant after correction. Event counts and event-count ratios are not counts or probabilities of unique recovery episodes, and exploratory correlations cannot establish causation. This matrix is separate from the earlier three-run dynamic-only experiment and the earlier instrumented stock/K20 matrix.
+The original final Dynamic Undo matrix contains five repetitions per variant-profile combination. The supplementary handover extension increases the handover sample sizes to ten for Stock, K20, and Dynamic Undo, while the other four variants retain five repetitions. Statistical comparisons are pairwise against Stock, with Holm correction applied within each profile across six comparisons. They do not establish statistical superiority over every alternative variant. The updated handover analysis shows statistically significant improvements for Dynamic Undo, K10, K20, and K100 over Stock, but not for K5 or Dynamic. The original Stock handover run 4 recorded an unusually low goodput of 0.012 Mbps. A separate fresh rerun reported 0.435 Mbps and passed SHA-256 verification; however, this rerun has not been incorporated into the combined dataset. The original observation is retained in the primary analysis, and the fresh rerun is treated separately.
 
 There are several limitations to consider when interpreting the results.
 
@@ -580,7 +641,7 @@ Finally, the video workload is a simulation: it does not perform video decoding 
 
 ## Conclusion
 
-The final 175-run Dynamic Undo matrix provides a separate evaluation of the rollback variant. Dynamic Undo achieved the highest mean goodput among the seven tested variants in all four impaired profiles, with improvements over stock of 142.78% (mild), 107.08% (moderate), 52.91% (severe), and 81.13% (handover). After within-profile Holm correction, the improvements were statistically significant under mild, moderate, and severe conditions, but not under handover or baseline conditions. The qlog analysis recorded 1,510 congestion-window restorations and 923 undo abandonments across the 25 Dynamic Undo runs; all observed abandonments were attributed to genuine loss. These findings are distinct from the earlier three-run dynamic-only results and should be interpreted within the scope and limitations of the final matrix.
+The original 175-run Dynamic Undo matrix, together with the supplementary 15-run handover extension, provides an evaluation of the rollback variant across seven recovery configurations and five network profiles. Dynamic Undo achieved the highest mean goodput among the seven tested variants in all four impaired profiles. Its improvements over Stock were 142.78% (mild), 107.08% (moderate), 52.91% (severe), and 59.14% (handover, using the updated ten-run comparison). After within-profile Holm correction, the improvements were statistically significant under mild, moderate, severe, and handover conditions, but not under baseline conditions. The updated handover comparison uses ten runs each for Stock, K20, and Dynamic Undo, while the other variants retain five runs. The qlog analysis of the original 25 Dynamic Undo runs recorded 1,510 congestion-window restorations and 923 undo abandonments; all observed abandonments were attributed to genuine loss. These findings are distinct from the earlier three-run dynamic-only results and should be interpreted within the scope and limitations of the experiments. The original Stock handover run 4 anomaly and its separately reported fresh rerun are documented in the statistical analysis section.
 
 The earlier performance experiments showed that increasing the packet loss detection threshold to 20 improved average goodput and reduced completion time compared with the default configuration across the five network profiles. The new instrumented experiments also showed higher mean goodput for K20 under mild, moderate, severe and handover conditions, while baseline goodput remained almost unchanged. After Holm correction, the improvements were statistically significant under moderate, severe and handover conditions, but not under mild or baseline conditions.
 
